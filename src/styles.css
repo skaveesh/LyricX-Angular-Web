@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url('https://fonts.googleapis.com/css?family=Fredoka+One');
+@import url('https://fonts.googleapis.com/css?family=Pacifico');
+
+* {
+  font-family: 'Fredoka One', cursive;
+}
+
+ul:focus {
+  outline: none !important;
+  border: 0 !important;
+}
+li:focus {
+  outline: none !important;
+  border: 0 !important;
+}
+
+.color-warn{
+  color:#f44336;
+}
