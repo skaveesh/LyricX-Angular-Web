@@ -24,6 +24,12 @@ import { NotfoundComponent } from './components/notfound/notfound.component';
 import { AboutComponent } from './components/about/about.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
+export const firebaseConfig = environment.firebase;
+
+import { AngularFireModule} from '@angular/fire';
+import {environment} from '../environments/environment';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
+import 'rxjs';
 
 @NgModule({
   declarations: [
@@ -50,6 +56,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     BrowserAnimationsModule,
     MatIconModule,
     MatInputModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule,
     RouterModule.forRoot([
       {
         path: '',

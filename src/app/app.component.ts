@@ -6,6 +6,9 @@ import {
   animate,
   transition
 } from '@angular/animations';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+import 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +28,7 @@ import {
       })),
       transition('closed => open', animate('2000ms ease-in')),
       transition('open => closed', animate('1000ms ease-out'))
-      ])
+    ])
   ]
 })
 export class AppComponent implements OnInit {
@@ -41,6 +44,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.innerWidth = window.innerWidth;
   }
+
   toggleCollapse() {
     this.collapse = this.collapse === 'open' ? 'closed' : 'open';
   }
