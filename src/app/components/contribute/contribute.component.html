@@ -1,3 +1,41 @@
-<p>
+<ng-template #showLogin>
   contribute works!
-</p>
+
+  loginn
+
+  <input type="text" [(ngModel)]="email">
+  <br>
+  <input type="text" [(ngModel)]="password">
+
+  <button (click)="login()">Login</button>
+
+
+</ng-template>
+
+<div *ngIf="afAuth.user | async as user; else showLogin">
+
+  <h1>Hello {{ user.displayName }}!</h1>
+
+  <button (click)="logout()">Logout</button>
+
+
+  <!--<div *ngIf="user.emailVerified; else showVerifyEmail">-->
+
+
+
+    <span>refresh token: {{token}}</span>
+
+    <button (click)="refreshToken(true)">Force Auth Token</button>
+
+    <span>force refresh token: {{forceToken}}</span>
+
+  <!--</div>-->
+
+  <ng-template #showVerifyEmail>
+
+    <h2>{{emailVerifyText}}</h2>
+    <button (click)="sendEmailConfirmation()">Send Verification E-Mail</button>
+
+  </ng-template>
+
+</div>

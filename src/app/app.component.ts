@@ -6,8 +6,6 @@ import {
   animate,
   transition
 } from '@angular/animations';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Observable } from 'rxjs';
 import 'rxjs/operators';
 
 @Component({

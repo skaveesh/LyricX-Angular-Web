@@ -3,11 +3,6 @@ import { NgModule } from '@angular/core';
 
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
-import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
-import { ToplyricsComponent } from './components/toplyrics/toplyrics.component';
-import { ContributeComponent } from './components/contribute/contribute.component';
-import { LyricsviewComponent } from './components/lyricsview/lyricsview.component';
 import {
   MatButtonModule,
   MatCheckboxModule,
@@ -19,17 +14,20 @@ import {
   MatToolbarModule,
   MatTooltipModule
 } from '@angular/material';
+import { AppComponent } from './app.component';
+import { HomeComponent } from './components/home/home.component';
+import { ToplyricsComponent } from './components/toplyrics/toplyrics.component';
+import { ContributeComponent } from './components/contribute/contribute.component';
+import { LyricsviewComponent } from './components/lyricsview/lyricsview.component';
+import { FormsModule } from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import { NotfoundComponent } from './components/notfound/notfound.component';
 import { AboutComponent } from './components/about/about.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-
-export const firebaseConfig = environment.firebase;
-
-import { AngularFireModule} from '@angular/fire';
 import {environment} from '../environments/environment';
-import {AngularFirestoreModule} from '@angular/fire/firestore';
-import 'rxjs';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+
 
 @NgModule({
   declarations: [
@@ -53,18 +51,19 @@ import 'rxjs';
     MatSelectModule,
     MatOptionModule,
     MatIconModule,
+    FormsModule,
     BrowserAnimationsModule,
     MatIconModule,
     MatInputModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
+    AngularFireAuthModule,
     RouterModule.forRoot([
       {
         path: '',
         component: HomeComponent
       },
       {
-        path: 'lyrics/:artist/:song',
+        path: 'feedItem/:artist/:song',
         component: LyricsviewComponent
       },
       {

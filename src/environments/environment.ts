@@ -5,12 +5,9 @@
 export const environment = {
   production: false,
   firebase: {
-      apiKey: 'AIzaSyAhZgt6S5n3_H4zZ66SGc-lEshw5U0l_R4',
-      authDomain: 'lyricx-app.firebaseapp.com',
-      databaseURL: 'https://lyricx-app.firebaseio.com',
-      projectId: 'lyricx-app',
-      storageBucket: 'lyricx-app.appspot.com',
-      messagingSenderId: '977133508084'
+    apiKey: 'AIzaSyA8tzZ0_Gbft1oXYqqB5LCrg0tp6lt33p8',
+    authDomain: 'lyricx-contributor.firebaseapp.com',
+    projectId: 'lyricx-contributor'
   }
 };
 
