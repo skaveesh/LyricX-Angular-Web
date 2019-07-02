@@ -11,7 +11,10 @@
 
     <mat-toolbar style="left:0; right:0">
       <mat-toolbar-row>
-        <span style="font-size: 24px; color:#d0d0d0">{{ title }}</span>
+
+        <mat-progress-bar [hidden]="!progressBarViewStatus" mode="indeterminate" color="warn" class="loading-progress-bar-position"></mat-progress-bar>
+
+        <span style="font-size: 24px;">{{ title }}</span>
 
         <span class="fill-remaining-space"></span>
 
@@ -25,7 +28,9 @@
       </mat-toolbar-row>
 
       <mat-toolbar-row>
-        <h1 style="padding-bottom: 20px" class="mat-display-1 cursive-font color-warn" [ngStyle]="{'font-size': innerWidth<700 ? '1.5rem':'2rem'}">Explore the world's largest catalog of song lyrics</h1>
+        <h1 style="padding-bottom: 20px" class="mat-display-1 cursive-font color-warn"
+            [ngStyle]="{'font-size': innerWidth<700 ? '1.5rem':'2rem'}">Explore the world's largest catalog of song
+          lyrics</h1>
       </mat-toolbar-row>
 
       <mat-toolbar-row>

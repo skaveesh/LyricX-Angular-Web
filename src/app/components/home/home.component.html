@@ -2,20 +2,28 @@
   <div class="col-6" *ngFor="let ly of feedItem | async">
 
     <table>
-      <tr><td><p>{{ly.artist}}</p></td></tr>
-      <tr><td><h3>{{ly.song_title}}</h3></td></tr>
-      <tr><td><h6>{{ly.album}}</h6></td></tr>
-      <tr><td><h6>{{ly.keywords}}</h6></td></tr>
+      <tr>
+        <td><p>{{ly.artist}}</p></td>
+      </tr>
+      <tr>
+        <td><h3>{{ly.song_title}}</h3></td>
+      </tr>
+      <tr>
+        <td><h6>{{ly.album}}</h6></td>
+      </tr>
+      <tr>
+        <td><h6>{{ly.keywords}}</h6></td>
+      </tr>
     </table>
   </div>
 
-<div class="col-6">
-<p>hellp</p>
+  <div class="col-6">
+    <p>hellp</p>
 
-<textarea cols="16" style="resize:both" id="str" [(ngModel)]="str"> hello</textarea>
-<br />
-<button (click)="sendValues()">Send</button>
-<br />
-<pre>{{str}}</pre>
-</div>
+    <textarea cols="16" style="resize:both" id="str" [(ngModel)]="str"> hello</textarea>
+    <br/>
+    <button (click)="sendValues()">Send</button>
+    <br/>
+    <pre>{{str}}</pre>
+  </div>
 </div>

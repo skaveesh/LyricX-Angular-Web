@@ -1,0 +1,83 @@
+<div class="form-container light-grey-solid-border" style="padding-top: 50px; padding-bottom: 50px">
+
+  <div fxLayout="row" fxLayoutAlign="center">
+
+    <div fxLayout="column">
+
+      <h3 style="text-align: center; line-height: 150%" class="mat-display-1 cursive-font color-warn" fxFlexAlign="center" fxFlex="100px">
+        The purpose of life is to contribute in some
+        way to making things better.
+        <br>
+        -Robert F. Kennedy
+      </h3>
+
+    </div>
+
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="center">
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div fxLayout="column">
+
+        <h5 class="color-dark-grey" fxFlexAlign="start">Sign in as a Contributor</h5>
+
+        <mat-form-field fxFlexAlign="center" fxFlex="70px" color="warn"
+                        class="login-form-inner-component-width light-grey-solid-border">
+          <input matInput placeholder="Your Email" formControlName="email" required>
+          <mat-error
+            *ngIf="loginForm.controls.email.invalid">{{getErrorMessage(loginFieldsValidatingStatus.EMAIL)}}</mat-error>
+          <mat-icon matSuffix>edit</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field fxFlexAlign="center" fxFlex="70px" color="warn"
+                        class="login-form-inner-component-width light-grey-solid-border">
+          <input matInput placeholder="Your Password" [type]="hidePasswordStatus ? 'password' : 'text'"
+                 formControlName="password">
+          <mat-error
+            *ngIf="loginForm.controls.password.invalid">{{getErrorMessage(loginFieldsValidatingStatus.PASSWORD)}}</mat-error>
+          <button matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'"
+                  [attr.aria-pressed]="hidePasswordStatus" class="button-no-background">
+            <mat-icon>{{hidePasswordStatus ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-divider fxFlexAlign="center" class="login-form-inner-component-width"></mat-divider>
+
+        <button fxFlexAlign="center" fxFlex="70px" mat-raised-button color="warn"
+                class="login-form-inner-component-width button-default">Login
+        </button>
+
+        <mat-divider fxFlexAlign="center" class="login-form-inner-component-width"></mat-divider>
+
+      </div>
+
+    </form>
+
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="center">
+
+    <div fxLayout="column">
+
+      <button fxFlex="70px" fxFlexAlign="center" (click)="createAnAccount()" mat-raised-button color="warn"
+              class="login-form-inner-component-width button-default" type="submit">Create an Account
+      </button>
+
+    </div>
+
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="center">
+
+    <div fxLayout="column">
+
+      <h5 class="color-dark-grey" fxFlexAlign="center">Forgot password?</h5>
+
+
+    </div>
+
+  </div>
+
+</div>

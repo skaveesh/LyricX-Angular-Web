@@ -1,20 +1,13 @@
-<ng-template #showLogin>
-  contribute works!
+<ng-template  #showLogin>
 
-  loginn
-
-  <input type="text" [(ngModel)]="email">
-  <br>
-  <input type="text" [(ngModel)]="password">
-
-  <button (click)="login()">Login</button>
-
+  <app-login></app-login>
 
 </ng-template>
 
 <div *ngIf="afAuth.user | async as user; else showLogin">
 
   <h1>Hello {{ user.displayName }}!</h1>
+  <h1>Hello {{ user.email }}!</h1>
 
   <button (click)="logout()">Logout</button>
 
@@ -22,12 +15,11 @@
   <!--<div *ngIf="user.emailVerified; else showVerifyEmail">-->
 
 
+  <span>refresh token: {{token}}</span>
 
-    <span>refresh token: {{token}}</span>
+  <button (click)="refreshToken(true)">Force Auth Token</button>
 
-    <button (click)="refreshToken(true)">Force Auth Token</button>
-
-    <span>force refresh token: {{forceToken}}</span>
+  <span>force refresh token: {{forceToken}}</span>
 
   <!--</div>-->
 
@@ -39,3 +31,4 @@
   </ng-template>
 
 </div>
+

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {LoadingStatusService} from '../../services/loadingstatus.service';
 
 @Component({
   selector: 'app-contribute',
@@ -8,27 +9,14 @@ import {AngularFireAuth} from '@angular/fire/auth';
 })
 export class ContributeComponent implements OnInit {
 
-  constructor(public afAuth: AngularFireAuth) { }
+  constructor(public afAuth: AngularFireAuth, private loadingStatus:LoadingStatusService) {
+  }
 
-  email: string;
-  password: string;
   token: string;
   forceToken: string;
   emailVerifyText = 'Verify your email';
-  ngOnInit() {
-  }
 
-  login() {
-    this.afAuth.auth.signInWithEmailAndPassword(this.email, this.password)
-      .then((res) => {
-        console.log(res.additionalUserInfo);
-        console.log(res.credential);
-        console.log(res.operationType);
-        this.token = res.user.refreshToken;
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  ngOnInit() {
   }
 
   refreshToken(forceRefresh: boolean) {

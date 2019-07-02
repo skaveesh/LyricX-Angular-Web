@@ -1,0 +1,75 @@
+import { Component, OnInit } from '@angular/core';
+import {LoginFieldsValidatingStatus} from '../../../constants/constants';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {LoadingStatusService} from '../../../services/loadingstatus.service';
+
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent implements OnInit {
+
+  loginFieldsValidatingStatus: typeof LoginFieldsValidatingStatus = LoginFieldsValidatingStatus;
+
+  loginForm: FormGroup;
+  loginFormSubmitted = false;
+
+  hidePasswordStatus = true;
+  token: string;
+
+  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService) { }
+
+  ngOnInit() {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(8)]]
+    });
+  }
+
+
+  createAnAccount() {
+    this.loadingStatus.startLoading();
+
+    setTimeout(()=>{
+      this.loadingStatus.stopLoading();
+    }, 5000);
+  }
+
+  onSubmit() {
+    this.loginFormSubmitted = true;
+
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.login();
+  }
+
+  login() {
+    this.afAuth.auth.signInWithEmailAndPassword(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
+      .then((res) => {
+        console.log(res.additionalUserInfo);
+        console.log(res.credential);
+        console.log(res.operationType);
+        this.token = res.user.refreshToken;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  getErrorMessage(field: LoginFieldsValidatingStatus) {
+    switch (field) {
+      case LoginFieldsValidatingStatus.EMAIL:
+        return this.loginForm.controls.email.hasError('required') ? 'You must enter a valid Email' :
+          this.loginForm.controls.email.hasError('email') ? 'Not a valid email' : 'Your Email';
+
+      case LoginFieldsValidatingStatus.PASSWORD:
+        return this.loginForm.controls.password.hasError('required') ? 'You must enter a valid password' :
+          this.loginForm.controls.password.hasError('minlength') ? 'Password is should be at least 8 characters' : 'Your Password';
+
+    }
+  }
+}

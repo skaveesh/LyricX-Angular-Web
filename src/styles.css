@@ -1,24 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+/* Can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import url('https://fonts.googleapis.com/css?family=Fredoka+One');
 @import url('https://fonts.googleapis.com/css?family=Pacifico');
 
+:root {
+  --var-color-warn: #f44336;
+  --var-color-light-grey: #d1d1d1;
+  --var-color-dark-grey: #707070;
+  --var-color-text-default: #323232;
+  --var-color-button-text-default: #ffffff;
+}
+
 * {
   font-family: 'Fredoka One', cursive;
-  color: #323232;
+  color: var(--var-color-text-default);
 }
 
 ul:focus {
   outline: none !important;
   border: 0 !important;
 }
+
 li:focus {
   outline: none !important;
   border: 0 !important;
 }
 
-.color-warn{
-  color:#f44336;
+.cursive-font {
+  font-family: 'Pacifico', cursive !important;
 }
+
+.color-warn {
+  color: var(--var-color-warn);
+}
+
+.color-dark-grey {
+  color: var(--var-color-dark-grey);
+}
+
+.light-grey-solid-border {
+  border: 1px solid var(--var-color-light-grey);
+  border-radius: 5px;
+  padding: 0 10px 0 10px;
+  margin: 10px;
+}
+
+.button-default {
+  font-size: 18px;
+  border-radius: 5px !important;
+  padding: 0 10px 0 10px !important;
+  margin: 10px !important;
+}
+
+.button-default .mat-button-wrapper {
+  color: var(--var-color-button-text-default);
+}
+
+.button-no-background {
+  background-color: Transparent;
+  background-repeat:no-repeat;
+  border: none;
+  cursor:pointer;
+  overflow: hidden;
+  outline:none;
+}
+
+
+

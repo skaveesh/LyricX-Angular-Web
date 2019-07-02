@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {LoadingStatusService} from '../../services/loadingstatus.service';
 
 
 @Component({
@@ -9,11 +10,11 @@ import { Component, OnInit } from '@angular/core';
 export class HomeComponent implements OnInit {
 
 
-
-  constructor() { }
+  constructor(private loadingStatus: LoadingStatusService) {
+  }
 
   ngOnInit() {
+  }
 
-
-    }
 }
+

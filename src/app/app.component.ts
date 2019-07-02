@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, Renderer2} from '@angular/core';
 import {
   trigger,
   state,
@@ -7,6 +7,7 @@ import {
   transition
 } from '@angular/animations';
 import 'rxjs/operators';
+import {LoadingStatusService} from './services/loadingstatus.service';
 
 @Component({
   selector: 'app-root',
@@ -33,17 +34,43 @@ export class AppComponent implements OnInit {
   title = 'LyricX';
   public collapse = 'closed';
   public innerWidth: any;
+  public progressBarViewStatus: boolean = false;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.innerWidth = window.innerWidth;
   }
 
+  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef) {
+
+    this.loadingStatus.getLoading().subscribe(
+      (status) => {
+        this.progressBarViewStatus = status;
+
+        let allInputElements = this.element.nativeElement.querySelectorAll('button, input, textarea');
+
+        if (status) {
+          allInputElements.forEach((element) => {
+            element.disabled = true;
+          });
+        } else {
+          allInputElements.forEach((element) => {
+            element.disabled = false;
+          });
+        }
+      }
+    );
+
+  }
+
   ngOnInit() {
     this.innerWidth = window.innerWidth;
   }
 
+
   toggleCollapse() {
     this.collapse = this.collapse === 'open' ? 'closed' : 'open';
   }
+
+
 }
