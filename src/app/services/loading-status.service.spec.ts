@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LoadingStatusService } from './loadingstatus.service';
+import { LoadingStatusService } from './loading-status.service';
 
 describe('LoadingStatusService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

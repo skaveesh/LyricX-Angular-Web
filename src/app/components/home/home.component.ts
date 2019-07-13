@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {LoadingStatusService} from '../../services/loadingstatus.service';
+import {LoadingStatusService} from '../../services/loading-status.service';
 
 
 @Component({

@@ -7,7 +7,7 @@ import {
   transition
 } from '@angular/animations';
 import 'rxjs/operators';
-import {LoadingStatusService} from './services/loadingstatus.service';
+import {LoadingStatusService} from './services/loading-status.service';
 
 @Component({
   selector: 'app-root',

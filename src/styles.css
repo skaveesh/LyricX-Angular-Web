@@ -67,5 +67,14 @@ li:focus {
   outline:none;
 }
 
+.word-wrap{
+  word-wrap: break-word;
+  white-space: -moz-pre-wrap;
+  white-space: pre-wrap;
+}
+
+mat-icon{
+  color: var(--var-color-button-text-default);
+}
 
 

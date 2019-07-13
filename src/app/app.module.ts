@@ -13,34 +13,39 @@ import {
   MatSelectModule,
   MatSidenavModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatTabsModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
-import {ToplyricsComponent} from './components/toplyrics/toplyrics.component';
+import {TopLyricsComponent} from './components/top-lyrics/top-lyrics.component';
 import {ContributeComponent} from './components/contribute/contribute.component';
 import {LyricsviewComponent} from './components/lyricsview/lyricsview.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {NotfoundComponent} from './components/notfound/notfound.component';
+import {NotFoundComponent} from './components/not-found/not-found.component';
 import {AboutComponent} from './components/about/about.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {environment} from '../environments/environment';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {FlexLayoutModule} from '@angular/flex-layout';
-import { LoginComponent } from './components/contribute/login/login.component';
+import {LoginComponent} from './components/contribute/login/login.component';
+import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
+import { MyProfileComponent } from './components/contribute/contributor-dashboard/my-profile/my-profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ToplyricsComponent,
+    TopLyricsComponent,
     ContributeComponent,
     LyricsviewComponent,
-    NotfoundComponent,
+    NotFoundComponent,
     AboutComponent,
-    LoginComponent
+    LoginComponent,
+    ContributorDashboardComponent,
+    MyProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -57,6 +62,7 @@ import { LoginComponent } from './components/contribute/login/login.component';
     MatIconModule,
     MatDividerModule,
     MatProgressBarModule,
+    MatTabsModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -75,7 +81,7 @@ import { LoginComponent } from './components/contribute/login/login.component';
       },
       {
         path: 'toplyrics',
-        component: ToplyricsComponent
+        component: TopLyricsComponent
       },
       {
         path: 'contribute',
@@ -87,7 +93,7 @@ import { LoginComponent } from './components/contribute/login/login.component';
       },
       {
         path: '**',
-        component: NotfoundComponent
+        component: NotFoundComponent
       }
     ])
   ],

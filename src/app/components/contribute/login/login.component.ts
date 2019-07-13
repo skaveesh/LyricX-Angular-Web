@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {LoginFieldsValidatingStatus} from '../../../constants/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {LoadingStatusService} from '../../../services/loadingstatus.service';
+import {LoadingStatusService} from '../../../services/loading-status.service';
 
 @Component({
   selector: 'app-login',
@@ -48,6 +48,9 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+
+    this.loadingStatus.startLoading();
+
     this.afAuth.auth.signInWithEmailAndPassword(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
       .then((res) => {
         console.log(res.additionalUserInfo);
@@ -57,7 +60,8 @@ export class LoginComponent implements OnInit {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
+      .finally(()=> this.loadingStatus.stopLoading());
   }
 
   getErrorMessage(field: LoginFieldsValidatingStatus) {

@@ -1,4 +1,8 @@
-<mat-drawer-container [hasBackdrop]="true" style="height: 100vh">
+<mat-progress-bar [hidden]="!progressBarViewStatus" mode="indeterminate" color="warn"
+                  class="loading-progress-bar-position"></mat-progress-bar>
+
+<mat-drawer-container [hasBackdrop]="true" style="height: 100vh"
+                      [ngClass]="progressBarViewStatus ? 'filter-elements-grayscale' : 'filter-elements-none'">
   <mat-drawer #drawer mode="over" style="padding-left: 30px; padding-top:30px; padding-right: 100px;">
     <ul class="nav navbar-nav">
       <li class="nav-item"><a class="nav-link" routerLink="/" (click)="drawer.toggle()">Home</a></li>
@@ -12,8 +16,6 @@
     <mat-toolbar style="left:0; right:0">
       <mat-toolbar-row>
 
-        <mat-progress-bar [hidden]="!progressBarViewStatus" mode="indeterminate" color="warn" class="loading-progress-bar-position"></mat-progress-bar>
-
         <span style="font-size: 24px;">{{ title }}</span>
 
         <span class="fill-remaining-space"></span>
@@ -25,6 +27,7 @@
         <button mat-button (click)="drawer.toggle()" *ngIf="innerWidth<=576">
           <mat-icon>menu</mat-icon>
         </button>
+
       </mat-toolbar-row>
 
       <mat-toolbar-row>

@@ -9,6 +9,16 @@
   flex: 1 1 auto;
 }
 
+/*eliminate XSS attacks by explicitly declaring filters inside classes*/
+.filter-elements-grayscale {
+  filter: grayscale(100%);
+}
+
+/*eliminate XSS attacks by explicitly declaring filters inside classes*/
+.filter-elements-none {
+  filter: none;
+}
+
 .example-form {
   min-width: 150px;
   max-width: 500px;
@@ -25,5 +35,6 @@
   top: 0;
   padding: 0;
   margin: 0;
-  position: fixed;
+  z-index: 2;
+  position: fixed !important;
 }

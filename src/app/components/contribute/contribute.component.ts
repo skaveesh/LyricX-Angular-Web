@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {LoadingStatusService} from '../../services/loadingstatus.service';
+import {LoadingStatusService} from '../../services/loading-status.service';
 
 @Component({
   selector: 'app-contribute',
