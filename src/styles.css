@@ -74,7 +74,7 @@ li:focus {
 }
 
 mat-icon{
-  color: var(--var-color-button-text-default);
+  color: var(--var-color-dark-grey);
 }
 
 

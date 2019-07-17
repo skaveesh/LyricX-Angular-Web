@@ -37,10 +37,10 @@
                  formControlName="password">
           <mat-error
             *ngIf="loginForm.controls.password.invalid">{{getErrorMessage(loginFieldsValidatingStatus.PASSWORD)}}</mat-error>
-          <button matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'"
+          <div matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'"
                   [attr.aria-pressed]="hidePasswordStatus" class="button-no-background">
             <mat-icon>{{hidePasswordStatus ? 'visibility_off' : 'visibility'}}</mat-icon>
-          </button>
+          </div>
         </mat-form-field>
 
         <mat-divider fxFlexAlign="center" class="login-form-inner-component-width"></mat-divider>
