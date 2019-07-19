@@ -10,11 +10,11 @@
         </td>
       </tr>
       <tr *ngIf="afAuth.user | async as user;">
-        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0">
+        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0" *ngIf="user.displayName == ''">
           {{user.displayName}}
         </td>
-        <td>
-          <button color="warn" mat-mini-fab aria-label="Example icon-button with a heart icon">
+        <td *ngIf="user.displayName == ''">
+          <button color="warn" mat-mini-fab aria-label="Edit name">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -31,7 +31,7 @@
           </p>
         </td>
         <td>
-          <button color="warn" mat-mini-fab aria-label="Example icon-button with a heart icon">
+          <button color="warn" mat-mini-fab aria-label="Edit description">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -46,7 +46,7 @@
           fb.com/phillipgunn
         </td>
         <td>
-          <button color="warn" mat-mini-fab aria-label="Example icon-button with a heart icon">
+          <button color="warn" mat-mini-fab aria-label="Edit contact link">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
@@ -59,13 +59,13 @@
 
 <div fxLayout="row" fxLayoutAlign="start">
 
-  <p style="color: var(--var-color-light-grey)">Advanced Settings</p>
+  <p style="color: var(--var-color-light-grey)" class="padding-margin-bottom-values-zero">Advanced Settings</p>
 
 </div>
 
 <div fxLayout="row" fxLayoutAlign="center">
 
-  <mat-divider fxFlexAlign="center" fxFlex="100%"></mat-divider>
+  <mat-divider fxFlexAlign="center" fxFlex="100%" class="padding-margin-top-values-zero"></mat-divider>
 
 </div>
 
@@ -89,7 +89,7 @@
             Change Password (********)
           </td>
           <td>
-            <button color="warn" mat-mini-fab>
+            <button color="warn" (click)="changePassword()" mat-mini-fab>
               <mat-icon>edit</mat-icon>
             </button>
           </td>

@@ -6,21 +6,21 @@ import {BehaviorSubject} from 'rxjs';
 })
 export class LoadingStatusService {
 
-  static LOADING_STATUS : boolean = false;
+  static LOADING_STATUS = false;
 
   constructor() { }
 
   private loadingStatus$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(LoadingStatusService.LOADING_STATUS);
 
-  startLoading(){
+  startLoading() {
     this.loadingStatus$.next(true);
   }
 
-  stopLoading(){
+  stopLoading() {
     this.loadingStatus$.next(false);
   }
 
-  getLoading(){
+  getLoading() {
     return this.loadingStatus$;
   }
 }

@@ -9,7 +9,7 @@ import {LoadingStatusService} from '../../services/loading-status.service';
 })
 export class ContributeComponent implements OnInit {
 
-  constructor(public afAuth: AngularFireAuth, private loadingStatus:LoadingStatusService) {
+  constructor(public afAuth: AngularFireAuth, private loadingStatus: LoadingStatusService) {
   }
 
   token: string;

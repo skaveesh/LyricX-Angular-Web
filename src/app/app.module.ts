@@ -14,7 +14,8 @@ import {
   MatSidenavModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatTabsModule
+  MatTabsModule,
+  MatSnackBarModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -63,6 +64,7 @@ import { MyProfileComponent } from './components/contribute/contributor-dashboar
     MatDividerModule,
     MatProgressBarModule,
     MatTabsModule,
+    MatSnackBarModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,

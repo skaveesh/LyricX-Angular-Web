@@ -74,7 +74,25 @@ li:focus {
 }
 
 mat-icon{
+  color: var(--var-color-button-text-default);
+}
+
+.mat-icon-white{
   color: var(--var-color-dark-grey);
 }
 
+.padding-margin-top-values-zero{
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.padding-margin-bottom-values-zero{
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.padding-margin-values-zero{
+  padding: 0;
+  margin: 0;
+}
 
