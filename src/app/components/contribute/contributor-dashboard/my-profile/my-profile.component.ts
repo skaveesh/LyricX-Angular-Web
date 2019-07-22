@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {MatSnackBar} from '@angular/material';
+import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 
 @Component({
   selector: 'app-my-profile',
@@ -9,19 +10,21 @@ import {MatSnackBar} from '@angular/material';
 })
 export class MyProfileComponent implements OnInit {
 
-  constructor(public afAuth: AngularFireAuth, private snackBar: MatSnackBar) {
+  constructor(public afAuth: AngularFireAuth, private defaultSnackBar : DefaultSnackBarComponent, private snackBar:MatSnackBar ) {
   }
 
   ngOnInit() {
   }
 
   private changePassword() {
-    this.afAuth.auth.sendPasswordResetEmail("skaveesh@gmail.com");
+    // this.afAuth.auth.sendPasswordResetEmail("skaveesh@gmail.com");
+    // this.defaultSnackBar.openSnackBar("Password reset E-Mail has sent your inbox.");
     this.openSnackBar("Password reset E-Mail has sent your inbox.");
   }
 
   private openSnackBar(message: string){
-    this.snackBar.open(message,null,{
+    this.snackBar.openFromComponent(DefaultSnackBarComponent,{
+      data: message,
       duration:3000
     });
   }

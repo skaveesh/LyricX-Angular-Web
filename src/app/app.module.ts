@@ -34,6 +34,7 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {LoginComponent} from './components/contribute/login/login.component';
 import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
 import { MyProfileComponent } from './components/contribute/contributor-dashboard/my-profile/my-profile.component';
+import { DefaultSnackBarComponent } from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { MyProfileComponent } from './components/contribute/contributor-dashboar
     AboutComponent,
     LoginComponent,
     ContributorDashboardComponent,
-    MyProfileComponent
+    MyProfileComponent,
+    DefaultSnackBarComponent
   ],
   imports: [
     BrowserModule,
