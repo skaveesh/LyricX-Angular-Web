@@ -15,7 +15,7 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatTabsModule,
-  MatSnackBarModule
+  MatSnackBarModule, MatSnackBarRef, MAT_SNACK_BAR_DATA
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -33,8 +33,8 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {LoginComponent} from './components/contribute/login/login.component';
 import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
-import { MyProfileComponent } from './components/contribute/contributor-dashboard/my-profile/my-profile.component';
-import { DefaultSnackBarComponent } from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {MyProfileComponent} from './components/contribute/contributor-dashboard/my-profile/my-profile.component';
+import {DefaultSnackBarComponent} from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 
 @NgModule({
   declarations: [
@@ -101,7 +101,15 @@ import { DefaultSnackBarComponent } from './components/popups-and-modals/default
       }
     ])
   ],
-  providers: [],
+  providers: [DefaultSnackBarComponent,
+    {
+      provide: MatSnackBarRef,
+      useValue: {}
+    }, {
+      provide: MAT_SNACK_BAR_DATA,
+      useValue: {} // Add any data you wish to test if it is passed/used correctly
+    }],
+  entryComponents: [DefaultSnackBarComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

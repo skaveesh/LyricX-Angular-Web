@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {MatSnackBar} from '@angular/material';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {User} from 'firebase';
 
 @Component({
   selector: 'app-my-profile',
@@ -10,7 +10,7 @@ import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack
 })
 export class MyProfileComponent implements OnInit {
 
-  constructor(public afAuth: AngularFireAuth, private defaultSnackBar : DefaultSnackBarComponent, private snackBar:MatSnackBar ) {
+  constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent) {
   }
 
   ngOnInit() {
@@ -18,14 +18,14 @@ export class MyProfileComponent implements OnInit {
 
   private changePassword() {
     // this.afAuth.auth.sendPasswordResetEmail("skaveesh@gmail.com");
-    // this.defaultSnackBar.openSnackBar("Password reset E-Mail has sent your inbox.");
-    this.openSnackBar("Password reset E-Mail has sent your inbox.");
+    this.defaultSnackBar.openSnackBar('Password reset E-Mail has been sent your inbox.');
   }
 
-  private openSnackBar(message: string){
-    this.snackBar.openFromComponent(DefaultSnackBarComponent,{
-      data: message,
-      duration:3000
+  private changeUserName(name: String) {
+    this.afAuth.auth.currentUser.updateProfile({
+      displayName: 'John Doe'
+    }).catch((error) => {
+      this.defaultSnackBar.openSnackBar('Something went wrong. ' + error.toString());
     });
   }
 

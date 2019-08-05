@@ -10,14 +10,52 @@
         </td>
       </tr>
       <tr *ngIf="afAuth.user | async as user;">
-        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0" *ngIf="user.displayName == ''">
-          {{user.displayName}}
+
+        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0" *ngIf="user.displayName != null">
+          {{user.displayName}} saaa
         </td>
-        <td *ngIf="user.displayName == ''">
-          <button color="warn" mat-mini-fab aria-label="Edit name">
+        <td *ngIf="user.displayName != null">
+          <button color="warn" mat-mini-fab aria-label="Edit name" (click)="changeUserName('John Doe')">
             <mat-icon>edit</mat-icon>
           </button>
         </td>
+
+        <td *ngIf="user.displayName == null">
+
+
+          <div fxLayout="row" fxLayoutAlign="center">
+
+              <form>
+
+                <div fxLayout="row wrap">
+
+                  <mat-form-field fxFlexAlign="center" color="warn"
+                                  class="login-form-inner-component-width light-grey-solid-border">
+                    <input matInput placeholder="First Name" formControlName="email" required>
+
+                  </mat-form-field>
+
+                  <mat-form-field fxFlexAlign="center" color="warn"
+                                  class="login-form-inner-component-width light-grey-solid-border">
+                    <input matInput placeholder="Last Name" formControlName="password">
+
+                  </mat-form-field>
+
+                </div>
+
+              </form>
+
+          </div>
+
+        </td>
+        <td>
+          <div fxLayoutAlign="center center">
+            <button color="warn" mat-mini-fab aria-label="Edit name">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </td>
+
       </tr>
       <tr>
         <td style="color: var(--var-color-dark-grey); font-size: 18px; padding-top: 0">
@@ -72,37 +110,35 @@
 <div fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="space-between">
 
   <div *ngIf="afAuth.user | async as user">
-    <div>
-      <table>
-        <tr>
-          <td>
-            Change E-Mail ({{user.email}})
-          </td>
-          <td>
-            <button color="warn" mat-mini-fab>
-              <mat-icon>edit</mat-icon>
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Change Password (********)
-          </td>
-          <td>
-            <button color="warn" (click)="changePassword()" mat-mini-fab>
-              <mat-icon>edit</mat-icon>
-            </button>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <table>
+      <tr>
+        <td>
+          Change E-Mail ({{user.email}})
+        </td>
+        <td>
+          <button color="warn" mat-mini-fab>
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Change Password (********)
+        </td>
+        <td>
+          <button color="warn" (click)="changePassword()" mat-mini-fab>
+            <mat-icon>edit</mat-icon>
+          </button>
+        </td>
+      </tr>
+    </table>
   </div>
 
-    <!--<div>-->
-      <!--<table>-->
+  <!--<div>-->
+  <!--<table>-->
 
-      <!--</table>-->
-    <!--</div>-->
+  <!--</table>-->
+  <!--</div>-->
   <!--</div>-->
   <!--<h1>Hello {{ user.displayName }}!</h1>-->
 

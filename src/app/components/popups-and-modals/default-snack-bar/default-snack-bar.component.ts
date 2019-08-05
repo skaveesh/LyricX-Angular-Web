@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {MatSnackBar} from '@angular/material';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_SNACK_BAR_DATA, MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-default-snack-bar',
@@ -8,18 +8,17 @@ import {MatSnackBar} from '@angular/material';
 })
 export class DefaultSnackBarComponent implements OnInit {
 
-  private message : string;
-
-  constructor() { }
+  constructor(private snackBar: MatSnackBar, @Inject(MAT_SNACK_BAR_DATA) public data: any) {
+  }
 
   ngOnInit() {
   }
 
-  // public openSnackBar(message : string){
-  //   this.message = message;
-  //   this.snackBar.openFromComponent(DefaultSnackBarComponent,{
-  //     duration:3000
-  //   });
-  // }
+  public openSnackBar(message: string) {
+    this.snackBar.openFromComponent(DefaultSnackBarComponent, {
+      duration: 3000,
+      data: message
+    });
+  }
 
 }
