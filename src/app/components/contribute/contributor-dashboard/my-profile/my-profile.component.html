@@ -25,20 +25,24 @@
 
           <div fxLayout="row" fxLayoutAlign="center">
 
-              <form>
+              <form [formGroup]="nameChangingForm">
 
                 <div fxLayout="row wrap">
 
                   <mat-form-field fxFlexAlign="center" color="warn"
                                   class="login-form-inner-component-width light-grey-solid-border">
-                    <input matInput placeholder="First Name" formControlName="email" required>
-
+                    <input matInput placeholder="First Name" formControlName="firstName">
+                    <mat-error
+                      *ngIf="loginForm.controls.firstName.invalid">{{getErrorMessage(loginFieldsValidatingStatus.EMAIL)}}
+                    </mat-error>
                   </mat-form-field>
 
                   <mat-form-field fxFlexAlign="center" color="warn"
                                   class="login-form-inner-component-width light-grey-solid-border">
-                    <input matInput placeholder="Last Name" formControlName="password">
-
+                    <input matInput placeholder="Last Name" formControlName="lastName">
+                    <mat-error
+                      *ngIf="loginForm.controls.lastName.invalid">{{getErrorMessage(loginFieldsValidatingStatus.EMAIL)}}
+                    </mat-error>
                   </mat-form-field>
 
                 </div>

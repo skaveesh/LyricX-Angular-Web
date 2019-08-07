@@ -3,6 +3,7 @@ import {LoginFieldsValidatingStatus} from '../../../constants/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {LoadingStatusService} from '../../../services/loading-status.service';
+import {FormFieldsValidatingStatusService} from '../../../services/form-fields-validating-status.service';
 
 @Component({
   selector: 'app-login',
@@ -19,7 +20,7 @@ export class LoginComponent implements OnInit {
   hidePasswordStatus = true;
   token: string;
 
-  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService) { }
+  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService, public formFieldValidatingStatusService : FormFieldsValidatingStatusService) { }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -27,7 +28,6 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
-
 
   createAnAccount() {
     this.loadingStatus.startLoading();
@@ -64,16 +64,5 @@ export class LoginComponent implements OnInit {
       .finally(()=> this.loadingStatus.stopLoading());
   }
 
-  getErrorMessage(field: LoginFieldsValidatingStatus) {
-    switch (field) {
-      case LoginFieldsValidatingStatus.EMAIL:
-        return this.loginForm.controls.email.hasError('required') ? 'You must enter a valid Email' :
-          this.loginForm.controls.email.hasError('email') ? 'Not a valid email' : 'Your Email';
 
-      case LoginFieldsValidatingStatus.PASSWORD:
-        return this.loginForm.controls.password.hasError('required') ? 'You must enter a valid password' :
-          this.loginForm.controls.password.hasError('minlength') ? 'Password is should be at least 8 characters' : 'Your Password';
-
-    }
-  }
 }

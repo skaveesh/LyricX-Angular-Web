@@ -27,7 +27,7 @@
                         class="login-form-inner-component-width light-grey-solid-border">
           <input matInput placeholder="Your Email" formControlName="email" required>
           <mat-error
-            *ngIf="loginForm.controls.email.invalid">{{getErrorMessage(loginFieldsValidatingStatus.EMAIL)}}
+            *ngIf="loginForm.controls.email.invalid">{{formFieldValidatingStatusService.getErrorMessage(loginForm, loginFieldsValidatingStatus.EMAIL)}}
           </mat-error>
           <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
         </mat-form-field>
@@ -37,7 +37,7 @@
           <input matInput placeholder="Your Password" [type]="hidePasswordStatus ? 'password' : 'text'"
                  formControlName="password">
           <mat-error
-            *ngIf="loginForm.controls.password.invalid">{{getErrorMessage(loginFieldsValidatingStatus.PASSWORD)}}
+            *ngIf="loginForm.controls.password.invalid">{{formFieldValidatingStatusService.getErrorMessage(loginForm, loginFieldsValidatingStatus.PASSWORD)}}
           </mat-error>
           <div matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'"
                   [attr.aria-pressed]="hidePasswordStatus" class="button-no-background">
