@@ -2,6 +2,6 @@ export class Constants {
 
 }
 
-export enum LoginFieldsValidatingStatus {
+export enum FormFieldConstants {
   EMAIL, PASSWORD
 }

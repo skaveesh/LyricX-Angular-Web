@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {LoginFieldsValidatingStatus} from '../../../constants/constants';
+import {Component, OnInit} from '@angular/core';
+import {FormFieldConstants} from '../../../constants/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {LoadingStatusService} from '../../../services/loading-status.service';
@@ -12,7 +12,7 @@ import {FormFieldsValidatingStatusService} from '../../../services/form-fields-v
 })
 export class LoginComponent implements OnInit {
 
-  loginFieldsValidatingStatus: typeof LoginFieldsValidatingStatus = LoginFieldsValidatingStatus;
+
 
   loginForm: FormGroup;
   loginFormSubmitted = false;
@@ -20,7 +20,8 @@ export class LoginComponent implements OnInit {
   hidePasswordStatus = true;
   token: string;
 
-  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService, public formFieldValidatingStatusService : FormFieldsValidatingStatusService) { }
+  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService, public formFieldValidatingStatusService: FormFieldsValidatingStatusService) {
+  }
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -32,7 +33,7 @@ export class LoginComponent implements OnInit {
   createAnAccount() {
     this.loadingStatus.startLoading();
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.loadingStatus.stopLoading();
     }, 5000);
   }
@@ -61,7 +62,7 @@ export class LoginComponent implements OnInit {
       .catch((error) => {
         console.log(error);
       })
-      .finally(()=> this.loadingStatus.stopLoading());
+      .finally(() => this.loadingStatus.stopLoading());
   }
 
 

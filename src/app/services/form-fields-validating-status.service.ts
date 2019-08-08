@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {LoginFieldsValidatingStatus} from '../constants/constants';
+import {FormFieldConstants} from '../constants/constants';
 import {FormGroup} from '@angular/forms';
 
 @Injectable({
@@ -7,16 +7,18 @@ import {FormGroup} from '@angular/forms';
 })
 export class FormFieldsValidatingStatusService {
 
+  formFieldConstants: typeof FormFieldConstants = FormFieldConstants;
+
   constructor() {
   }
 
-  public static getErrorMessage(form: FormGroup, field: LoginFieldsValidatingStatus) {
+  public static getErrorMessage(form: FormGroup, field: FormFieldConstants) {
     switch (field) {
-      case LoginFieldsValidatingStatus.EMAIL:
+      case FormFieldConstants.EMAIL:
         return form.controls.email.hasError('required') ? 'You must enter a valid Email' :
           form.controls.email.hasError('email') ? 'Not a valid email' : 'Your Email';
 
-      case LoginFieldsValidatingStatus.PASSWORD:
+      case FormFieldConstants.PASSWORD:
         return form.controls.password.hasError('required') ? 'You must enter a valid password' :
           form.controls.password.hasError('minlength') ? 'Password is should be at least 8 characters' : 'Your Password';
 

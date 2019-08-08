@@ -3,7 +3,9 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {User} from 'firebase';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {LoginFieldsValidatingStatus} from '../../../../constants/constants';
+import {FormFieldConstants} from '../../../../constants/constants';
+import {LoadingStatusService} from '../../../../services/loading-status.service';
+import {FormFieldsValidatingStatusService} from '../../../../services/form-fields-validating-status.service';
 
 @Component({
   selector: 'app-my-profile',
@@ -14,7 +16,7 @@ export class MyProfileComponent implements OnInit {
 
   nameChangingForm : FormGroup;
 
-  constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent, private formBuilder: FormBuilder) {
+  constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent, private formBuilder: FormBuilder, public formFieldValidatingStatusService: FormFieldsValidatingStatusService) {
   }
 
   ngOnInit() {
@@ -42,11 +44,11 @@ export class MyProfileComponent implements OnInit {
   //todo
   // getErrorMessage(field: NameChangingFieldsValidatingStatus) {
   //   switch (field) {
-  //     case LoginFieldsValidatingStatus.EMAIL:
+  //     case FormFieldConstants.EMAIL:
   //       return this.loginForm.controls.email.hasError('required') ? 'You must enter a valid Email' :
   //         this.loginForm.controls.email.hasError('email') ? 'Not a valid email' : 'Your Email';
   //
-  //     case LoginFieldsValidatingStatus.PASSWORD:
+  //     case FormFieldConstants.PASSWORD:
   //       return this.loginForm.controls.password.hasError('required') ? 'You must enter a valid password' :
   //         this.loginForm.controls.password.hasError('minlength') ? 'Password is should be at least 8 characters' : 'Your Password';
   //
