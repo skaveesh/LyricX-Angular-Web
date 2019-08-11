@@ -25,9 +25,9 @@
 
         <mat-form-field fxFlexAlign="center" fxFlex="70px" color="warn"
                         class="login-form-inner-component-width light-grey-solid-border">
-          <input matInput placeholder="Your Email" formControlName="email" required>
+          <input matInput placeholder="Your Mail" formControlName="email" required>
           <mat-error
-            *ngIf="loginForm.controls.email.invalid">{{formFieldValidatingStatusService.getErrorMessage(loginForm, formFieldValidatingStatusService.formFieldConstants.EMAIL)}}
+            *ngIf="loginForm.controls.email.invalid">{{FormFieldsValidatingStatusService.getErrorMessage(loginForm.controls.email, constants.FormFieldConstants.EMAIL)}}
           </mat-error>
           <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
         </mat-form-field>
@@ -37,12 +37,15 @@
           <input matInput placeholder="Your Password" [type]="hidePasswordStatus ? 'password' : 'text'"
                  formControlName="password">
           <mat-error
-            *ngIf="loginForm.controls.password.invalid">{{formFieldValidatingStatusService.getErrorMessage(loginForm, formFieldValidatingStatusService.formFieldConstants.PASSWORD)}}
+            *ngIf="loginForm.controls.password.invalid">{{FormFieldsValidatingStatusService.getErrorMessage(loginForm.controls.password, constants.FormFieldConstants.PASSWORD)}}
           </mat-error>
-          <div matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'"
-                  [attr.aria-pressed]="hidePasswordStatus" class="button-no-background">
+
+          <div matSuffix (click)="hidePasswordStatus = !hidePasswordStatus" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePasswordStatus" class="button-no-background">
+
             <mat-icon class="mat-icon-white" matSuffix>{{hidePasswordStatus ? 'visibility_off' : 'visibility'}}</mat-icon>
+
           </div>
+
         </mat-form-field>
 
         <button fxFlexAlign="center" fxFlex="70px" mat-raised-button color="warn"
@@ -74,7 +77,6 @@
     <div fxLayout="column">
 
       <h6 class="color-dark-grey" fxFlexAlign="center">Forgot password?</h6>
-
 
     </div>
 

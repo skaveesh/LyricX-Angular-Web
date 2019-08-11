@@ -3,25 +3,33 @@
   <div fxLayout="column">
 
     <table style="text-align: center">
+
       <tr>
+
         <td style="padding-top: 30px">
+
           <img alt="profile picture" src="../../../../../assets/profile_picture_temp.jpg"
                style="width: 100px; height: 100px; border-radius: 50px; border: 6px solid #f44336"/>
+
         </td>
+
       </tr>
+
       <tr *ngIf="afAuth.user | async as user;">
 
-        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0" *ngIf="user.displayName != null">
-          {{user.displayName}} saaa
-        </td>
+        <td style="color:var(--var-color-warn); font-size: 36px; padding-bottom: 0" *ngIf="user.displayName != null">{{user.displayName}}</td>
+
         <td *ngIf="user.displayName != null">
-          <button color="warn" mat-mini-fab aria-label="Edit name" (click)="changeUserName('John Doe')">
+
+          <button color="warn" mat-mini-fab aria-label="Edit name">
+
             <mat-icon>edit</mat-icon>
+
           </button>
+
         </td>
 
         <td *ngIf="user.displayName == null">
-
 
           <div fxLayout="row" fxLayoutAlign="center">
 
@@ -32,17 +40,21 @@
                 <mat-form-field fxFlexAlign="center" color="warn"
                                 class="login-form-inner-component-width light-grey-solid-border">
                   <input matInput placeholder="First Name" formControlName="firstName">
+
                   <mat-error
-                    *ngIf="nameChangingForm.controls.firstName.invalid">{{formFieldValidatingStatusService.getErrorMessage(nameChangingForm, formFieldValidatingStatusService.formFieldConstants.EMAIL)}}
+                    *ngIf="nameChangingForm.controls.firstName.invalid">{{FormFieldsValidatingStatusService.getErrorMessage(nameChangingForm.controls.firstName, constants.FormFieldConstants.NAME)}}
                   </mat-error>
+
                 </mat-form-field>
 
                 <mat-form-field fxFlexAlign="center" color="warn"
                                 class="login-form-inner-component-width light-grey-solid-border">
                   <input matInput placeholder="Last Name" formControlName="lastName">
+
                   <mat-error
-                    *ngIf="nameChangingForm.controls.lastName.invalid">{{formFieldValidatingStatusService.getErrorMessage(nameChangingForm, formFieldValidatingStatusService.formFieldConstants.EMAIL)}}
+                    *ngIf="nameChangingForm.controls.lastName.invalid">{{FormFieldsValidatingStatusService.getErrorMessage(nameChangingForm.controls.lastName, constants.FormFieldConstants.NAME)}}
                   </mat-error>
+
                 </mat-form-field>
 
               </div>
@@ -52,47 +64,85 @@
           </div>
 
         </td>
-        <td>
+
+        <td *ngIf="user.displayName == null">
+
           <div fxLayoutAlign="center center">
-            <button color="warn" mat-mini-fab aria-label="Edit name">
-              <mat-icon>edit</mat-icon>
-            </button>
+
+            <form [formGroup]="nameChangingForm" (ngSubmit)="changeUserName()">
+
+              <button
+                [disabled]="nameChangingForm.controls.firstName.invalid || nameChangingForm.controls.lastName.invalid"
+                color="warn" mat-mini-fab aria-label="Confirm name">
+
+                <mat-icon>done</mat-icon>
+
+              </button>
+
+            </form>
+
           </div>
+
         </td>
 
       </tr>
+
       <tr>
+
         <td style="color: var(--var-color-dark-grey); font-size: 18px; padding-top: 0">
           Senior Contributor
         </td>
+
       </tr>
+
       <tr>
+
         <td>
+
           <p class="word-wrap">
             One good thing about music, when it hits you, you feel no pain.
           </p>
+
         </td>
+
         <td>
+
           <button color="warn" mat-mini-fab aria-label="Edit description">
+
             <mat-icon>edit</mat-icon>
+
           </button>
+
         </td>
+
       </tr>
+
       <tr>
+
         <td>
           Total Contributions - 240
         </td>
+
       </tr>
+
       <tr>
+
         <td>
           fb.com/phillipgunn
         </td>
+
         <td>
+
           <button color="warn" mat-mini-fab aria-label="Edit contact link">
+
             <mat-icon>edit</mat-icon>
+
           </button>
+
         </td>
+
       </tr>
+
     </table>
 
   </div>

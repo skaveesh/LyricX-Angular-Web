@@ -1,11 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
-import {User} from 'firebase';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {FormFieldConstants} from '../../../../constants/constants';
-import {LoadingStatusService} from '../../../../services/loading-status.service';
 import {FormFieldsValidatingStatusService} from '../../../../services/form-fields-validating-status.service';
+import {Constants} from '../../../../constants/constants';
 
 @Component({
   selector: 'app-my-profile',
@@ -14,45 +12,35 @@ import {FormFieldsValidatingStatusService} from '../../../../services/form-field
 })
 export class MyProfileComponent implements OnInit {
 
+  public constants = Constants;
+
+  public FormFieldsValidatingStatusService = FormFieldsValidatingStatusService;
+
   nameChangingForm : FormGroup;
 
-  constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent, private formBuilder: FormBuilder, public formFieldValidatingStatusService: FormFieldsValidatingStatusService) {
+  constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent, private formBuilder: FormBuilder) {
   }
 
   ngOnInit() {
     this.nameChangingForm = this.formBuilder.group({
-      firstName: ['', [Validators.required, Validators.minLength(3)]],
-      lastName: ['', [Validators.required, Validators.minLength(3)]]
+      firstName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z]+$/i)]],
+      lastName: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z]+$/i)]]
     });
   }
 
   private changePassword() {
     // this.afAuth.auth.sendPasswordResetEmail("skaveesh@gmail.com");
-    this.defaultSnackBar.openSnackBar('Password reset E-Mail has been sent your inbox.');
+    this.defaultSnackBar.openSnackBar('Password reset'); // E-Mail has been sent your inbox.
   }
 
-  private changeUserName(name: string) {
+  private changeUserName() {
     this.afAuth.auth.currentUser.updateProfile({
-      displayName: name
+      displayName: this.nameChangingForm.controls.firstName.value + " " + this.nameChangingForm.controls.lastName.value
     }).then(() => {
       this.defaultSnackBar.openSnackBar('Name has been changed.');
     }).catch((error) => {
       this.defaultSnackBar.openSnackBar('Something went wrong. ' + error.toString());
     });
   }
-
-  //todo
-  // getErrorMessage(field: NameChangingFieldsValidatingStatus) {
-  //   switch (field) {
-  //     case FormFieldConstants.EMAIL:
-  //       return this.loginForm.controls.email.hasError('required') ? 'You must enter a valid Email' :
-  //         this.loginForm.controls.email.hasError('email') ? 'Not a valid email' : 'Your Email';
-  //
-  //     case FormFieldConstants.PASSWORD:
-  //       return this.loginForm.controls.password.hasError('required') ? 'You must enter a valid password' :
-  //         this.loginForm.controls.password.hasError('minlength') ? 'Password is should be at least 8 characters' : 'Your Password';
-  //
-  //   }
-  // }
 
 }

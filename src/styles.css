@@ -10,7 +10,8 @@
   --var-color-light-grey: #d1d1d1;
   --var-color-dark-grey: #707070;
   --var-color-text-default: #323232;
-  --var-color-button-text-default: #ffffff;
+  --var-color-button-text-default: #fff;
+  --var-color-white: #fff;
 }
 
 * {
@@ -96,3 +97,11 @@ mat-icon{
   margin: 0;
 }
 
+.center-align-text{
+  text-align: center;
+}
+
+.white-color-background-with-text-color-warn{
+  color: var(--var-color-warn);
+  background: var(--var-color-white);
+}

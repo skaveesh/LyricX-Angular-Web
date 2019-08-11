@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {FormFieldConstants} from '../../../constants/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {LoadingStatusService} from '../../../services/loading-status.service';
 import {FormFieldsValidatingStatusService} from '../../../services/form-fields-validating-status.service';
+import {Constants} from '../../../constants/constants';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +12,9 @@ import {FormFieldsValidatingStatusService} from '../../../services/form-fields-v
 })
 export class LoginComponent implements OnInit {
 
+  public constants = Constants;
 
+  public FormFieldsValidatingStatusService = FormFieldsValidatingStatusService;
 
   loginForm: FormGroup;
   loginFormSubmitted = false;
@@ -20,7 +22,7 @@ export class LoginComponent implements OnInit {
   hidePasswordStatus = true;
   token: string;
 
-  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService, public formFieldValidatingStatusService: FormFieldsValidatingStatusService) {
+  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService) {
   }
 
   ngOnInit() {
@@ -64,6 +66,5 @@ export class LoginComponent implements OnInit {
       })
       .finally(() => this.loadingStatus.stopLoading());
   }
-
 
 }

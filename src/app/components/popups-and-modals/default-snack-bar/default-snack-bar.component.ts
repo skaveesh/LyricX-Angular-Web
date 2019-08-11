@@ -17,7 +17,8 @@ export class DefaultSnackBarComponent implements OnInit {
   public openSnackBar(message: string) {
     this.snackBar.openFromComponent(DefaultSnackBarComponent, {
       duration: 3000,
-      data: message
+      data: message,
+      panelClass: ['center-align-text', 'white-color-background-with-text-color-warn']
     });
   }
 
