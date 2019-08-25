@@ -1,5 +1,4 @@
 /* Can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import url('https://fonts.googleapis.com/css?family=Fredoka+One');
@@ -39,6 +38,10 @@ li:focus {
 
 .color-dark-grey {
   color: var(--var-color-dark-grey);
+}
+
+.color-light-grey {
+  color: var(--var-color-light-grey);
 }
 
 .light-grey-solid-border {

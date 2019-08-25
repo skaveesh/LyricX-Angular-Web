@@ -1,0 +1,87 @@
+<mat-horizontal-stepper [linear]="true">
+
+  <mat-step [stepControl]="firstFormGroup">
+
+    <form [formGroup]="firstFormGroup">
+
+      <ng-template matStepLabel>Album</ng-template>
+
+      <div fxLayout="row">
+
+        <div fxLayout="column">
+
+          <h6 class="color-light-grey" fxFlexAlign="start">Main Album Associated with this Song</h6>
+
+          <mat-divider fxFlexAlign="center" class="album-form-inner-component-width"></mat-divider>
+
+          <mat-form-field class="example-chip-list">
+
+            <mat-chip-list #chipList aria-label="Fruit selection">
+
+              <mat-chip
+                *ngFor="let fruit of fruits"
+                [selectable]="selectable"
+                [removable]="removable"
+                (removed)="remove(fruit)">
+                {{fruit}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip>
+
+              <input
+                placeholder="New fruit..."
+                #fruitInput
+                [formControl]="fruitCtrl"
+                [matAutocomplete]="auto"
+                [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="addOnBlur"
+                (matChipInputTokenEnd)="add($event, fruitCtrl)">
+
+            </mat-chip-list>
+
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+
+              <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
+                {{fruit}}
+              </mat-option>
+
+            </mat-autocomplete>
+
+          </mat-form-field>
+
+        </div>
+
+      </div>
+
+      <mat-form-field>
+        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
+      </mat-form-field>
+
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+
+    </form>
+
+  </mat-step>
+
+  <mat-step [stepControl]="secondFormGroup">
+    <form [formGroup]="secondFormGroup">
+      <ng-template matStepLabel>Lyrics</ng-template>
+      <mat-form-field>
+        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Publish</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

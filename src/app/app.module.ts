@@ -15,7 +15,9 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatTabsModule,
-  MatSnackBarModule, MatSnackBarRef, MAT_SNACK_BAR_DATA
+  MatStepperModule,
+  MatSnackBarModule, MatSnackBarRef, MAT_SNACK_BAR_DATA, MatChipsModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -33,8 +35,9 @@ import {AngularFireAuthModule} from '@angular/fire/auth';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {LoginComponent} from './components/contribute/login/login.component';
 import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
-import {MyProfileComponent} from './components/contribute/contributor-dashboard/my-profile/my-profile.component';
+import {MyProfileTabComponent} from './components/contribute/contributor-dashboard/my-profile-tab/my-profile-tab.component';
 import {DefaultSnackBarComponent} from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {ContributeTabComponent} from './components/contribute/contributor-dashboard/contribute-tab/contribute-tab.component';
 
 @NgModule({
   declarations: [
@@ -47,8 +50,9 @@ import {DefaultSnackBarComponent} from './components/popups-and-modals/default-s
     AboutComponent,
     LoginComponent,
     ContributorDashboardComponent,
-    MyProfileComponent,
-    DefaultSnackBarComponent
+    MyProfileTabComponent,
+    DefaultSnackBarComponent,
+    ContributeTabComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +76,9 @@ import {DefaultSnackBarComponent} from './components/popups-and-modals/default-s
     BrowserAnimationsModule,
     MatIconModule,
     MatInputModule,
+    MatStepperModule,
+    MatChipsModule,
+    MatAutocompleteModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     RouterModule.forRoot([

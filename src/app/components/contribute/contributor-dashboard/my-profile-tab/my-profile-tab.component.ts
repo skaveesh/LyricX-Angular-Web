@@ -6,11 +6,11 @@ import {FormFieldsValidatingStatusService} from '../../../../services/form-field
 import {Constants} from '../../../../constants/constants';
 
 @Component({
-  selector: 'app-my-profile',
-  templateUrl: './my-profile.component.html',
-  styleUrls: ['./my-profile.component.css']
+  selector: 'app-my-profile-tab',
+  templateUrl: './my-profile-tab.component.html',
+  styleUrls: ['./my-profile-tab.component.css']
 })
-export class MyProfileComponent implements OnInit {
+export class MyProfileTabComponent implements OnInit {
 
   public constants = Constants;
 
