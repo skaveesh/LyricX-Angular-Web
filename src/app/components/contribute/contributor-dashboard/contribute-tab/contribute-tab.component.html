@@ -19,11 +19,11 @@
             <mat-chip-list #chipList aria-label="Fruit selection">
 
               <mat-chip
-                *ngFor="let fruit of fruits"
+                *ngFor="let fruit of chipSelectedFruits"
                 [selectable]="selectable"
                 [removable]="removable"
                 (removed)="remove(fruit)">
-                {{fruit}}
+                {{fruit.albumName.substring(0, fruit.albumName.lastIndexOf("$"))}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
 
@@ -35,14 +35,16 @@
                 [matChipInputFor]="chipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
-                (matChipInputTokenEnd)="add($event, fruitCtrl)">
+                [multiple]="false"
+                (matChipInputTokenEnd)="addFruit($event)"
+                (keyup)="onKey($event)">
 
             </mat-chip-list>
 
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="fruitSelected($event)">
 
               <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
-                {{fruit}}
+                {{fruit.substring(0, fruit.lastIndexOf("$"))}}
               </mat-option>
 
             </mat-autocomplete>
@@ -56,6 +58,8 @@
       <mat-form-field>
         <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
       </mat-form-field>
+
+      <button (click)="getSelectedValue()">ShowMe SUrrogate key</button>
 
       <div>
         <button mat-button matStepperNext>Next</button>
