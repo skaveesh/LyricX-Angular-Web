@@ -19,10 +19,10 @@
             <mat-chip-list #chipList aria-label="Fruit selection">
 
               <mat-chip
-                *ngFor="let fruit of chipSelectedFruits"
+                *ngFor="let fruit of suggestionUserInterfaceAlbum.chipSelectedFruits"
                 [selectable]="selectable"
                 [removable]="removable"
-                (removed)="remove(fruit)">
+                (removed)="suggestionUserInterfaceAlbum.remove(fruit)">
                 {{fruit.albumName.substring(0, fruit.albumName.lastIndexOf("$"))}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
@@ -30,18 +30,18 @@
               <input
                 placeholder="New fruit..."
                 #fruitInput
-                [formControl]="fruitCtrl"
+                [formControl]="suggestionUserInterfaceAlbum.fruitCtrl"
                 [matAutocomplete]="auto"
                 [matChipInputFor]="chipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
                 [multiple]="false"
-                (matChipInputTokenEnd)="addFruit($event)"
-                (keyup)="onKey($event)">
+                (matChipInputTokenEnd)="suggestionUserInterfaceAlbum.addFruit($event)"
+                (keyup)="suggestionUserInterfaceAlbum.onKey($event)">
 
             </mat-chip-list>
 
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="fruitSelected($event)">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.fruitSelected($event)">
 
               <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
                 {{fruit.substring(0, fruit.lastIndexOf("$"))}}
@@ -59,7 +59,7 @@
         <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
       </mat-form-field>
 
-      <button (click)="getSelectedValue()">ShowMe SUrrogate key</button>
+      <button (click)="suggestionUserInterfaceAlbum.getSelectedValue()">ShowMe SUrrogate key</button>
 
       <div>
         <button mat-button matStepperNext>Next</button>
