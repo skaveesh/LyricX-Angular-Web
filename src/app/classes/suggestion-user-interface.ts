@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Constants} from '../constants/constants';
@@ -7,23 +6,29 @@ import AlbumSuggestType = Constants.AlbumSuggestedItem;
 import {ElementRef} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {SuggestionService} from '../services/suggestion.service';
+import {map, startWith} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 export class SuggestionUserInterface {
 
+  filteredFruits: Observable<String[]>;
   fruitInput: ElementRef<HTMLInputElement>;
   fruitCtrl = new FormControl();
-  private suggestionService: SuggestionService;
-
-
-  private matAutocomplete : MatAutocomplete;
   chipSelectedFruits: AlbumSuggestType[] = [];
-  allFruits: AlbumSuggestType[] = null;
 
+  private suggestionService: SuggestionService;
+  private matAutocomplete : MatAutocomplete;
   private allowFreeTextAddFruit = false;
   private inputAlbumNameModify: string = '';
+  private allFruits: AlbumSuggestType[] = null;
 
   constructor(suggestionService: SuggestionService){
     this.suggestionService = suggestionService;
+
+    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+      startWith(<string>null),
+      map(fruitName => this.filterOnValueChange(fruitName))
+    );
   }
 
   setFruitInput(fruitInput: ElementRef<HTMLInputElement>){
@@ -35,12 +40,13 @@ export class SuggestionUserInterface {
   }
 
   addFruit(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
     if (this.matAutocomplete.isOpen) {
       return;
     }
 
-    const input = event.input;
-    const value = event.value;
     if ((value || '').trim()) {
       this.selectFruitByName(value.trim());
     }
@@ -107,7 +113,6 @@ export class SuggestionUserInterface {
         this.chipSelectedFruits.push(foundFruit[0]);
       } else {
         //only when allowFreeTextAddFruit is true
-
       }
     }
   }
@@ -127,5 +132,20 @@ export class SuggestionUserInterface {
   getSelectedValue() {
     //TODO should remove later
     this.chipSelectedFruits.forEach(x => console.log(x));
+  }
+
+  pushDataFromSuggestionService(data : AlbumSuggestType[]){
+    this.allFruits = [];
+
+    if (data !== null) {
+      data.forEach(y => {
+        let a = <AlbumSuggestType>{
+          surrogateKey: y.surrogateKey,
+          albumName: y.albumName + '$' + y.surrogateKey
+        };
+
+        this.allFruits.push(a);
+      });
+    }
   }
 }

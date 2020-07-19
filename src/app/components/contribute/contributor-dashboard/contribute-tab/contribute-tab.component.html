@@ -43,7 +43,7 @@
 
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.fruitSelected($event)">
 
-              <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
+              <mat-option *ngFor="let fruit of suggestionUserInterfaceAlbum.filteredFruits | async" [value]="fruit">
                 {{fruit.substring(0, fruit.lastIndexOf("$"))}}
               </mat-option>
 
