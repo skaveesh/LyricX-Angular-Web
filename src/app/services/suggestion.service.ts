@@ -3,6 +3,7 @@ import {SocketRootService} from './socket-root.service';
 
 import {Constants} from '../constants/constants';
 import {Stomp} from 'stompjs/lib/stomp.js';
+import ItemSuggestion = Constants.ItemSuggest;
 import AlbumSuggestion = Constants.AlbumSuggest;
 import {BehaviorSubject} from 'rxjs';
 
@@ -38,7 +39,14 @@ export class SuggestionService extends SocketRootService {
     });
   }
 
-  public getAlbumSuggestion(albumSuggestion: AlbumSuggestion): void {
+  public getAlbumSuggestion(itemSuggestion: ItemSuggestion): void {
+
+    let albumSuggestion : AlbumSuggestion = {
+      surrogateKey : null,
+      albumName : itemSuggestion.name
+    };
+
+    console.log(albumSuggestion);
     this.stompClient.send("/app/suggest/album", {}, JSON.stringify(albumSuggestion));
   }
 

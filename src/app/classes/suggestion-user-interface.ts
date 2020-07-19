@@ -1,45 +1,48 @@
 import {MatChipInputEvent} from '@angular/material/chips';
 import {MatAutocomplete, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import {Constants} from '../constants/constants';
-import AlbumSuggestion = Constants.AlbumSuggest;
-import AlbumSuggestType = Constants.AlbumSuggestedItem;
 import {ElementRef} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {SuggestionService} from '../services/suggestion.service';
 import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import ItemSuggestion = Constants.ItemSuggest;
+import ItemSuggestType = Constants.SuggestedItem;
 
 export class SuggestionUserInterface {
 
-  filteredFruits: Observable<String[]>;
-  fruitInput: ElementRef<HTMLInputElement>;
-  fruitCtrl = new FormControl();
-  chipSelectedFruits: AlbumSuggestType[] = [];
+  filteredItems: Observable<String[]>;
+  itemInput: ElementRef<HTMLInputElement>;
+  itemCtrl = new FormControl();
+  chipSelectedItems: ItemSuggestType[] = [];
 
   private suggestionService: SuggestionService;
-  private matAutocomplete : MatAutocomplete;
-  private allowFreeTextAddFruit = false;
-  private inputAlbumNameModify: string = '';
-  private allFruits: AlbumSuggestType[] = null;
+  private matAutocomplete: MatAutocomplete;
+  private allowFreeTextAddItem = false;
+  private inputItemNameModify: string = '';
+  private allItems: ItemSuggestType[] = null;
 
-  constructor(suggestionService: SuggestionService){
+  private readonly callback: any; //saves a function call to a service
+
+  constructor(suggestionService: SuggestionService, callback: any) {
     this.suggestionService = suggestionService;
+    this.callback = callback;
 
-    this.filteredFruits = this.fruitCtrl.valueChanges.pipe(
+    this.filteredItems = this.itemCtrl.valueChanges.pipe(
       startWith(<string>null),
-      map(fruitName => this.filterOnValueChange(fruitName))
+      map(itemName => this.filterOnValueChange(itemName))
     );
   }
 
-  setFruitInput(fruitInput: ElementRef<HTMLInputElement>){
-    this.fruitInput = fruitInput;
+  setItemInput(itemInput: ElementRef<HTMLInputElement>) {
+    this.itemInput = itemInput;
   }
 
-  setMatAutoComplete(matAutocomplete : MatAutocomplete){
+  setMatAutoComplete(matAutocomplete: MatAutocomplete) {
     this.matAutocomplete = matAutocomplete;
   }
 
-  addFruit(event: MatChipInputEvent): void {
+  addItem(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
 
@@ -48,103 +51,104 @@ export class SuggestionUserInterface {
     }
 
     if ((value || '').trim()) {
-      this.selectFruitByName(value.trim());
+      this.selectItemByName(value.trim());
     }
 
     this.resetInputs();
   }
 
-  remove(fruit: AlbumSuggestType): void {
-    const index = this.chipSelectedFruits.indexOf(fruit);
+  remove(item: ItemSuggestType): void {
+    const index = this.chipSelectedItems.indexOf(item);
     //add to the drop down list after removing from the input field
 
     if (index >= 0) {
-      this.chipSelectedFruits.splice(index, 1);
+      this.chipSelectedItems.splice(index, 1);
       this.resetInputs();
     }
   }
 
-  fruitSelected(event: MatAutocompleteSelectedEvent): void {
-    this.selectFruitByName(event.option.value);
+  itemSelected(event: MatAutocompleteSelectedEvent): void {
+    this.selectItemByName(event.option.value);
     this.resetInputs();
   }
 
   private resetInputs() {
-    this.fruitInput.nativeElement.value = '';
-    this.fruitCtrl.setValue(null);
+    this.itemInput.nativeElement.value = '';
+    this.itemCtrl.setValue(null);
   }
 
-  filterOnValueChange(albumName: string | null): String[] {
+  filterOnValueChange(itemName: string | null): String[] {
     let result: String[] = [];
 
-    if (this.allFruits !== null) {
-      let allFruitLessSelected = this.allFruits.filter(fruit => this.chipSelectedFruits.indexOf(fruit) < 0);
+    if (this.allItems !== null) {
+      let allItemLessSelected = this.allItems.filter(item => this.chipSelectedItems.indexOf(item) < 0);
 
-      if (albumName) {
-        result = this.filterFruit(allFruitLessSelected, albumName);
+      if (itemName) {
+        result = this.filterItem(allItemLessSelected, itemName);
       } else {
-        result = allFruitLessSelected.map(fruit => fruit.albumName);
+        result = allItemLessSelected.map(item => item.name);
       }
     }
     return result;
   }
 
-  private filterFruit(fruitList: AlbumSuggestType[], fruitName: String): String[] {
-    let filteredFruitList: AlbumSuggestType[] = [];
-    const filterValue = fruitName.toLowerCase();
-    let fruitMatchingFruitName = fruitList.filter(fruit => fruit.albumName.toLowerCase().indexOf(filterValue) === 0);
+  private filterItem(itemList: ItemSuggestType[], itemName: String): String[] {
+    let filteredItemList: ItemSuggestType[] = [];
+    const filterValue = itemName.toLowerCase();
+    let itemMatchingItemName = itemList.filter(item => item.name.toLowerCase().indexOf(filterValue) === 0);
 
-    if (fruitMatchingFruitName.length || this.allowFreeTextAddFruit) {
-      filteredFruitList = fruitMatchingFruitName;
+    if (itemMatchingItemName.length || this.allowFreeTextAddItem) {
+      filteredItemList = itemMatchingItemName;
     } else {
-      filteredFruitList = fruitList;
+      filteredItemList = itemList;
     }
 
-    return filteredFruitList.map(fruit => fruit.albumName);
+    return filteredItemList.map(item => item.name);
   }
 
-  private selectFruitByName(fruitName) {
+  private selectItemByName(itemName) {
 
-    if (this.allFruits !== null) {
-      let foundFruit = this.allFruits.filter(fruit => fruit.albumName == fruitName);
+    if (this.allItems !== null) {
+      let foundItem = this.allItems.filter(item => item.name == itemName);
 
-      //only allow of adding one chip this.chipSelectedFruits.length === 0
-      if (foundFruit.length && this.chipSelectedFruits.length === 0) {
-        this.chipSelectedFruits.push(foundFruit[0]);
+      //only allow of adding one chip this.chipSelectedItems.length === 0
+      if (foundItem.length && this.chipSelectedItems.length === 0) {
+        this.chipSelectedItems.push(foundItem[0]);
       } else {
-        //only when allowFreeTextAddFruit is true
+        //only when allowFreeTextAddItem is true
       }
     }
   }
 
   onKey(event: KeyboardEvent) {
 
-    if (this.inputAlbumNameModify.localeCompare(this.fruitInput.nativeElement.value) !== 0 && this.chipSelectedFruits.length === 0) {
-      this.inputAlbumNameModify = this.fruitInput.nativeElement.value;
+    if (this.inputItemNameModify.localeCompare(this.itemInput.nativeElement.value) !== 0 && this.chipSelectedItems.length === 0) {
+      this.inputItemNameModify = this.itemInput.nativeElement.value;
 
-      let x: AlbumSuggestion = {
-        albumName: this.fruitInput.nativeElement.value
+      let x: ItemSuggestion = {
+        name: this.itemInput.nativeElement.value
       };
-      this.suggestionService.getAlbumSuggestion(x);
+
+      //function to execute on the service - passed through constructor
+      this.callback(x);
     }
   }
 
   getSelectedValue() {
     //TODO should remove later
-    this.chipSelectedFruits.forEach(x => console.log(x));
+    this.chipSelectedItems.forEach(x => console.log(x));
   }
 
-  pushDataFromSuggestionService(data : AlbumSuggestType[]){
-    this.allFruits = [];
+  pushDataToAllItems(data: ItemSuggestType[]) {
+    this.allItems = [];
 
     if (data !== null) {
-      data.forEach(y => {
-        let a = <AlbumSuggestType>{
-          surrogateKey: y.surrogateKey,
-          albumName: y.albumName + '$' + y.surrogateKey
+      data.forEach(item => {
+        let itemSuggestType = <ItemSuggestType>{
+          surrogateKey: item.surrogateKey,
+          name: item.name + Constants.DOLLAR_SIGN + item.surrogateKey
         };
-
-        this.allFruits.push(a);
+        this.allItems.push(itemSuggestType);
       });
     }
   }

@@ -4,8 +4,9 @@ import {MatAutocomplete} from '@angular/material/autocomplete';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionService} from '../../../../services/suggestion.service';
 import {Constants} from '../../../../constants/constants';
-import AlbumSuggestType = Constants.AlbumSuggestedItem;
 import {SuggestionUserInterface} from '../../../../classes/suggestion-user-interface';
+import AlbumSuggestType = Constants.AlbumSuggest;
+import ItemSuggestType = Constants.SuggestedItem;
 
 @Component({
   selector: 'app-contribute-tab',
@@ -22,18 +23,18 @@ export class ContributeTabComponent implements OnInit {
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
- private suggestionUserInterfaceAlbum : SuggestionUserInterface;
+  private suggestionUserInterfaceAlbum: SuggestionUserInterface;
 
   @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService);
+    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, (res) => this.suggestionService.getAlbumSuggestion(res));
   }
 
   ngAfterViewInit() {
-      this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocomplete);
-      this.suggestionUserInterfaceAlbum.setFruitInput(this.fruitInput);
+    this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocomplete);
+    this.suggestionUserInterfaceAlbum.setItemInput(this.fruitInput);
   }
 
   ngOnInit(): void {
@@ -44,11 +45,21 @@ export class ContributeTabComponent implements OnInit {
       secondCtrl: ['', Validators.required]
     });
 
-    this.suggestionService.getAlbumSuggestions().subscribe((x: AlbumSuggestType[]) => {
-      this.suggestionUserInterfaceAlbum.pushDataFromSuggestionService(x);
+    this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggestType[]) => {
+
+      if (albumSuggestArray != null) {
+      let itemSuggestArray = albumSuggestArray.map(function (xitem) {
+        let item : ItemSuggestType = {
+          surrogateKey: xitem.surrogateKey,
+          name: xitem.albumName
+        };
+        return item;
+      });
+
+      this.suggestionUserInterfaceAlbum.pushDataToAllItems(itemSuggestArray);
+    }
     });
   }
-
 }
 
 

@@ -19,31 +19,31 @@
             <mat-chip-list #chipList aria-label="Fruit selection">
 
               <mat-chip
-                *ngFor="let fruit of suggestionUserInterfaceAlbum.chipSelectedFruits"
+                *ngFor="let fruit of suggestionUserInterfaceAlbum.chipSelectedItems"
                 [selectable]="selectable"
                 [removable]="removable"
                 (removed)="suggestionUserInterfaceAlbum.remove(fruit)">
-                {{fruit.albumName.substring(0, fruit.albumName.lastIndexOf("$"))}}
+                {{fruit.name.substring(0, fruit.name.lastIndexOf("$"))}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
 
               <input
                 placeholder="New fruit..."
                 #fruitInput
-                [formControl]="suggestionUserInterfaceAlbum.fruitCtrl"
+                [formControl]="suggestionUserInterfaceAlbum.itemCtrl"
                 [matAutocomplete]="auto"
                 [matChipInputFor]="chipList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
                 [multiple]="false"
-                (matChipInputTokenEnd)="suggestionUserInterfaceAlbum.addFruit($event)"
+                (matChipInputTokenEnd)="suggestionUserInterfaceAlbum.addItem($event)"
                 (keyup)="suggestionUserInterfaceAlbum.onKey($event)">
 
             </mat-chip-list>
 
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.fruitSelected($event)">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.itemSelected($event)">
 
-              <mat-option *ngFor="let fruit of suggestionUserInterfaceAlbum.filteredFruits | async" [value]="fruit">
+              <mat-option *ngFor="let fruit of suggestionUserInterfaceAlbum.filteredItems | async" [value]="fruit">
                 {{fruit.substring(0, fruit.lastIndexOf("$"))}}
               </mat-option>
 
