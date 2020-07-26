@@ -7,7 +7,7 @@ export namespace Constants {
   }
 
   export interface ItemSuggest {
-    name : string
+    name: string
   }
 
   export interface SuggestedItem {
@@ -17,7 +17,7 @@ export namespace Constants {
 
   export interface AlbumSuggest {
     surrogateKey: string,
-    albumName : string
+    albumName: string
   }
 
 }

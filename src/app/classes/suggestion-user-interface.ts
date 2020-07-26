@@ -77,7 +77,7 @@ export class SuggestionUserInterface {
     this.itemCtrl.setValue(null);
   }
 
-  filterOnValueChange(itemName: string | null): String[] {
+  private filterOnValueChange(itemName: string | null): String[] {
     let result: String[] = [];
 
     if (this.allItems !== null) {
@@ -139,7 +139,7 @@ export class SuggestionUserInterface {
     this.chipSelectedItems.forEach(x => console.log(x));
   }
 
-  pushDataToAllItems(data: ItemSuggestType[]) {
+  public pushDataToAllItems(data: ItemSuggestType[]) {
     this.allItems = [];
 
     if (data !== null) {

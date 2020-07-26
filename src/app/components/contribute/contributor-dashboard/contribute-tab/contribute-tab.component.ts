@@ -29,7 +29,8 @@ export class ContributeTabComponent implements OnInit {
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, (res) => this.suggestionService.getAlbumSuggestion(res));
+    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService,
+      (res) => this.suggestionService.getAlbumSuggestion(res));
   }
 
   ngAfterViewInit() {
@@ -48,16 +49,16 @@ export class ContributeTabComponent implements OnInit {
     this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggestType[]) => {
 
       if (albumSuggestArray != null) {
-      let itemSuggestArray = albumSuggestArray.map(function (xitem) {
-        let item : ItemSuggestType = {
-          surrogateKey: xitem.surrogateKey,
-          name: xitem.albumName
-        };
-        return item;
-      });
+        let itemSuggestArray = albumSuggestArray.map(function (albumItem) {
+          let item: ItemSuggestType = {
+            surrogateKey: albumItem.surrogateKey,
+            name: albumItem.albumName
+          };
+          return item;
+        });
 
-      this.suggestionUserInterfaceAlbum.pushDataToAllItems(itemSuggestArray);
-    }
+        this.suggestionUserInterfaceAlbum.pushDataToAllItems(itemSuggestArray);
+      }
     });
   }
 }
