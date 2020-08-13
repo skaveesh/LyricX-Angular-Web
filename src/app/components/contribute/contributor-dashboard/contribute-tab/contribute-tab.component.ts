@@ -6,6 +6,7 @@ import {SuggestionService} from '../../../../services/suggestion.service';
 import {Constants} from '../../../../constants/constants';
 import {SuggestionUserInterface} from '../../../../classes/suggestion-user-interface';
 import AlbumSuggestType = Constants.AlbumSuggest;
+import ArtistSuggestType = Constants.ArtistSuggest;
 import ItemSuggestType = Constants.SuggestedItem;
 
 @Component({
@@ -24,18 +25,26 @@ export class ContributeTabComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   private suggestionUserInterfaceAlbum: SuggestionUserInterface;
+  private suggestionUserInterfaceArtist: SuggestionUserInterface;
 
-  @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
+  @ViewChild('albumInput', {static: false}) albumInput: ElementRef<HTMLInputElement>;
+  @ViewChild('artistInput', {static: false}) artistInput: ElementRef<HTMLInputElement>;
   @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
     this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService,
       (res) => this.suggestionService.getAlbumSuggestion(res));
+
+    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService,
+      (res) => this.suggestionService.getArtistSuggestion(res));
   }
 
   ngAfterViewInit() {
     this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocomplete);
-    this.suggestionUserInterfaceAlbum.setItemInput(this.fruitInput);
+    this.suggestionUserInterfaceAlbum.setItemInput(this.albumInput);
+
+    this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocomplete);
+    this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
   }
 
   ngOnInit(): void {
@@ -58,6 +67,21 @@ export class ContributeTabComponent implements OnInit {
         });
 
         this.suggestionUserInterfaceAlbum.pushDataToAllItems(itemSuggestArray);
+      }
+    });
+
+    this.suggestionService.getArtistSuggestions().subscribe((artistSuggestArray: ArtistSuggestType[]) => {
+
+      if (artistSuggestArray != null) {
+        let itemSuggestArray = artistSuggestArray.map(function (artistItem) {
+          let item: ItemSuggestType = {
+            surrogateKey: artistItem.surrogateKey,
+            name: artistItem.artistName
+          };
+          return item;
+        });
+
+        this.suggestionUserInterfaceArtist.pushDataToAllItems(itemSuggestArray);
       }
     });
   }

@@ -12,27 +12,27 @@
 
           <h6 class="color-light-grey" fxFlexAlign="start">Main Album Associated with this Song</h6>
 
-          <mat-divider fxFlexAlign="center" class="album-form-inner-component-width"></mat-divider>
+          <mat-divider fxFlexAlign="left" class="album-form-inner-component-width"></mat-divider>
 
-          <mat-form-field class="example-chip-list">
+          <mat-form-field class="album-chip-list">
 
-            <mat-chip-list #chipList aria-label="Fruit selection">
+            <mat-chip-list #chipAlbumList aria-label="Album selection">
 
               <mat-chip
-                *ngFor="let fruit of suggestionUserInterfaceAlbum.chipSelectedItems"
+                *ngFor="let album of suggestionUserInterfaceAlbum.chipSelectedItems"
                 [selectable]="selectable"
                 [removable]="removable"
-                (removed)="suggestionUserInterfaceAlbum.remove(fruit)">
-                {{fruit.name.substring(0, fruit.name.lastIndexOf("$"))}}
+                (removed)="suggestionUserInterfaceAlbum.remove(album)">
+                {{album.name.substring(0, album.name.lastIndexOf("$"))}}
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
 
               <input
-                placeholder="New fruit..."
-                #fruitInput
+                placeholder="Search an Album"
+                #albumInput
                 [formControl]="suggestionUserInterfaceAlbum.itemCtrl"
-                [matAutocomplete]="auto"
-                [matChipInputFor]="chipList"
+                [matAutocomplete]="autoCompleteAlbum"
+                [matChipInputFor]="chipAlbumList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
                 [multiple]="false"
@@ -41,29 +41,75 @@
 
             </mat-chip-list>
 
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.itemSelected($event)">
+            <mat-autocomplete #autoCompleteAlbum="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.itemSelected($event)">
 
-              <mat-option *ngFor="let fruit of suggestionUserInterfaceAlbum.filteredItems | async" [value]="fruit">
-                {{fruit.substring(0, fruit.lastIndexOf("$"))}}
+              <mat-option *ngFor="let album of suggestionUserInterfaceAlbum.filteredItems | async" [value]="album">
+                {{album.substring(0, album.lastIndexOf("$"))}}
               </mat-option>
 
             </mat-autocomplete>
 
           </mat-form-field>
 
+          <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top">
+            *Create an album named 'Singles' for single song releases per artist if doesn't exist.</span>
+
+          <div style="height: 50px">
+            <!--vertical space between two components-->
+          </div>
+
+          <h6 class="color-light-grey" fxFlexAlign="start">Secondary Artist Associated with this Song</h6>
+
+          <mat-divider fxFlexAlign="left" class="artist-form-inner-component-width"></mat-divider>
+
+          <mat-form-field class="artist-chip-list">
+
+            <mat-chip-list #chipArtistList aria-label="Artist selection">
+
+              <mat-chip
+                *ngFor="let artist of suggestionUserInterfaceArtist.chipSelectedItems"
+                [selectable]="selectable"
+                [removable]="removable"
+                (removed)="suggestionUserInterfaceArtist.remove(artist)">
+                {{artist.name.substring(0, artist.name.lastIndexOf("$"))}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+              </mat-chip>
+
+              <input
+                placeholder="Search an Artist"
+                #artistInput
+                [formControl]="suggestionUserInterfaceArtist.itemCtrl"
+                [matAutocomplete]="autoCompleteArtist"
+                [matChipInputFor]="chipArtistList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                [matChipInputAddOnBlur]="addOnBlur"
+                [multiple]="false"
+                (matChipInputTokenEnd)="suggestionUserInterfaceArtist.addItem($event)"
+                (keyup)="suggestionUserInterfaceArtist.onKey($event)">
+
+            </mat-chip-list>
+
+            <mat-autocomplete #autoCompleteArtist="matAutocomplete" (optionSelected)="suggestionUserInterfaceArtist.itemSelected($event)">
+
+              <mat-option *ngFor="let artist of suggestionUserInterfaceArtist.filteredItems | async" [value]="artist">
+                {{artist.substring(0, artist.lastIndexOf("$"))}}
+              </mat-option>
+
+            </mat-autocomplete>
+
+          </mat-form-field>
+
+          <button (click)="suggestionUserInterfaceAlbum.getSelectedValue()">album SUrrogate key</button>
+          <button (click)="suggestionUserInterfaceArtist.getSelectedValue()">artist SUrrogate key</button>
+
+          <div>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+
         </div>
 
       </div>
 
-      <mat-form-field>
-        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-      </mat-form-field>
-
-      <button (click)="suggestionUserInterfaceAlbum.getSelectedValue()">ShowMe SUrrogate key</button>
-
-      <div>
-        <button mat-button matStepperNext>Next</button>
-      </div>
 
     </form>
 

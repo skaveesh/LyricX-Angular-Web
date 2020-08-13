@@ -6,15 +6,21 @@ import {Stomp} from 'stompjs/lib/stomp.js';
 import {BehaviorSubject} from 'rxjs';
 import ItemSuggestion = Constants.ItemSuggest;
 import AlbumSuggestion = Constants.AlbumSuggest;
+import ArtistSuggestion = Constants.ArtistSuggest;
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuggestionService extends SocketRootService {
-  private socket = new WebSocket(this.ROOT_URL);
-  private stompClient = Stomp.over(this.socket);
+
+  private albumSocket = new WebSocket(this.ROOT_URL);
+  private artistSocket = new WebSocket(this.ROOT_URL);
+
+  private albumStompClient = Stomp.over(this.albumSocket);
+  private artistStompClient = Stomp.over(this.artistSocket);
 
   private albumSuggestionsBehaviorSubject = new BehaviorSubject(null);
+  private artistSuggestionsBehaviorSubject = new BehaviorSubject(null);
 
   constructor() {
     super();
@@ -25,15 +31,29 @@ export class SuggestionService extends SocketRootService {
     return this.albumSuggestionsBehaviorSubject;
   }
 
+  public getArtistSuggestions(): BehaviorSubject<any> {
+    return this.artistSuggestionsBehaviorSubject;
+  }
+
   private connect(): void {
     const _this = this;
 
-    this.stompClient.connect({}, function (frame) {
+    this.albumStompClient.connect({}, function (frame) {
 
       console.log('Connected: ' + frame);
 
-      _this.stompClient.subscribe('/user/suggested/album', function (message) {
+      _this.albumStompClient.subscribe('/user/suggested/album', function (message) {
         _this.onAlbumReceived(message);
+
+      }, _this.errorCallBack);
+    });
+
+    this.artistStompClient.connect({}, function (frame) {
+
+      console.log('Connected: ' + frame);
+
+      _this.artistStompClient.subscribe('/user/suggested/artist', function (message) {
+        _this.onArtistReceived(message);
 
       }, _this.errorCallBack);
     });
@@ -47,12 +67,20 @@ export class SuggestionService extends SocketRootService {
     };
 
     if (albumSuggestion.albumName != null && albumSuggestion.albumName.length > 2) {
-      this.getSuggestion('/app/suggest/album', JSON.stringify(albumSuggestion));
+      this.albumStompClient.send('/app/suggest/album', {}, JSON.stringify(albumSuggestion));
     }
   }
 
-  private getSuggestion(destination: string, object: any) {
-    this.stompClient.send(destination, {}, object);
+  public getArtistSuggestion(itemSuggestion: ItemSuggestion): void {
+
+    let artistSuggestion: ArtistSuggestion = {
+      surrogateKey: null,
+      artistName: itemSuggestion.name
+    };
+
+    if (artistSuggestion.artistName != null && artistSuggestion.artistName.length > 2) {
+      this.artistStompClient.send('/app/suggest/artist', {}, JSON.stringify(artistSuggestion));
+    }
   }
 
   //TODO on error, schedule a reconnection attempt, should connect to sockjs as fallback
@@ -67,7 +95,12 @@ export class SuggestionService extends SocketRootService {
     SuggestionService.onMessageReceived(message, this.albumSuggestionsBehaviorSubject);
   }
 
+  private onArtistReceived(message) {
+    SuggestionService.onMessageReceived(message, this.artistSuggestionsBehaviorSubject);
+  }
+
   private static onMessageReceived(message : any, behaviourSubject : any) {
+    console.log(message.body);
     behaviourSubject.next(
       (JSON.parse(message.body))
     );

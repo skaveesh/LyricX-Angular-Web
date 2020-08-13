@@ -1,7 +1,11 @@
 .album-form-inner-component-width{
-  width: 300px;
+  width: 350px;
 }
 
-.example-chip-list {
+.album-chip-list {
+  width: 100%;
+}
+
+.artist-chip-list {
   width: 100%;
 }
