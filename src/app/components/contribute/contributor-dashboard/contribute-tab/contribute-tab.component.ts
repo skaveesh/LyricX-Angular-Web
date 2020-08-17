@@ -38,9 +38,7 @@ export class ContributeTabComponent implements OnInit {
       res => this.suggestionService.getAlbumSuggestion(res));
 
     this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, true,
-      res => {
-        this.suggestionService.getArtistSuggestion(res);
-    });
+      res => this.suggestionService.getArtistSuggestion(res));
   }
 
   ngAfterViewInit() {

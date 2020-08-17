@@ -162,13 +162,6 @@ export class SuggestionUserInterface {
 
       //function to execute on the service - passed through constructor
       this.callback(itemSuggest);
-
-      let eventx = new KeyboardEvent("keypress",{
-        "key": "Space"
-      });
-
-      this.itemInput.nativeElement.value = this.itemInput.nativeElement.value + ' ';
-      this.itemInput.nativeElement.value = this.itemInput.nativeElement.value.substring(0, this.itemInput.nativeElement.value.length-1);
     }
   }
 
