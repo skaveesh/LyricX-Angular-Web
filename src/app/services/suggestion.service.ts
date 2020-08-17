@@ -60,25 +60,23 @@ export class SuggestionService extends SocketRootService {
   }
 
   public getAlbumSuggestion(itemSuggestion: ItemSuggestion): void {
-
     let albumSuggestion: AlbumSuggestion = {
       surrogateKey: null,
       albumName: itemSuggestion.name
     };
 
-    if (albumSuggestion.albumName != null && albumSuggestion.albumName.length > 2) {
+    if (albumSuggestion.albumName != null && albumSuggestion.albumName.length >= 1) {
       this.albumStompClient.send('/app/suggest/album', {}, JSON.stringify(albumSuggestion));
     }
   }
 
   public getArtistSuggestion(itemSuggestion: ItemSuggestion): void {
-
     let artistSuggestion: ArtistSuggestion = {
       surrogateKey: null,
       artistName: itemSuggestion.name
     };
 
-    if (artistSuggestion.artistName != null && artistSuggestion.artistName.length > 2) {
+    if (artistSuggestion.artistName != null && artistSuggestion.artistName.length >= 1) {
       this.artistStompClient.send('/app/suggest/artist', {}, JSON.stringify(artistSuggestion));
     }
   }
@@ -100,7 +98,6 @@ export class SuggestionService extends SocketRootService {
   }
 
   private static onMessageReceived(message : any, behaviourSubject : any) {
-    console.log(message.body);
     behaviourSubject.next(
       (JSON.parse(message.body))
     );

@@ -21,11 +21,13 @@ export class SuggestionUserInterface {
   private allowFreeTextAddItem = false;
   private inputItemNameModify: string = '';
   private allItems: ItemSuggestType[] = null;
+  readonly multiChipsSupport: boolean;
 
   private readonly callback: any; //saves a function call to a service
 
-  constructor(suggestionService: SuggestionService, callback: any) {
+  constructor(suggestionService: SuggestionService, multiChipsSupport: boolean, callback: any) {
     this.suggestionService = suggestionService;
+    this.multiChipsSupport = multiChipsSupport;
     this.callback = callback;
 
     this.filteredItems = this.itemCtrl.valueChanges.pipe(
@@ -112,8 +114,31 @@ export class SuggestionUserInterface {
       let foundItem = this.allItems.filter(item => item.name == itemName);
 
       //only allow of adding one chip this.chipSelectedItems.length === 0
-      if (foundItem.length && this.chipSelectedItems.length === 0) {
-        this.chipSelectedItems.push(foundItem[0]);
+      if ((() => {
+        if (this.multiChipsSupport) {
+          return foundItem.length;
+        } else {
+          return foundItem.length && this.chipSelectedItems.length === 0;
+        }
+      })()) {
+
+        //only allows to add the same item to the list once
+        for (let i = 0; i < this.chipSelectedItems.length || this.chipSelectedItems.length === 0; i++) {
+
+          if (this.chipSelectedItems.length === 0) {
+            this.chipSelectedItems.push(foundItem[0]);
+            break;
+          }
+
+          if (this.chipSelectedItems[i].name === foundItem[0].name) {
+            break;
+          }
+
+          if (i == this.chipSelectedItems.length - 1) {
+            this.chipSelectedItems.push(foundItem[0]);
+          }
+        }
+
       } else {
         //only when allowFreeTextAddItem is true
       }
@@ -121,16 +146,29 @@ export class SuggestionUserInterface {
   }
 
   onKey(event: KeyboardEvent) {
+    if (((): boolean => {
+      if (this.multiChipsSupport) {
+        return this.inputItemNameModify.localeCompare(this.itemInput.nativeElement.value) !== 0;
+      } else {
+        return this.inputItemNameModify.localeCompare(this.itemInput.nativeElement.value) !== 0 && this.chipSelectedItems.length === 0;
+      }
+    })()) {
 
-    if (this.inputItemNameModify.localeCompare(this.itemInput.nativeElement.value) !== 0 && this.chipSelectedItems.length === 0) {
       this.inputItemNameModify = this.itemInput.nativeElement.value;
 
-      let x: ItemSuggestion = {
+      let itemSuggest: ItemSuggestion = {
         name: this.itemInput.nativeElement.value
       };
 
       //function to execute on the service - passed through constructor
-      this.callback(x);
+      this.callback(itemSuggest);
+
+      let eventx = new KeyboardEvent("keypress",{
+        "key": "Space"
+      });
+
+      this.itemInput.nativeElement.value = this.itemInput.nativeElement.value + ' ';
+      this.itemInput.nativeElement.value = this.itemInput.nativeElement.value.substring(0, this.itemInput.nativeElement.value.length-1);
     }
   }
 

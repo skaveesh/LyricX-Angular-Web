@@ -83,7 +83,7 @@
                 [matChipInputFor]="chipArtistList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
-                [multiple]="false"
+                [multiple]="true"
                 (matChipInputTokenEnd)="suggestionUserInterfaceArtist.addItem($event)"
                 (keyup)="suggestionUserInterfaceArtist.onKey($event)">
 
@@ -116,22 +116,31 @@
   </mat-step>
 
   <mat-step [stepControl]="secondFormGroup">
+
     <form [formGroup]="secondFormGroup">
+
       <ng-template matStepLabel>Lyrics</ng-template>
+
       <mat-form-field>
         <input matInput placeholder="Address" formControlName="secondCtrl" required>
       </mat-form-field>
+
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
       </div>
+
     </form>
+
   </mat-step>
+
   <mat-step>
+
     <ng-template matStepLabel>Publish</ng-template>
     You are now done.
     <div>
       <button mat-button matStepperPrevious>Back</button>
     </div>
+
   </mat-step>
 </mat-horizontal-stepper>

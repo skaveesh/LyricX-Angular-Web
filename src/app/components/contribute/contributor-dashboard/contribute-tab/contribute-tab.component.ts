@@ -29,21 +29,25 @@ export class ContributeTabComponent implements OnInit {
 
   @ViewChild('albumInput', {static: false}) albumInput: ElementRef<HTMLInputElement>;
   @ViewChild('artistInput', {static: false}) artistInput: ElementRef<HTMLInputElement>;
-  @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
+
+  @ViewChild('autoCompleteAlbum', {static: false}) matAutocompleteAlbum: MatAutocomplete;
+  @ViewChild('autoCompleteArtist', {static: false}) matAutocompleteArtist: MatAutocomplete;
 
   constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService,
-      (res) => this.suggestionService.getAlbumSuggestion(res));
+    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, false,
+      res => this.suggestionService.getAlbumSuggestion(res));
 
-    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService,
-      (res) => this.suggestionService.getArtistSuggestion(res));
+    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, true,
+      res => {
+        this.suggestionService.getArtistSuggestion(res);
+    });
   }
 
   ngAfterViewInit() {
-    this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocomplete);
+    this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocompleteAlbum);
     this.suggestionUserInterfaceAlbum.setItemInput(this.albumInput);
 
-    this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocomplete);
+    this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocompleteArtist);
     this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
   }
 
