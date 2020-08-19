@@ -4,10 +4,11 @@ import {Constants} from '../constants/constants';
 import {ElementRef} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {SuggestionService} from '../services/suggestion.service';
-import {map, startWith} from 'rxjs/operators';
 import {Observable} from 'rxjs';
+import {of} from 'rxjs';
 import ItemSuggestion = Constants.ItemSuggest;
 import ItemSuggestType = Constants.SuggestedItem;
+// import {map, startWith} from 'rxjs/operators';
 
 export class SuggestionUserInterface {
 
@@ -30,10 +31,11 @@ export class SuggestionUserInterface {
     this.multiChipsSupport = multiChipsSupport;
     this.callback = callback;
 
-    this.filteredItems = this.itemCtrl.valueChanges.pipe(
-      startWith(<string>null),
-      map(itemName => this.filterOnValueChange(itemName))
-    );
+     /** this will list items whenever HTML DOM is modified
+     this.filteredItems = this.itemCtrl.valueChanges.pipe(
+       startWith(<string>null),
+       map(itemName => this.filterOnValueChange(itemName))
+     );*/
   }
 
   setItemInput(itemInput: ElementRef<HTMLInputElement>) {
@@ -85,15 +87,24 @@ export class SuggestionUserInterface {
     if (this.allItems !== null) {
       let allItemLessSelected = this.allItems.filter(item => this.chipSelectedItems.indexOf(item) < 0);
 
-      if (itemName) {
-        result = this.filterItem(allItemLessSelected, itemName);
-      } else {
+       /** this will filter suggested list from the API
+       if (itemName) {
+         result = this.filterItem(allItemLessSelected, itemName);
+       } else {
         result = allItemLessSelected.map(item => item.name);
-      }
+       }*/
+
+      result = allItemLessSelected.map(item => item.name);
+
     }
     return result;
   }
 
+  /**
+   * This will filter the suggested list from the API
+   * @param itemList
+   * @param itemName
+   */
   private filterItem(itemList: ItemSuggestType[], itemName: String): String[] {
     let filteredItemList: ItemSuggestType[] = [];
     const filterValue = itemName.toLowerCase();
@@ -182,5 +193,8 @@ export class SuggestionUserInterface {
         this.allItems.push(itemSuggestType);
       });
     }
+
+    //filter items when item list is updated
+    this.filteredItems = of(this.filterOnValueChange(this.itemCtrl.value));
   }
 }
