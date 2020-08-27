@@ -1,4 +1,4 @@
-<mat-horizontal-stepper [linear]="true">
+<mat-horizontal-stepper linear #stepper>
 
   <mat-step [stepControl]="firstFormGroup">
 
@@ -27,17 +27,16 @@
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
 
-              <input
+              <input #albumInput matInput
                 placeholder="Search an Album"
-                #albumInput
-                [formControl]="suggestionUserInterfaceAlbum.itemCtrl"
+                formControlName="albumCtrl"
                 [matAutocomplete]="autoCompleteAlbum"
                 [matChipInputFor]="chipAlbumList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                 [matChipInputAddOnBlur]="addOnBlur"
                 [multiple]="false"
                 (matChipInputTokenEnd)="suggestionUserInterfaceAlbum.addItem($event)"
-                (keyup)="suggestionUserInterfaceAlbum.onKey($event)">
+                (keyup)="suggestionUserInterfaceAlbum.onKey($event)" required>
 
             </mat-chip-list>
 
@@ -75,10 +74,9 @@
                 <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
               </mat-chip>
 
-              <input
+              <input #artistInput matInput
                 placeholder="Search an Artist"
-                #artistInput
-                [formControl]="suggestionUserInterfaceArtist.itemCtrl"
+                formControlName="artistCtrl"
                 [matAutocomplete]="autoCompleteArtist"
                 [matChipInputFor]="chipArtistList"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -110,7 +108,6 @@
 
       </div>
 
-
     </form>
 
   </mat-step>
@@ -122,7 +119,7 @@
       <ng-template matStepLabel>Lyrics</ng-template>
 
       <mat-form-field>
-        <input matInput placeholder="Address" formControlName="secondCtrl" required>
+        <input matInput placeholder="Address" formControlName="thirdCtrl">
       </mat-form-field>
 
       <div>

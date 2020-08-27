@@ -5,6 +5,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionService} from '../../../../services/suggestion.service';
 import {Constants} from '../../../../constants/constants';
 import {SuggestionUserInterface} from '../../../../classes/suggestion-user-interface';
+import {FormControl} from '@angular/forms';
 import AlbumSuggestType = Constants.AlbumSuggest;
 import ArtistSuggestType = Constants.ArtistSuggest;
 import ItemSuggestType = Constants.SuggestedItem;
@@ -18,6 +19,10 @@ export class ContributeTabComponent implements OnInit {
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
+
+  albumCtrl = new FormControl();
+  artistCtrl = new FormControl();
+
   visible = true;
   selectable = true;
   removable = true;
@@ -34,10 +39,10 @@ export class ContributeTabComponent implements OnInit {
   @ViewChild('autoCompleteArtist', {static: false}) matAutocompleteArtist: MatAutocomplete;
 
   constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, false,
+    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, this.albumCtrl,false,
       res => this.suggestionService.getAlbumSuggestion(res));
 
-    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, true,
+    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, this.artistCtrl,true,
       res => this.suggestionService.getArtistSuggestion(res));
   }
 
@@ -51,10 +56,11 @@ export class ContributeTabComponent implements OnInit {
 
   ngOnInit(): void {
     this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
+      albumCtrl: ['', Validators.required],
+      artistCtrl: ''
     });
     this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
+      thirdCtrl: ''
     });
 
     this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggestType[]) => {

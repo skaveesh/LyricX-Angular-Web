@@ -14,7 +14,7 @@ export class SuggestionUserInterface {
 
   filteredItems: Observable<String[]>;
   itemInput: ElementRef<HTMLInputElement>;
-  itemCtrl = new FormControl();
+  itemCtrl : FormControl;
   chipSelectedItems: ItemSuggestType[] = [];
 
   private suggestionService: SuggestionService;
@@ -24,10 +24,13 @@ export class SuggestionUserInterface {
   private allItems: ItemSuggestType[] = null;
   readonly multiChipsSupport: boolean;
 
-  private readonly callback: any; //saves a function call to a service
+  private readonly callback: any;
 
-  constructor(suggestionService: SuggestionService, multiChipsSupport: boolean, callback: any) {
+  //saves a function call to a service
+
+  constructor(suggestionService: SuggestionService, itemCtrl : FormControl, multiChipsSupport: boolean, callback: any) {
     this.suggestionService = suggestionService;
+    this.itemCtrl = itemCtrl;
     this.multiChipsSupport = multiChipsSupport;
     this.callback = callback;
 
