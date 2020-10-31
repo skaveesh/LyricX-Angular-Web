@@ -38,6 +38,7 @@ import {ContributorDashboardComponent} from './components/contribute/contributor
 import {MyProfileTabComponent} from './components/contribute/contributor-dashboard/my-profile-tab/my-profile-tab.component';
 import {DefaultSnackBarComponent} from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ContributeTabComponent} from './components/contribute/contributor-dashboard/contribute-tab/contribute-tab.component';
+import { AlbumAndAuthorAddingDashboardComponent } from './components/contribute/contributor-dashboard/contribute-tab/album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import {ContributeTabComponent} from './components/contribute/contributor-dashbo
     ContributorDashboardComponent,
     MyProfileTabComponent,
     DefaultSnackBarComponent,
-    ContributeTabComponent
+    ContributeTabComponent,
+    AlbumAndAuthorAddingDashboardComponent
   ],
   imports: [
     BrowserModule,

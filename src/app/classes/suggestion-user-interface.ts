@@ -24,9 +24,7 @@ export class SuggestionUserInterface {
   private allItems: ItemSuggestType[] = null;
   readonly multiChipsSupport: boolean;
 
-  private readonly callback: any;
-
-  //saves a function call to a service
+  private readonly callback: any; //saves a function call to a service
 
   constructor(suggestionService: SuggestionService, itemCtrl : FormControl, multiChipsSupport: boolean, callback: any) {
     this.suggestionService = suggestionService;
