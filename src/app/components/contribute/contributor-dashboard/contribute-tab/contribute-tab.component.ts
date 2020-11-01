@@ -14,7 +14,7 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder,private cdr: ChangeDetectorRef) {
+  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  validateInputs(): boolean {
+  isInputsInvalid(): boolean {
     return this.albumAndAuthorAddingDashboardComponent === undefined ||
       this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum === undefined ||
       this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum.chipSelectedItems.length !== 1;

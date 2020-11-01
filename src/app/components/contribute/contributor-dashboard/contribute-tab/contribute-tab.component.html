@@ -1,6 +1,6 @@
 <mat-horizontal-stepper linear #stepper>
 
-  <mat-step [stepControl]="firstFormGroup">
+  <mat-step [completed]="!isInputsInvalid()">
 
     <form [formGroup]="firstFormGroup">
 
@@ -14,12 +14,12 @@
 
           <div>
 
-            <p class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top" [hidden]="!validateInputs()
+            <p class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top" [hidden]="!isInputsInvalid()
              && mandatoryInputNames() != null">
               *{{mandatoryInputNames()}} field is mandatory.
             </p>
 
-            <button mat-button matStepperNext [disabled]="validateInputs()">
+            <button mat-button matStepperNext [disabled]="isInputsInvalid()">
               Next
             </button>
 
@@ -33,7 +33,7 @@
 
   </mat-step>
 
-  <mat-step [stepControl]="secondFormGroup">
+  <mat-step>
 
     <form [formGroup]="secondFormGroup">
 
