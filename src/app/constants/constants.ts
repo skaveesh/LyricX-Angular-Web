@@ -1,6 +1,19 @@
 export namespace Constants {
 
   export const DOLLAR_SIGN = '$';
+  export const FORWARD_SLASH = '/';
+
+  export enum Routes {
+    LOGIN = "login",
+    CONTRIBUTE = "contribute",
+    HOME = "",
+    TOP_LYRICS = "toplyrics",
+    ADD_ARTIST = "contribute/add-artist",
+    ADD_ALBUM = "contribute/add-album",
+    LYRICS_VIEW = "feedItem/:artist/:song",
+    ABOUT = "about",
+    WILDCARD = "**"
+  }
 
   export enum FormFieldConstants {
     NAME, EMAIL, PASSWORD

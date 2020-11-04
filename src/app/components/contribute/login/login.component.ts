@@ -4,6 +4,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import {LoadingStatusService} from '../../../services/loading-status.service';
 import {FormFieldsValidatingStatusService} from '../../../services/form-fields-validating-status.service';
 import {Constants} from '../../../constants/constants';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,7 @@ export class LoginComponent implements OnInit {
   hidePasswordStatus = true;
   token: string;
 
-  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private loadingStatus: LoadingStatusService) {
+  constructor(public afAuth: AngularFireAuth, private formBuilder: FormBuilder, private router: Router, private loadingStatus: LoadingStatusService) {
   }
 
   ngOnInit() {
@@ -64,7 +65,10 @@ export class LoginComponent implements OnInit {
       .catch((error) => {
         console.log(error);
       })
-      .finally(() => this.loadingStatus.stopLoading());
+      .finally(() => {
+        this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE );
+        this.loadingStatus.stopLoading();
+      });
   }
 
 }

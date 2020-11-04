@@ -32,6 +32,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {environment} from '../environments/environment';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFireAuthGuard, redirectLoggedInTo, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {LoginComponent} from './components/contribute/login/login.component';
 import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
@@ -39,6 +40,9 @@ import {MyProfileTabComponent} from './components/contribute/contributor-dashboa
 import {DefaultSnackBarComponent} from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ContributeTabComponent} from './components/contribute/contributor-dashboard/contribute-tab/contribute-tab.component';
 import { AlbumAndAuthorAddingDashboardComponent } from './components/contribute/contributor-dashboard/contribute-tab/album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
+import { AddArtistComponent } from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
+import { AddAlbumComponent } from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
+import {Constants} from './constants/constants';
 
 @NgModule({
   declarations: [
@@ -54,7 +58,9 @@ import { AlbumAndAuthorAddingDashboardComponent } from './components/contribute/
     MyProfileTabComponent,
     DefaultSnackBarComponent,
     ContributeTabComponent,
-    AlbumAndAuthorAddingDashboardComponent
+    AlbumAndAuthorAddingDashboardComponent,
+    AddArtistComponent,
+    AddAlbumComponent
   ],
   imports: [
     BrowserModule,
@@ -85,36 +91,59 @@ import { AlbumAndAuthorAddingDashboardComponent } from './components/contribute/
     AngularFireAuthModule,
     RouterModule.forRoot([
       {
-        path: '',
+        path: Constants.Routes.HOME,
         component: HomeComponent
       },
       {
-        path: 'feedItem/:artist/:song',
+        path: Constants.Routes.LYRICS_VIEW,
         component: LyricsviewComponent
       },
       {
-        path: 'toplyrics',
+        path: Constants.Routes.TOP_LYRICS,
         component: TopLyricsComponent
       },
       {
-        path: 'contribute',
-        component: ContributeComponent
+        path: Constants.Routes.CONTRIBUTE,
+        component: ContributeComponent,
+        canActivate: [AngularFireAuthGuard],
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
       },
       {
-        path: 'about',
+        path: Constants.Routes.LOGIN,
+        component: LoginComponent,
+        canActivate: [AngularFireAuthGuard],
+        data: { authGuardPipe: () => redirectLoggedInTo([Constants.Routes.CONTRIBUTE]) }
+      },
+      {
+        path: Constants.Routes.ADD_ARTIST,
+        component: AddArtistComponent,
+        canActivate: [AngularFireAuthGuard],
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
+      },
+      {
+        path: Constants.Routes.ADD_ALBUM,
+        component: AddAlbumComponent,
+        canActivate: [AngularFireAuthGuard],
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
+      },
+      {
+        path: Constants.Routes.ABOUT,
         component: AboutComponent
       },
       {
-        path: '**',
+        path: Constants.Routes.WILDCARD,
         component: NotFoundComponent
       }
     ])
   ],
-  providers: [DefaultSnackBarComponent,
+  providers: [
+    DefaultSnackBarComponent,
+    AngularFireAuthGuard,
     {
       provide: MatSnackBarRef,
       useValue: {}
-    }, {
+    },
+    {
       provide: MAT_SNACK_BAR_DATA,
       useValue: {} // Add any data you wish to test if it is passed/used correctly
     }],
