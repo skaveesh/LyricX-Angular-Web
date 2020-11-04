@@ -44,6 +44,6 @@ export class ContributeComponent implements AfterViewInit {
 
   logout() {
     this.afAuth.auth.signOut();
-    this.router.navigateByUrl(Constants.FORWARD_SLASH + Constants.Routes.LOGIN );
+    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
   }
 }

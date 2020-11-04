@@ -91,47 +91,47 @@ import {Constants} from './constants/constants';
     AngularFireAuthModule,
     RouterModule.forRoot([
       {
-        path: Constants.Routes.HOME,
+        path: Constants.Route.HOME,
         component: HomeComponent
       },
       {
-        path: Constants.Routes.LYRICS_VIEW,
+        path: Constants.Route.LYRICS_VIEW,
         component: LyricsviewComponent
       },
       {
-        path: Constants.Routes.TOP_LYRICS,
+        path: Constants.Route.TOP_LYRICS,
         component: TopLyricsComponent
       },
       {
-        path: Constants.Routes.CONTRIBUTE,
+        path: Constants.Route.CONTRIBUTE,
         component: ContributeComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
       },
       {
-        path: Constants.Routes.LOGIN,
+        path: Constants.Route.LOGIN,
         component: LoginComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectLoggedInTo([Constants.Routes.CONTRIBUTE]) }
+        data: { authGuardPipe: () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]) }
       },
       {
-        path: Constants.Routes.ADD_ARTIST,
+        path: Constants.Route.ADD_ARTIST,
         component: AddArtistComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
       },
       {
-        path: Constants.Routes.ADD_ALBUM,
+        path: Constants.Route.ADD_ALBUM,
         component: AddAlbumComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Routes.LOGIN]) }
+        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
       },
       {
-        path: Constants.Routes.ABOUT,
+        path: Constants.Route.ABOUT,
         component: AboutComponent
       },
       {
-        path: Constants.Routes.WILDCARD,
+        path: Constants.Route.WILDCARD,
         component: NotFoundComponent
       }
     ])

@@ -1,9 +1,11 @@
 export namespace Constants {
 
-  export const DOLLAR_SIGN = '$';
-  export const FORWARD_SLASH = '/';
+  export enum Symbol {
+    DOLLAR_SIGN = '$',
+    FORWARD_SLASH = '/'
+  }
 
-  export enum Routes {
+  export enum Route {
     LOGIN = "login",
     CONTRIBUTE = "contribute",
     HOME = "",

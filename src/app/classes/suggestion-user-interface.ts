@@ -189,7 +189,7 @@ export class SuggestionUserInterface {
       data.forEach(item => {
         let itemSuggestType = <ItemSuggestType>{
           surrogateKey: item.surrogateKey,
-          name: item.name + Constants.DOLLAR_SIGN + item.surrogateKey
+          name: item.name + Constants.Symbol.DOLLAR_SIGN + item.surrogateKey
         };
         this.allItems.push(itemSuggestType);
       });
