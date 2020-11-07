@@ -20,7 +20,7 @@ export class ContributeComponent implements AfterViewInit {
   emailVerifyText = 'Verify your email';
 
   ngAfterViewInit() {
-    this.afAuth.user.subscribe(()=>{
+    this.afAuth.user.subscribe(() =>{
       this.loadingStatus.stopLoading();
     });
   }
@@ -45,5 +45,6 @@ export class ContributeComponent implements AfterViewInit {
   logout() {
     this.afAuth.auth.signOut();
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
+    sessionStorage.clear();
   }
 }

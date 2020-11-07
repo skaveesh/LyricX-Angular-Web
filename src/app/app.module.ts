@@ -2,8 +2,11 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {
+  MAT_SNACK_BAR_DATA,
+  MatAutocompleteModule,
   MatButtonModule,
   MatCheckboxModule,
+  MatChipsModule,
   MatDividerModule,
   MatFormFieldModule,
   MatIconModule,
@@ -12,12 +15,12 @@ import {
   MatProgressBarModule,
   MatSelectModule,
   MatSidenavModule,
-  MatToolbarModule,
-  MatTooltipModule,
-  MatTabsModule,
+  MatSnackBarModule,
+  MatSnackBarRef,
   MatStepperModule,
-  MatSnackBarModule, MatSnackBarRef, MAT_SNACK_BAR_DATA, MatChipsModule,
-  MatAutocompleteModule
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -39,10 +42,13 @@ import {ContributorDashboardComponent} from './components/contribute/contributor
 import {MyProfileTabComponent} from './components/contribute/contributor-dashboard/my-profile-tab/my-profile-tab.component';
 import {DefaultSnackBarComponent} from './components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ContributeTabComponent} from './components/contribute/contributor-dashboard/contribute-tab/contribute-tab.component';
-import { AlbumAndAuthorAddingDashboardComponent } from './components/contribute/contributor-dashboard/contribute-tab/album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
-import { AddArtistComponent } from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
-import { AddAlbumComponent } from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
+import {AlbumAndAuthorAddingDashboardComponent} from './components/contribute/contributor-dashboard/contribute-tab/album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
+import {AddArtistComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
+import {AddAlbumComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
 import {Constants} from './constants/constants';
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
+const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
 
 @NgModule({
   declarations: [
@@ -106,25 +112,25 @@ import {Constants} from './constants/constants';
         path: Constants.Route.CONTRIBUTE,
         component: ContributeComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
+        data: { authGuardPipe: redirectUnauthorizedToLogin }
       },
       {
         path: Constants.Route.LOGIN,
         component: LoginComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]) }
+        data: { authGuardPipe: redirectLoggedInToContribute }
       },
       {
         path: Constants.Route.ADD_ARTIST,
         component: AddArtistComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
+        data: { authGuardPipe: redirectUnauthorizedToLogin }
       },
       {
         path: Constants.Route.ADD_ALBUM,
         component: AddAlbumComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: () => redirectUnauthorizedTo([Constants.Route.LOGIN]) }
+        data: { authGuardPipe: redirectUnauthorizedToLogin }
       },
       {
         path: Constants.Route.ABOUT,

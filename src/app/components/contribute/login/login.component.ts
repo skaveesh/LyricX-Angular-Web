@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {LoadingStatusService} from '../../../services/loading-status.service';
 import {FormFieldsValidatingStatusService} from '../../../services/form-fields-validating-status.service';
 import {Constants} from '../../../constants/constants';
 import {Router} from '@angular/router';
+import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 
 @Component({
   selector: 'app-login',
@@ -66,7 +67,16 @@ export class LoginComponent implements OnInit {
         console.log(error);
       })
       .finally(() => {
-        this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE );
+
+        const redirectTo = sessionStorage.getItem(Constants.Session.AFTER_LOGIN_PATH_KEY);
+        sessionStorage.removeItem(Constants.Session.AFTER_LOGIN_PATH_KEY);
+
+        if (isNotNullOrUndefined(redirectTo) && redirectTo.length !== 0) {
+          this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + redirectTo);
+        } else {
+          this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE);
+        }
+
         this.loadingStatus.stopLoading();
       });
   }

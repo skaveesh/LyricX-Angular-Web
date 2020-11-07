@@ -8,6 +8,7 @@ import {
 } from '@angular/animations';
 import 'rxjs/operators';
 import {LoadingStatusService} from './services/loading-status.service';
+import {LoginAccessoryService} from './services/login-accessory.service';
 
 @Component({
   selector: 'app-root',
@@ -41,13 +42,14 @@ export class AppComponent implements OnInit {
     this.innerWidth = window.innerWidth;
   }
 
-  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef) {
+  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef,
+              private loginAccessory: LoginAccessoryService) {
 
     this.loadingStatus.getLoading().subscribe(
       (status) => {
         this.progressBarViewStatus = status;
 
-        let allInputElements = this.element.nativeElement.querySelectorAll('button, input, textarea');
+        const allInputElements = this.element.nativeElement.querySelectorAll('button, input, textarea');
 
         if (status) {
           allInputElements.forEach((element) => {
@@ -67,10 +69,8 @@ export class AppComponent implements OnInit {
     this.innerWidth = window.innerWidth;
   }
 
-
   toggleCollapse() {
     this.collapse = this.collapse === 'open' ? 'closed' : 'open';
   }
-
 
 }
