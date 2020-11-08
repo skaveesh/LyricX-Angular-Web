@@ -1,8 +1,8 @@
-<mat-tab-group color="warn" dynamicHeight>
+<mat-tab-group color="warn" [selectedIndex]="tab" dynamicHeight>
   <mat-tab label="My Profile">
     <app-my-profile-tab></app-my-profile-tab>
   </mat-tab>
-  <mat-tab label="Contribute" >
+  <mat-tab label="Contribute">
     <app-contribute-tab></app-contribute-tab>
   </mat-tab>
   <mat-tab label="My Contribution"> My Contribution tab</mat-tab>

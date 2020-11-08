@@ -14,19 +14,19 @@ export class SuggestionUserInterface {
 
   filteredItems: Observable<String[]>;
   itemInput: ElementRef<HTMLInputElement>;
-  itemCtrl : FormControl;
+  itemCtrl: FormControl;
   chipSelectedItems: ItemSuggestType[] = [];
 
   private suggestionService: SuggestionService;
   private matAutocomplete: MatAutocomplete;
   private allowFreeTextAddItem = false;
-  private inputItemNameModify: string = '';
+  private inputItemNameModify = '';
   private allItems: ItemSuggestType[] = null;
   readonly multiChipsSupport: boolean;
 
-  private readonly callback: any; //saves a function call to a service
+  private readonly callback: any; // saves a function call to a service
 
-  constructor(suggestionService: SuggestionService, itemCtrl : FormControl, multiChipsSupport: boolean, callback: any) {
+  constructor(suggestionService: SuggestionService, itemCtrl: FormControl, multiChipsSupport: boolean, callback: any) {
     this.suggestionService = suggestionService;
     this.itemCtrl = itemCtrl;
     this.multiChipsSupport = multiChipsSupport;
@@ -64,7 +64,7 @@ export class SuggestionUserInterface {
 
   remove(item: ItemSuggestType): void {
     const index = this.chipSelectedItems.indexOf(item);
-    //add to the drop down list after removing from the input field
+    // add to the drop down list after removing from the input field
 
     if (index >= 0) {
       this.chipSelectedItems.splice(index, 1);
@@ -86,7 +86,7 @@ export class SuggestionUserInterface {
     let result: String[] = [];
 
     if (this.allItems !== null) {
-      let allItemLessSelected = this.allItems.filter(item => this.chipSelectedItems.indexOf(item) < 0);
+      const allItemLessSelected = this.allItems.filter(item => this.chipSelectedItems.indexOf(item) < 0);
 
        /** this will filter suggested list from the API
        if (itemName) {
@@ -103,13 +103,13 @@ export class SuggestionUserInterface {
 
   /**
    * This will filter the suggested list from the API
-   * @param itemList
-   * @param itemName
+   * @param itemList the item list
+   * @param itemName the item name
    */
   private filterItem(itemList: ItemSuggestType[], itemName: String): String[] {
     let filteredItemList: ItemSuggestType[] = [];
     const filterValue = itemName.toLowerCase();
-    let itemMatchingItemName = itemList.filter(item => item.name.toLowerCase().indexOf(filterValue) === 0);
+    const itemMatchingItemName = itemList.filter(item => item.name.toLowerCase().indexOf(filterValue) === 0);
 
     if (itemMatchingItemName.length || this.allowFreeTextAddItem) {
       filteredItemList = itemMatchingItemName;
@@ -123,9 +123,9 @@ export class SuggestionUserInterface {
   private selectItemByName(itemName) {
 
     if (this.allItems !== null) {
-      let foundItem = this.allItems.filter(item => item.name == itemName);
+      const foundItem = this.allItems.filter(item => item.name === itemName);
 
-      //only allow of adding one chip this.chipSelectedItems.length === 0
+      // only allow of adding one chip this.chipSelectedItems.length === 0
       if ((() => {
         if (this.multiChipsSupport) {
           return foundItem.length;
@@ -134,7 +134,7 @@ export class SuggestionUserInterface {
         }
       })()) {
 
-        //only allows to add the same item to the list once
+        // only allows to add the same item to the list once
         for (let i = 0; i < this.chipSelectedItems.length || this.chipSelectedItems.length === 0; i++) {
 
           if (this.chipSelectedItems.length === 0) {
@@ -146,13 +146,13 @@ export class SuggestionUserInterface {
             break;
           }
 
-          if (i == this.chipSelectedItems.length - 1) {
+          if (i === this.chipSelectedItems.length - 1) {
             this.chipSelectedItems.push(foundItem[0]);
           }
         }
 
       } else {
-        //only when allowFreeTextAddItem is true
+        // only when allowFreeTextAddItem is true
       }
     }
   }
@@ -168,17 +168,17 @@ export class SuggestionUserInterface {
 
       this.inputItemNameModify = this.itemInput.nativeElement.value;
 
-      let itemSuggest: ItemSuggestion = {
+      const itemSuggest: ItemSuggestion = {
         name: this.itemInput.nativeElement.value
       };
 
-      //function to execute on the service - passed through constructor
+      // function to execute on the service - passed through constructor
       this.callback(itemSuggest);
     }
   }
 
   getSelectedValue() {
-    //TODO should remove later
+    // TODO should remove later
     this.chipSelectedItems.forEach(x => console.log(x));
   }
 
@@ -187,7 +187,7 @@ export class SuggestionUserInterface {
 
     if (data !== null) {
       data.forEach(item => {
-        let itemSuggestType = <ItemSuggestType>{
+        const itemSuggestType = <ItemSuggestType>{
           surrogateKey: item.surrogateKey,
           name: item.name + Constants.Symbol.DOLLAR_SIGN + item.surrogateKey
         };
@@ -195,7 +195,7 @@ export class SuggestionUserInterface {
       });
     }
 
-    //filter items when item list is updated
+    // filter items when item list is updated
     this.filteredItems = of(this.filterOnValueChange(this.itemCtrl.value));
   }
 }

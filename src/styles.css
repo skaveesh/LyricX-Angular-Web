@@ -108,3 +108,20 @@ mat-icon{
   color: var(--var-color-warn);
   background: var(--var-color-white);
 }
+
+.back-button-with-ripple {
+  cursor: pointer;
+
+  width: 100%;
+  height: 100%;
+  line-height: 100%;
+  margin: 20px;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+}

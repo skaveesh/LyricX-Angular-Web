@@ -13,6 +13,7 @@ import {
   MatInputModule,
   MatOptionModule,
   MatProgressBarModule,
+  MatRippleModule,
   MatSelectModule,
   MatSidenavModule,
   MatSnackBarModule,
@@ -93,6 +94,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MatStepperModule,
     MatChipsModule,
     MatAutocompleteModule,
+    MatRippleModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     RouterModule.forRoot([

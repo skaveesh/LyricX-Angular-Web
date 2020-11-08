@@ -8,20 +8,35 @@
 
       <div fxLayout="row">
 
-        <div fxLayout="column">
+        <div fxLayout="column" fxFlex="100%">
 
           <app-album-and-author-adding-dashboard [firstFormGroup]="firstFormGroup"></app-album-and-author-adding-dashboard>
 
-          <div>
 
-            <p class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top" [hidden]="!isInputsInvalid()
-             && mandatoryInputNames() != null">
+          <div fxLayout="row" fxFlex fxLayoutAlign="start" style="margin-top: 2em">
+            <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top;"
+                  [hidden]="!isInputsInvalid() && mandatoryInputNames() != null">
               *{{mandatoryInputNames()}} field is mandatory.
-            </p>
+            </span>
+          </div>
 
-            <button mat-button matStepperNext [disabled]="isInputsInvalid()">
-              Next
-            </button>
+          <div fxLayout="row">
+
+            <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
+
+              <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isInputsInvalid()" (click)="navigateToAlbumCreation()">
+                Create a New Album
+              </button>
+
+              <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isInputsInvalid()" (click)="navigateToArtistCreation()">
+                Create a New Artist
+              </button>
+
+              <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" [disabled]="isInputsInvalid()">
+                Next
+              </button>
+
+            </div>
 
           </div>
 
