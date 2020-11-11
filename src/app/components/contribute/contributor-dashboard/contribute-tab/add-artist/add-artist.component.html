@@ -1,10 +1,60 @@
 <div fxLayout="row" fxLayoutAlign="start center" fxFlexFill>
   <div fxLayout="column">
-    <div class="back-button-with-ripple" matRipple [matRippleUnbounded]="true" [matRippleRadius]="500" (click)="backToContributor()">
+    <div class="back-button-with-ripple" matRipple [matRippleUnbounded]="true" [matRippleRadius]="1500" (click)="backToContributor()">
       <mat-icon class="mat-icon-white">arrow_back</mat-icon>
     </div>
   </div>
   <div fxLayout="column">
     <span style="font-size: 25px;">Add an Artist</span>
   </div>
+</div>
+
+<div [formGroup]="artistAddingFormGroup">
+
+  <div fxLayout="row">
+
+    <div fxLayout="column">
+
+      <mat-form-field class="artist-add-chip-list">
+
+        <mat-chip-list #chipGenreList aria-label="Artist selection">
+
+          <mat-chip
+            *ngFor="let singleGenre of genre"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="remove(singleGenre)">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+          <input #genreInput matInput
+                 name="Genre"
+                 placeholder="Search an Genre"
+                 formControlName="genreCtrl"
+                 [matAutocomplete]="autoCompleteGenre"
+                 [matChipInputFor]="chipGenreList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="false"
+                 (matChipInputTokenEnd)="add($event)">
+
+        </mat-chip-list>
+
+        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="selected($event)">
+
+          <mat-option *ngFor="let singleGenre of filteredGenre | async" [value]="singleGenre">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+          </mat-option>
+
+        </mat-autocomplete>
+
+      </mat-form-field>
+
+      <input name="ArtistName" placeholder="Enter Artist Name" formControlName="artistNameCtrl">
+
+    </div>
+
+  </div>
+
 </div>

@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
@@ -14,7 +14,7 @@ import ItemSuggestType = Constants.SuggestedItem;
   templateUrl: './album-and-author-adding-dashboard.component.html',
   styleUrls: ['./album-and-author-adding-dashboard.component.css']
 })
-export class AlbumAndAuthorAddingDashboardComponent implements OnInit {
+export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterViewInit {
 
   @Input() firstFormGroup: FormGroup;
 
@@ -37,10 +37,10 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit {
   @ViewChild('autoCompleteArtist', {static: false}) matAutocompleteArtist: MatAutocomplete;
 
   constructor(private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, this.albumCtrl,false,
+    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, this.albumCtrl, false,
       res => this.suggestionService.getAlbumSuggestion(res));
 
-    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, this.artistCtrl,true,
+    this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, this.artistCtrl, true,
       res => this.suggestionService.getArtistSuggestion(res));
   }
 
@@ -57,8 +57,8 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit {
     this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggestType[]) => {
 
       if (albumSuggestArray != null) {
-        let itemSuggestArray = albumSuggestArray.map(function (albumItem) {
-          let item: ItemSuggestType = {
+        const itemSuggestArray = albumSuggestArray.map(function (albumItem) {
+          const item: ItemSuggestType = {
             surrogateKey: albumItem.surrogateKey,
             name: albumItem.albumName
           };
@@ -72,8 +72,8 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit {
     this.suggestionService.getArtistSuggestions().subscribe((artistSuggestArray: ArtistSuggestType[]) => {
 
       if (artistSuggestArray != null) {
-        let itemSuggestArray = artistSuggestArray.map(function (artistItem) {
-          let item: ItemSuggestType = {
+        const itemSuggestArray = artistSuggestArray.map(function (artistItem) {
+          const item: ItemSuggestType = {
             surrogateKey: artistItem.surrogateKey,
             name: artistItem.artistName
           };

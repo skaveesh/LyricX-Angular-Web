@@ -16,6 +16,12 @@
 * {
   font-family: 'Fredoka One', cursive;
   color: var(--var-color-text-default);
+  -ms-overflow-style: none;  /* IE and Edge - hide the scrollbar */
+  scrollbar-width: none;  /* Firefox - hide the scrollbar */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera - hide the scrollbar */
 }
 
 ul:focus {
