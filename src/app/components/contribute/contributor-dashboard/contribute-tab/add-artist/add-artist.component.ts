@@ -23,18 +23,17 @@ export class AddArtistComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   genreCtrl = new FormControl();
-  filteredGenre: Observable<string[]>;
+  filteredGenre: Observable<String[]>;
   genre: string[] = [];
+  allGenre: string[] = ['Apple$1', 'Lemon$2', 'Lime$3', 'Orange$4', 'Strawberry$5', 'aa$6', 'ba$7', 'ac$8', 'da$9', 'ae$10', 'af$11', 'ag$12', 'ah$13', 'ia$14', 'ja$15'];
   displayedGenre: string[] = [];
-  allGenre: string[] = ['Apple$1', 'Lemon$2', 'Lime$3', 'Orange$4', 'Strawberry$5', 'a$6', 'b$7', 'c$8','d$9','e$10','f$11','g$12','h$13','i$14','j$15'];
 
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteGenre', {static: false}) matAutocomplete: MatAutocomplete;
 
   constructor(private router: Router, private _formBuilder: FormBuilder) {
-    this.filteredGenre = this.genreCtrl.valueChanges.pipe(
-      startWith(null),
-      map((genre: string | null) => genre ? this._filter(genre) : this.displayedGenre.slice()));
+    this.displayedGenre.push(...this.allGenre);
+    this.pipeOnValueChanges();
   }
 
   ngOnInit() {
@@ -42,27 +41,16 @@ export class AddArtistComponent implements OnInit {
       artistNameCtrl: '',
       genreCtrl: ''
     });
-
-    this.fillDisplayedGenresWithGenresFromAllGenres();
-  }
-
-  private fillDisplayedGenresWithGenresFromAllGenres() {
-    let count = 0;
-    while (this.displayedGenre.length < 5) {
-      this.displayedGenre.push(this.allGenre[count]);
-      this.allGenre.splice(0, 1, this.allGenre[count]);
-      count++;
-    }
   }
 
   add(event: MatChipInputEvent): void {
-    // Add fruit only when MatAutocomplete is not open
+    // Add genre only when MatAutocomplete is not open
     // To make sure this does not conflict with OptionSelected Event
     if (!this.matAutocomplete.isOpen) {
       const input = event.input;
       const value = event.value;
 
-      // Add our fruit
+      // Add genre
       if ((value || '').trim()) {
         this.genre.push(value.trim());
       }
@@ -72,16 +60,21 @@ export class AddArtistComponent implements OnInit {
         input.value = '';
       }
 
-      console.log(input);
-      const index = this.allGenre.indexOf(value);
-      if (index !== -1) {
-        this.allGenre.splice(index, 1, this.allGenre[index]);
-      }
-
-      this.fillDisplayedGenresWithGenresFromAllGenres();
-
       this.genreCtrl.setValue(null);
     }
+  }
+
+  onKey(event: KeyboardEvent): void {
+    const value = this.genreInput.nativeElement.value;
+
+    this.displayedGenre = [];
+    this.allGenre.forEach((x) => {
+      if (x.toLowerCase().includes(value.toLowerCase())) {
+        this.displayedGenre.push(x);
+      }
+    });
+
+    this.pipeOnValueChanges();
   }
 
   remove(genre: string): void {
@@ -91,11 +84,22 @@ export class AddArtistComponent implements OnInit {
       this.genre.splice(index, 1);
     }
 
-    this.allGenre.push(genre);
+  }
+
+  private pipeOnValueChanges(){
+    this.filteredGenre = this.genreCtrl.valueChanges.pipe(
+      startWith(null),
+      map((genre: string | null) => genre ? this._filter(genre) : this.displayedGenre.slice()));
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.genre.push(event.option.viewValue);
+
+    const index = this.genre.indexOf(event.option.value);
+
+    if (index < 0) {
+      this.genre.push(event.option.value);
+    }
+
     this.genreInput.nativeElement.value = '';
     this.genreCtrl.setValue(null);
   }
