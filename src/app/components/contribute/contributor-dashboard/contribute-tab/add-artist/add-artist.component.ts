@@ -5,7 +5,8 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent} from '@angular/material';
 import {Observable} from 'rxjs';
-import {map, startWith} from 'rxjs/operators';
+import {map, startWith, take} from 'rxjs/operators';
+import {GenreAdapterService} from '../../../../../services/rest/genre-adapter.service';
 
 @Component({
   selector: 'app-add-artist',
@@ -23,17 +24,15 @@ export class AddArtistComponent implements OnInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   genreCtrl = new FormControl();
-  filteredGenre: Observable<String[]>;
+  filteredGenre: Observable<string[]>;
   genre: string[] = [];
-  allGenre: string[] = ['Apple$1', 'Lemon$2', 'Lime$3', 'Orange$4', 'Strawberry$5', 'aa$6', 'ba$7', 'ac$8', 'da$9', 'ae$10', 'af$11', 'ag$12', 'ah$13', 'ia$14', 'ja$15'];
   displayedGenre: string[] = [];
 
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteGenre', {static: false}) matAutocomplete: MatAutocomplete;
 
-  constructor(private router: Router, private _formBuilder: FormBuilder) {
-    this.displayedGenre.push(...this.allGenre);
-    this.pipeOnValueChanges();
+  constructor(private router: Router, private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService) {
+    this.genreAdapter.getAllGenres();
   }
 
   ngOnInit() {
@@ -41,6 +40,13 @@ export class AddArtistComponent implements OnInit {
       artistNameCtrl: '',
       genreCtrl: ''
     });
+
+    this.genreAdapter.allGenre.pipe(
+      take(this.genreAdapter.allGenre.getValue().length <= 0 ? 2 : 1)
+    ).subscribe(value => {
+      this.displayedGenre.push(...value);
+      this.pipeOnValueChanges();
+    }, e => console.log('error'));
   }
 
   add(event: MatChipInputEvent): void {
@@ -68,7 +74,7 @@ export class AddArtistComponent implements OnInit {
     const value = this.genreInput.nativeElement.value;
 
     this.displayedGenre = [];
-    this.allGenre.forEach((x) => {
+    this.genreAdapter.allGenre.getValue().forEach((x) => {
       if (x.toLowerCase().includes(value.toLowerCase())) {
         this.displayedGenre.push(x);
       }
@@ -83,10 +89,9 @@ export class AddArtistComponent implements OnInit {
     if (index >= 0) {
       this.genre.splice(index, 1);
     }
-
   }
 
-  private pipeOnValueChanges(){
+  private pipeOnValueChanges() {
     this.filteredGenre = this.genreCtrl.valueChanges.pipe(
       startWith(null),
       map((genre: string | null) => genre ? this._filter(genre) : this.displayedGenre.slice()));

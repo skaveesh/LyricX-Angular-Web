@@ -8,7 +8,8 @@ import {
 } from '@angular/animations';
 import 'rxjs/operators';
 import {LoadingStatusService} from './services/loading-status.service';
-import {LoginAccessoryService} from './services/login-accessory.service';
+import {LoginAccessoryService} from './services/auth/login-accessory.service';
+import {RestTemplate} from './services/rest/rest-template-builder';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit {
   }
 
   constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef,
-              private loginAccessory: LoginAccessoryService) {
+              private loginAccessory: LoginAccessoryService, private restTemplate: RestTemplate) {
 
     this.loadingStatus.getLoading().subscribe(
       (status) => {

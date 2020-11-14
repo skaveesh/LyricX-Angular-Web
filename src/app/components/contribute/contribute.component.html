@@ -1,4 +1,4 @@
-<div *ngIf="afAuth.user | async as user">
+<div *ngIf="userAuth.getUser() | async as user">
 
   <h1>Hello {{ user.displayName }}!</h1>
   <h1>Hello {{ user.email }}!</h1>
@@ -9,11 +9,11 @@
   <!--<div *ngIf="user.emailVerified; else showVerifyEmail">-->
 
 
-  <span>refresh token: {{token}}</span>
+  <span>refresh token: {{userAuth.token}}</span>
 
   <button (click)="refreshToken(true)">Force Auth Token</button>
 
-  <span>force refresh token: {{forceToken}}</span>
+  <span>force refresh token: {{userAuth.forceToken}}</span>
 
   <!--</div>-->
 
@@ -22,7 +22,7 @@
 
   <ng-template #showVerifyEmail>
 
-    <h2>{{emailVerifyText}}</h2>
+    <h2>{{userAuth.emailVerifyText}}</h2>
     <button (click)="sendEmailConfirmation()">Send Verification E-Mail</button>
 
   </ng-template>

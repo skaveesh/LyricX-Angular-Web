@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {NavigationCancel, Router} from '@angular/router';
-import {Constants} from '../constants/constants';
+import {Constants} from '../../constants/constants';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 
 @Injectable({

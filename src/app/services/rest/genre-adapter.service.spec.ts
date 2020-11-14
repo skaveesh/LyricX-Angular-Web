@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SocketRootService } from './socket-root.service';
+import { GenreAdapterService } from './genre-adapter.service';
 
-describe('SocketRootService', () => {
+describe('GenreAdapterService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: SocketRootService = TestBed.get(SocketRootService);
+    const service: GenreAdapterService = TestBed.get(GenreAdapterService);
     expect(service).toBeTruthy();
   });
 });
