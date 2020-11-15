@@ -16,7 +16,7 @@ export class MyProfileTabComponent implements OnInit {
 
   public FormFieldsValidatingStatusService = FormFieldsValidatingStatusService;
 
-  nameChangingForm : FormGroup;
+  nameChangingForm: FormGroup;
 
   constructor(public afAuth: AngularFireAuth, private defaultSnackBar: DefaultSnackBarComponent, private formBuilder: FormBuilder) {
   }
@@ -35,7 +35,7 @@ export class MyProfileTabComponent implements OnInit {
 
   private changeUserName() {
     this.afAuth.auth.currentUser.updateProfile({
-      displayName: this.nameChangingForm.controls.firstName.value + " " + this.nameChangingForm.controls.lastName.value
+      displayName: this.nameChangingForm.controls.firstName.value + ' ' + this.nameChangingForm.controls.lastName.value
     }).then(() => {
       this.defaultSnackBar.openSnackBar('Name has been changed.');
     }).catch((error) => {

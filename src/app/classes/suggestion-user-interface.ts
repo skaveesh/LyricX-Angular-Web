@@ -6,8 +6,7 @@ import {FormControl} from '@angular/forms';
 import {SuggestionService} from '../services/suggestion.service';
 import {Observable} from 'rxjs';
 import {of} from 'rxjs';
-import ItemSuggestion = Constants.ItemSuggest;
-import ItemSuggestType = Constants.SuggestedItem;
+import {ItemSuggest, SuggestedItem} from '../dto/item-suggest';
 // import {map, startWith} from 'rxjs/operators';
 
 export class SuggestionUserInterface {
@@ -15,13 +14,13 @@ export class SuggestionUserInterface {
   filteredItems: Observable<String[]>;
   itemInput: ElementRef<HTMLInputElement>;
   itemCtrl: FormControl;
-  chipSelectedItems: ItemSuggestType[] = [];
+  chipSelectedItems: SuggestedItem[] = [];
 
   private suggestionService: SuggestionService;
   private matAutocomplete: MatAutocomplete;
   private allowFreeTextAddItem = false;
   private inputItemNameModify = '';
-  private allItems: ItemSuggestType[] = null;
+  private allItems: SuggestedItem[] = null;
   readonly multiChipsSupport: boolean;
 
   private readonly callback: any; // saves a function call to a service
@@ -62,7 +61,7 @@ export class SuggestionUserInterface {
     this.resetInputs();
   }
 
-  remove(item: ItemSuggestType): void {
+  remove(item: SuggestedItem): void {
     const index = this.chipSelectedItems.indexOf(item);
     // add to the drop down list after removing from the input field
 
@@ -106,8 +105,8 @@ export class SuggestionUserInterface {
    * @param itemList the item list
    * @param itemName the item name
    */
-  private filterItem(itemList: ItemSuggestType[], itemName: String): String[] {
-    let filteredItemList: ItemSuggestType[] = [];
+  private filterItem(itemList: SuggestedItem[], itemName: String): String[] {
+    let filteredItemList: SuggestedItem[] = [];
     const filterValue = itemName.toLowerCase();
     const itemMatchingItemName = itemList.filter(item => item.name.toLowerCase().indexOf(filterValue) === 0);
 
@@ -168,7 +167,7 @@ export class SuggestionUserInterface {
 
       this.inputItemNameModify = this.itemInput.nativeElement.value;
 
-      const itemSuggest: ItemSuggestion = {
+      const itemSuggest: ItemSuggest = {
         name: this.itemInput.nativeElement.value
       };
 
@@ -182,12 +181,12 @@ export class SuggestionUserInterface {
     this.chipSelectedItems.forEach(x => console.log(x));
   }
 
-  public pushDataToAllItems(data: ItemSuggestType[]) {
+  public pushDataToAllItems(data: SuggestedItem[]) {
     this.allItems = [];
 
     if (data !== null) {
       data.forEach(item => {
-        const itemSuggestType = <ItemSuggestType>{
+        const itemSuggestType = <SuggestedItem>{
           surrogateKey: item.surrogateKey,
           name: item.name + Constants.Symbol.DOLLAR_SIGN + item.surrogateKey
         };

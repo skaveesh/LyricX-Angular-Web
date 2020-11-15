@@ -3,10 +3,14 @@ import {Constants} from '../../../../../constants/constants';
 import {Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent} from '@angular/material';
+import {MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent, MatDialog} from '@angular/material';
 import {Observable} from 'rxjs';
 import {map, startWith, take} from 'rxjs/operators';
 import {GenreAdapterService} from '../../../../../services/rest/genre-adapter.service';
+import {DefaultDialogComponent} from '../../../../popups-and-modals/default-dialog/default-dialog.component';
+import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
+import {CropperPosition} from 'ngx-image-cropper';
+import {DialogData} from '../../../../../dto/dialog-data';
 
 @Component({
   selector: 'app-add-artist',
@@ -14,6 +18,9 @@ import {GenreAdapterService} from '../../../../../services/rest/genre-adapter.se
   styleUrls: ['./add-artist.component.css']
 })
 export class AddArtistComponent implements OnInit {
+  private artistCroppedImageBase64: string;
+  private artistOriginalImageBase64: string;
+  private artistCroppedImagePositions: CropperPosition;
 
   artistAddingFormGroup: FormGroup;
 
@@ -31,7 +38,7 @@ export class AddArtistComponent implements OnInit {
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteGenre', {static: false}) matAutocomplete: MatAutocomplete;
 
-  constructor(private router: Router, private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService) {
+  constructor(private router: Router, private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, public dialog: MatDialog) {
     this.genreAdapter.getAllGenres();
   }
 
@@ -117,5 +124,42 @@ export class AddArtistComponent implements OnInit {
 
   backToContributor() {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE);
+  }
+
+  getArtistImage(): string {
+    if (isNotNullOrUndefined(this.artistCroppedImageBase64) && this.artistCroppedImageBase64.length > 0) {
+      return this.artistCroppedImageBase64;
+    }
+
+    return Constants.Assert.ARTIST_IMAGE;
+  }
+
+  openDialog(): void {
+
+    const dataObj = isNotNullOrUndefined(this.artistCroppedImageBase64) ?
+      {injectedTitle: Constants.AppConstant.ARTIST, originalImageBase64: this.artistOriginalImageBase64, cropperPositions: this.artistCroppedImagePositions} :
+        {injectedTitle: Constants.AppConstant.ARTIST};
+
+    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+      disableClose: true,
+      maxWidth: '90vw',
+      data: dataObj
+    });
+
+    dialogRef.afterClosed().subscribe((result: DialogData) => {
+      if (isNotNullOrUndefined(result)) {
+        if (isNotNullOrUndefined(result.originalImageBase64)) {
+          this.artistOriginalImageBase64 = result.originalImageBase64;
+        }
+
+        if (isNotNullOrUndefined(result.croppedImageBase64)) {
+          this.artistCroppedImageBase64 = result.croppedImageBase64;
+        }
+
+        if (isNotNullOrUndefined(result.cropperPositions)) {
+          this.artistCroppedImagePositions = result.cropperPositions;
+        }
+      }
+    });
   }
 }

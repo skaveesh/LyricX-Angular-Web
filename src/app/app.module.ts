@@ -7,7 +7,7 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatCheckboxModule,
-  MatChipsModule,
+  MatChipsModule, MatDialogModule,
   MatDividerModule,
   MatFormFieldModule,
   MatIconModule,
@@ -48,6 +48,8 @@ import {AlbumAndAuthorAddingDashboardComponent} from './components/contribute/co
 import {AddArtistComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
 import {AddAlbumComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
 import {Constants} from './constants/constants';
+import { DefaultDialogComponent } from './components/popups-and-modals/default-dialog/default-dialog.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -68,7 +70,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     ContributeTabComponent,
     AlbumAndAuthorAddingDashboardComponent,
     AddArtistComponent,
-    AddAlbumComponent
+    AddAlbumComponent,
+    DefaultDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -99,6 +102,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MatRippleModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
+    MatDialogModule,
+    ImageCropperModule,
     RouterModule.forRoot([
       {
         path: Constants.Route.HOME,
@@ -116,25 +121,25 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
         path: Constants.Route.CONTRIBUTE,
         component: ContributeComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedToLogin }
+        data: {authGuardPipe: redirectUnauthorizedToLogin}
       },
       {
         path: Constants.Route.LOGIN,
         component: LoginComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectLoggedInToContribute }
+        data: {authGuardPipe: redirectLoggedInToContribute}
       },
       {
         path: Constants.Route.ADD_ARTIST,
         component: AddArtistComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedToLogin }
+        data: {authGuardPipe: redirectUnauthorizedToLogin}
       },
       {
         path: Constants.Route.ADD_ALBUM,
         component: AddAlbumComponent,
         canActivate: [AngularFireAuthGuard],
-        data: { authGuardPipe: redirectUnauthorizedToLogin }
+        data: {authGuardPipe: redirectUnauthorizedToLogin}
       },
       {
         path: Constants.Route.ABOUT,
@@ -157,7 +162,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
       provide: MAT_SNACK_BAR_DATA,
       useValue: {} // Add any data you wish to test if it is passed/used correctly
     }],
-  entryComponents: [DefaultSnackBarComponent],
+  entryComponents: [DefaultSnackBarComponent, DefaultDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

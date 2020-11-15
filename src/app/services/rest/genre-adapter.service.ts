@@ -2,10 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpRoot} from './http-root';
 import {RestTemplateBuilder} from './rest-template-builder';
 import {HttpClient} from '@angular/common/http';
-import {Constants} from '../../constants/constants';
 import {first, map, tap} from 'rxjs/operators';
-import AllGenre = Constants.AllGenre;
 import {BehaviorSubject} from 'rxjs';
+import {AllGenre} from '../../dto/genre';
 
 @Injectable({
   providedIn: 'root'

@@ -1,17 +1,20 @@
 import {Injectable} from '@angular/core';
 import {SocketRootService} from './socket-root.service';
-
-import {Constants} from '../constants/constants';
 import {Stomp} from 'stompjs/lib/stomp.js';
 import {BehaviorSubject} from 'rxjs';
-import ItemSuggestion = Constants.ItemSuggest;
-import AlbumSuggestion = Constants.AlbumSuggest;
-import ArtistSuggestion = Constants.ArtistSuggest;
+import {ItemSuggest} from '../dto/item-suggest';
+import {AlbumSuggest} from '../dto/album';
+import {ArtistSuggest} from '../dto/artist';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuggestionService extends SocketRootService {
+
+  constructor() {
+    super();
+    this.connect();
+  }
 
   private albumSocket = new WebSocket(this.ROOT_URL);
   private artistSocket = new WebSocket(this.ROOT_URL);
@@ -22,9 +25,10 @@ export class SuggestionService extends SocketRootService {
   private albumSuggestionsBehaviorSubject = new BehaviorSubject(null);
   private artistSuggestionsBehaviorSubject = new BehaviorSubject(null);
 
-  constructor() {
-    super();
-    this.connect();
+  private static onMessageReceived(message: any, behaviourSubject: any) {
+    behaviourSubject.next(
+      (JSON.parse(message.body))
+    );
   }
 
   public getAlbumSuggestions(): BehaviorSubject<any> {
@@ -59,8 +63,8 @@ export class SuggestionService extends SocketRootService {
     });
   }
 
-  public getAlbumSuggestion(itemSuggestion: ItemSuggestion): void {
-    let albumSuggestion: AlbumSuggestion = {
+  public getAlbumSuggestion(itemSuggestion: ItemSuggest): void {
+    const albumSuggestion: AlbumSuggest = {
       surrogateKey: null,
       albumName: itemSuggestion.name
     };
@@ -70,8 +74,8 @@ export class SuggestionService extends SocketRootService {
     }
   }
 
-  public getArtistSuggestion(itemSuggestion: ItemSuggestion): void {
-    let artistSuggestion: ArtistSuggestion = {
+  public getArtistSuggestion(itemSuggestion: ItemSuggest): void {
+    const artistSuggestion: ArtistSuggest = {
       surrogateKey: null,
       artistName: itemSuggestion.name
     };
@@ -81,7 +85,7 @@ export class SuggestionService extends SocketRootService {
     }
   }
 
-  //TODO on error, schedule a reconnection attempt, should connect to sockjs as fallback
+  // TODO on error, schedule a reconnection attempt, should connect to sockjs as fallback
   private errorCallBack(error) {
     console.log('errorCallBack -> ' + error);
     setTimeout(() => {
@@ -95,12 +99,6 @@ export class SuggestionService extends SocketRootService {
 
   private onArtistReceived(message) {
     SuggestionService.onMessageReceived(message, this.artistSuggestionsBehaviorSubject);
-  }
-
-  private static onMessageReceived(message : any, behaviourSubject : any) {
-    behaviourSubject.next(
-      (JSON.parse(message.body))
-    );
   }
 }
 

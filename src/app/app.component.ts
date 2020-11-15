@@ -36,7 +36,7 @@ export class AppComponent implements OnInit {
   title = 'LyricX';
   public collapse = 'closed';
   public innerWidth: any;
-  public progressBarViewStatus: boolean = false;
+  public progressBarViewStatus = false;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {

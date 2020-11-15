@@ -9,11 +9,28 @@
   </div>
 </div>
 
-<div [formGroup]="artistAddingFormGroup">
+<form [formGroup]="artistAddingFormGroup"  fxLayoutAlign="center center" class="artist-form" fxLayout>
 
   <div fxLayout="row">
 
-    <div fxLayout="column">
+    <div fxLayout="column" fxLayoutAlign="center center">
+
+      <img alt="profile picture" [src]="getArtistImage()"
+           style="width: 146px; height: 146px; border-radius: 73px; border: 8px solid #f44336"/>
+
+      <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openDialog()">
+        Upload Artist Image
+      </button>
+
+      <mat-form-field class="artist-form-full-width">
+
+        <input matInput name="ArtistName"
+               placeholder="Enter Artist Name"
+               formControlName="artistNameCtrl">
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
 
       <mat-form-field class="artist-add-chip-list">
 
@@ -40,6 +57,7 @@
                  (matChipInputTokenEnd)="add($event)"
                  (keyup)="onKey($event)">
 
+          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
 
         </mat-chip-list>
 
@@ -53,10 +71,8 @@
 
       </mat-form-field>
 
-      <input name="ArtistName" placeholder="Enter Artist Name" formControlName="artistNameCtrl">
-
     </div>
 
   </div>
 
-</div>
+</form>

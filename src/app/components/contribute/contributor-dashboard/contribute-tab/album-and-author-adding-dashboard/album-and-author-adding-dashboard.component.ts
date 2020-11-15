@@ -4,10 +4,9 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete} from '@angular/material/autocomplete';
 import {SuggestionService} from '../../../../../services/suggestion.service';
-import {Constants} from '../../../../../constants/constants';
-import AlbumSuggestType = Constants.AlbumSuggest;
-import ArtistSuggestType = Constants.ArtistSuggest;
-import ItemSuggestType = Constants.SuggestedItem;
+import {AlbumSuggest} from '../../../../../dto/album';
+import {ArtistSuggest} from '../../../../../dto/artist';
+import {SuggestedItem} from '../../../../../dto/item-suggest';
 
 @Component({
   selector: 'app-album-and-author-adding-dashboard',
@@ -54,11 +53,11 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
 
   ngOnInit(): void {
 
-    this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggestType[]) => {
+    this.suggestionService.getAlbumSuggestions().subscribe((albumSuggestArray: AlbumSuggest[]) => {
 
       if (albumSuggestArray != null) {
         const itemSuggestArray = albumSuggestArray.map(function (albumItem) {
-          const item: ItemSuggestType = {
+          const item: SuggestedItem = {
             surrogateKey: albumItem.surrogateKey,
             name: albumItem.albumName
           };
@@ -69,11 +68,11 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
       }
     });
 
-    this.suggestionService.getArtistSuggestions().subscribe((artistSuggestArray: ArtistSuggestType[]) => {
+    this.suggestionService.getArtistSuggestions().subscribe((artistSuggestArray: ArtistSuggest[]) => {
 
       if (artistSuggestArray != null) {
         const itemSuggestArray = artistSuggestArray.map(function (artistItem) {
-          const item: ItemSuggestType = {
+          const item: SuggestedItem = {
             surrogateKey: artistItem.surrogateKey,
             name: artistItem.artistName
           };

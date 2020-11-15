@@ -4,7 +4,13 @@ export namespace Constants {
     CONTENT_TYPE = 'Content-Type',
     APPLICATION_JSON = 'application/json',
     AUTHORIZATION = 'Authorization',
-    BEARER = 'Bearer'
+    BEARER = 'Bearer',
+    ARTIST = 'Artist',
+    ALBUM = 'Album',
+  }
+
+  export enum Assert {
+    ARTIST_IMAGE = '/assets/artist_image.png'
   }
 
   export enum Error {
@@ -37,43 +43,5 @@ export namespace Constants {
   export enum FormFieldConstants {
     NAME, EMAIL, PASSWORD
   }
-
-  export interface ItemSuggest {
-    name: string;
-  }
-
-  export interface SuggestedItem {
-    surrogateKey: string;
-    name: string;
-  }
-
-  export interface AlbumSuggest {
-    surrogateKey: string;
-    albumName: string;
-  }
-
-  export interface ArtistSuggest {
-    surrogateKey: string;
-    artistName: string;
-  }
-
-  interface BaseHttpResponse {
-    'timestamp': string;
-    'message': string;
-    'errorCode': string;
-  }
-
-  interface Genre {
-    'id': number;
-    'genreName': string;
-    'addedDate': string;
-    'lastModifiedDate': string;
-  }
-
-  interface GenreList {
-    'data': Genre[];
-  }
-
-  export type AllGenre = BaseHttpResponse & GenreList;
 
 }
