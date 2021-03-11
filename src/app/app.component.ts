@@ -10,6 +10,7 @@ import 'rxjs/operators';
 import {LoadingStatusService} from './services/loading-status.service';
 import {LoginAccessoryService} from './services/auth/login-accessory.service';
 import {RestTemplate} from './services/rest/rest-template-builder';
+import {MetadataService} from './services/rest/metadata.service';
 
 @Component({
   selector: 'app-root',
@@ -44,7 +45,7 @@ export class AppComponent implements OnInit {
   }
 
   constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef,
-              private loginAccessory: LoginAccessoryService, private restTemplate: RestTemplate) {
+              private loginAccessory: LoginAccessoryService, private restTemplate: RestTemplate, private metadata: MetadataService) {
 
     this.loadingStatus.getLoading().subscribe(
       (status) => {

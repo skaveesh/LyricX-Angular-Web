@@ -1,4 +1,4 @@
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams, HttpResponse} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {UserAuthorizationService} from '../auth/user-authorization.service';
@@ -6,6 +6,8 @@ import {Constants} from '../../constants/constants';
 import AppConstant = Constants.AppConstant;
 import Symbol = Constants.Symbol;
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
+import {catchError} from 'rxjs/operators';
+import {UtilService} from '../util.service';
 
 let httpClient: HttpClient;
 let userAuthorizationService: UserAuthorizationService;
@@ -40,6 +42,11 @@ export class RestTemplateBuilder {
     return this;
   }
 
+  public withMultipartFormDataContentType(): RestTemplateBuilder {
+    this.headers = this.headers.set(AppConstant.CONTENT_TYPE, AppConstant.MULTIPART_FORM_DATA);
+    return this;
+  }
+
   public withAuthHeader(): RestTemplateBuilder {
     this.headers = this.headers.set( AppConstant.AUTHORIZATION, RestTemplateBuilder.getBearerToken());
     return this;
@@ -50,11 +57,28 @@ export class RestTemplateBuilder {
     return this;
   }
 
-  public get<T>(url: string): Observable<T> {
-    return httpClient.get<T>(url, {
+  public get<R>(url: string): Observable<HttpResponse<R>> {
+    return httpClient.get(url, {
       headers: this.headers,
+      observe: AppConstant.RESPONSE,
       params: this.params
-    });
+    }).pipe(catchError(UtilService.handleErrorObservable));
+  }
+
+  public post<P, R>(url: string, body: P): Observable<HttpResponse<R>> {
+    return httpClient.post(url, <P> body, {
+      headers: this.headers,
+      observe: AppConstant.RESPONSE,
+      params: this.params
+    }).pipe(catchError(UtilService.handleErrorObservable));
+  }
+
+  public put<P, R>(url: string, body: P): Observable<HttpResponse<R>> {
+    return httpClient.put(url, <P> body, {
+      headers: this.headers,
+      observe: AppConstant.RESPONSE,
+      params: this.params
+    }).pipe(catchError(UtilService.handleErrorObservable));
   }
 
 }

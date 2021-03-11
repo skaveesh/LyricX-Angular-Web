@@ -22,7 +22,8 @@ import {
   MatStepperModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatDatepickerModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -48,8 +49,9 @@ import {AlbumAndAuthorAddingDashboardComponent} from './components/contribute/co
 import {AddArtistComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
 import {AddAlbumComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
 import {Constants} from './constants/constants';
-import { DefaultDialogComponent } from './components/popups-and-modals/default-dialog/default-dialog.component';
+import { ImageUploadDialogComponent } from './components/popups-and-modals/image-upload-dialog/image-upload-dialog.component';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import {MultiDatepickerModule} from './components/popups-and-modals/multidatepicker/multidatepicker.module';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -71,7 +73,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     AlbumAndAuthorAddingDashboardComponent,
     AddArtistComponent,
     AddAlbumComponent,
-    DefaultDialogComponent
+    ImageUploadDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -100,10 +102,12 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MatChipsModule,
     MatAutocompleteModule,
     MatRippleModule,
+    MatDialogModule,
+    MultiDatepickerModule,
+    ImageCropperModule,
+    MatDatepickerModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
-    MatDialogModule,
-    ImageCropperModule,
     RouterModule.forRoot([
       {
         path: Constants.Route.HOME,
@@ -162,7 +166,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
       provide: MAT_SNACK_BAR_DATA,
       useValue: {} // Add any data you wish to test if it is passed/used correctly
     }],
-  entryComponents: [DefaultSnackBarComponent, DefaultDialogComponent],
+  entryComponents: [DefaultSnackBarComponent, ImageUploadDialogComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -3,13 +3,20 @@
 }
 
 .artist-form-full-width {
-  width: 340px;
+  width: var(--var-album-artist-form-width);
 }
 
 .button-artist-image {
-  width: 240px;
+  width: var(--var-album-artist-button-width);
 }
 
 .artist-add-chip-list {
-  width: 340px;
+  width: var(--var-album-artist-form-width);
+}
+
+.artist-image {
+  width: 146px;
+  height: 146px;
+  border-radius: 73px;
+  border: 8px solid #f44336
 }

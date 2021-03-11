@@ -9,14 +9,13 @@
   </div>
 </div>
 
-<form [formGroup]="artistAddingFormGroup"  fxLayoutAlign="center center" class="artist-form" fxLayout>
+<form [formGroup]="artistAddingFormGroup" fxLayoutAlign="center center" class="artist-form" fxLayout>
 
   <div fxLayout="row">
 
     <div fxLayout="column" fxLayoutAlign="center center">
 
-      <img alt="profile picture" [src]="getArtistImage()"
-           style="width: 146px; height: 146px; border-radius: 73px; border: 8px solid #f44336"/>
+      <img alt="artist image" [src]="getArtistImage()" class="artist-image"/>
 
       <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openDialog()">
         Upload Artist Image
@@ -34,7 +33,7 @@
 
       <mat-form-field class="artist-add-chip-list">
 
-        <mat-chip-list #chipGenreList aria-label="Artist selection">
+        <mat-chip-list #chipGenreList aria-label="Genre selection">
 
           <mat-chip
             *ngFor="let singleGenre of genre"
@@ -70,6 +69,12 @@
         </mat-autocomplete>
 
       </mat-form-field>
+
+      <div style="margin-top: 3vh; margin-bottom: 3vh"></div>
+
+      <button mat-mini-fab color="warn" aria-label="Submit Artist" (click)="submitArtist()">
+        <mat-icon>add_task</mat-icon>
+      </button>
 
     </div>
 

@@ -1,3 +1,5 @@
+import {BaseHttpResponse} from './base-http-response';
+
 interface Genre {
   'id': number;
   'genreName': string;

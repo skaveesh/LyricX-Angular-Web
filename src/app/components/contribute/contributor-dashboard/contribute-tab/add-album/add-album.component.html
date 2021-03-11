@@ -8,3 +8,82 @@
     <span style="font-size: 25px;">Add an Album</span>
   </div>
 </div>
+
+<form [formGroup]="albumAddingFormGroup" fxLayoutAlign="center center" class="album-form" fxLayout>
+
+  <div fxLayout="row">
+
+    <div fxLayout="column" fxLayoutAlign="center center">
+
+      <img alt="album image" [src]="getAlbumImage()" class="album-image"/>
+
+      <button mat-button mat-raised-button color="warn" class="button-default button-album-image" (click)="openDialog()">
+        Upload Album Image
+      </button>
+
+      <mat-form-field class="album-form-full-width">
+
+        <input matInput name="AlbumName"
+               placeholder="Enter Album Name"
+               formControlName="albumNameCtrl">
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field class="album-add-chip-list">
+
+        <mat-chip-list #chipArtistList aria-label="Artist selection">
+
+          <mat-chip
+            *ngFor="let artist of suggestionUserInterfaceArtist.chipSelectedItems"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="suggestionUserInterfaceArtist.remove(artist)">
+            {{artist.name.substring(0, artist.name.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+          <input #artistInput matInput
+                 placeholder="Search an Artist"
+                 formControlName="artistCtrl"
+                 [matAutocomplete]="autoCompleteArtist"
+                 [matChipInputFor]="chipArtistList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="false"
+                 (matChipInputTokenEnd)="suggestionUserInterfaceArtist.addItem($event)"
+                 (keyup)="suggestionUserInterfaceArtist.onKey($event)">
+
+        </mat-chip-list>
+
+        <mat-autocomplete #autoCompleteArtist="matAutocomplete" (optionSelected)="suggestionUserInterfaceArtist.itemSelected($event)">
+
+          <mat-option *ngFor="let artist of suggestionUserInterfaceArtist.filteredItems | async" [value]="artist">
+            {{artist.substring(0, artist.lastIndexOf("$"))}}
+          </mat-option>
+
+        </mat-autocomplete>
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
+
+      <jp-multi-datepicker #yearInput tabindex="-1" mode="YEAR" formControlName="albumYearCtrl" label="Enter Released Year"
+                           [min]="1850" [max]="currentYear"></jp-multi-datepicker>
+
+      <div style="margin-top: 3vh; margin-bottom: 3vh"></div>
+
+      <button mat-mini-fab color="warn" aria-label="Submit Album" (click)="submitAlbum()">
+        <mat-icon>add_task</mat-icon>
+      </button>
+
+      <button mat-mini-fab color="warn" aria-label="Submit Album" (click)="destroyInputs()">
+        <mat-icon>add_task</mat-icon> destr
+      </button>
+
+    </div>
+
+  </div>
+
+</form>

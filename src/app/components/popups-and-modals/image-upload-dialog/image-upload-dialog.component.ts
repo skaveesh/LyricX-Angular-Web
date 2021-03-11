@@ -6,16 +6,16 @@ import {DialogData} from '../../../dto/dialog-data';
 
 @Component({
   selector: 'app-default-dialog',
-  templateUrl: './default-dialog.component.html',
-  styleUrls: ['./default-dialog.component.css']
+  templateUrl: './image-upload-dialog.component.html',
+  styleUrls: ['./image-upload-dialog.component.css']
 })
-export class DefaultDialogComponent {
+export class ImageUploadDialogComponent {
 
   @ViewChild('imageCropperElement', {static: false}) imageCropper: ImageCropperComponent;
 
   imageChangedEvent: any = '';
 
-  constructor(public dialogRef: MatDialogRef<DefaultDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+  constructor(public dialogRef: MatDialogRef<ImageUploadDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
   onCancelClick(): void {
     this.dialogRef.close();

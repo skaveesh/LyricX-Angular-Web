@@ -30,16 +30,16 @@ export class MyProfileTabComponent implements OnInit {
 
   private changePassword() {
     // this.afAuth.auth.sendPasswordResetEmail("skaveesh@gmail.com");
-    this.defaultSnackBar.openSnackBar('Password reset'); // E-Mail has been sent your inbox.
+    this.defaultSnackBar.openSnackBar('Password reset', false); // E-Mail has been sent your inbox.
   }
 
   private changeUserName() {
     this.afAuth.auth.currentUser.updateProfile({
       displayName: this.nameChangingForm.controls.firstName.value + ' ' + this.nameChangingForm.controls.lastName.value
     }).then(() => {
-      this.defaultSnackBar.openSnackBar('Name has been changed.');
+      this.defaultSnackBar.openSnackBar('Name has been changed.', false);
     }).catch((error) => {
-      this.defaultSnackBar.openSnackBar('Something went wrong. ' + error.toString());
+      this.defaultSnackBar.openSnackBar('Something went wrong. ' + error.toString(), true);
     });
   }
 

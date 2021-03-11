@@ -3,14 +3,20 @@ export namespace Constants {
   export enum AppConstant {
     CONTENT_TYPE = 'Content-Type',
     APPLICATION_JSON = 'application/json',
+    MULTIPART_FORM_DATA = 'multipart/form-data',
     AUTHORIZATION = 'Authorization',
+    RESPONSE = 'response',
     BEARER = 'Bearer',
     ARTIST = 'Artist',
     ALBUM = 'Album',
+    BASE64 = 'base64',
+    PAYLOAD = 'payload',
+    IMAGE = 'image'
   }
 
   export enum Assert {
-    ARTIST_IMAGE = '/assets/artist_image.png'
+    ARTIST_IMAGE = '/assets/artist_image.png',
+    ALBUM_IMAGE = '/assets/album_image.png'
   }
 
   export enum Error {
@@ -20,7 +26,10 @@ export namespace Constants {
   export enum Symbol {
     DOLLAR_SIGN = '$',
     FORWARD_SLASH = '/',
-    WHITESPACE = ' '
+    WHITESPACE = ' ',
+    COMMA = ',',
+    COLON = ':',
+    SEMI_COLON = ';'
   }
 
   export enum Route {

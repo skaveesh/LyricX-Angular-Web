@@ -1,11 +1,4 @@
 .album-form-inner-component-width{
-  width: 350px;
+  width: var(--var-album-artist-form-width);
 }
 
-.album-chip-list {
-  width: 100%;
-}
-
-.artist-chip-list {
-  width: 100%;
-}

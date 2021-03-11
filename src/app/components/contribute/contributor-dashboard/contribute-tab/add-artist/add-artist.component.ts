@@ -1,16 +1,20 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Constants} from '../../../../../constants/constants';
 import {Router} from '@angular/router';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent, MatDialog} from '@angular/material';
 import {Observable} from 'rxjs';
 import {map, startWith, take} from 'rxjs/operators';
 import {GenreAdapterService} from '../../../../../services/rest/genre-adapter.service';
-import {DefaultDialogComponent} from '../../../../popups-and-modals/default-dialog/default-dialog.component';
+import {ImageUploadDialogComponent} from '../../../../popups-and-modals/image-upload-dialog/image-upload-dialog.component';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 import {CropperPosition} from 'ngx-image-cropper';
 import {DialogData} from '../../../../../dto/dialog-data';
+import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {UtilService} from '../../../../../services/util.service';
+import {ArtistAdapterService} from '../../../../../services/rest/artist-adapter.service';
+import {ArtistCreateRequest} from '../../../../../dto/artist';
 
 @Component({
   selector: 'app-add-artist',
@@ -38,13 +42,15 @@ export class AddArtistComponent implements OnInit {
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteGenre', {static: false}) matAutocomplete: MatAutocomplete;
 
-  constructor(private router: Router, private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, public dialog: MatDialog) {
+  constructor(private router: Router, private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService,
+              private artistAdapter: ArtistAdapterService, public dialog: MatDialog, private defaultSnackBar: DefaultSnackBarComponent) {
+
     this.genreAdapter.getAllGenres();
   }
 
   ngOnInit() {
     this.artistAddingFormGroup = this._formBuilder.group({
-      artistNameCtrl: '',
+      artistNameCtrl: ['', Validators.required],
       genreCtrl: ''
     });
 
@@ -53,7 +59,9 @@ export class AddArtistComponent implements OnInit {
     ).subscribe(value => {
       this.displayedGenre.push(...value);
       this.pipeOnValueChanges();
-    }, e => console.log('error'));
+    }, e => {
+      throw new Error('Error while fetching genres');
+    });
   }
 
   add(event: MatChipInputEvent): void {
@@ -140,7 +148,7 @@ export class AddArtistComponent implements OnInit {
       {injectedTitle: Constants.AppConstant.ARTIST, originalImageBase64: this.artistOriginalImageBase64, cropperPositions: this.artistCroppedImagePositions} :
         {injectedTitle: Constants.AppConstant.ARTIST};
 
-    const dialogRef = this.dialog.open(DefaultDialogComponent, {
+    const dialogRef = this.dialog.open(ImageUploadDialogComponent, {
       disableClose: true,
       maxWidth: '90vw',
       data: dataObj
@@ -161,5 +169,39 @@ export class AddArtistComponent implements OnInit {
         }
       }
     });
+  }
+
+  public submitArtist(): void {
+    const artistName = this.artistAddingFormGroup.get('artistNameCtrl');
+
+    if (artistName.valid && this.genre.length > 0
+      && isNotNullOrUndefined(this.artistCroppedImageBase64) && this.artistCroppedImageBase64.length > 0) {
+      const image = UtilService.base64URItoBlob(this.artistCroppedImageBase64);
+
+      const payload: ArtistCreateRequest = {
+        name: artistName.value,
+        genreIdList: UtilService.extractIdsFromChipListArray(this.genre)
+      };
+
+      this.artistAdapter.createArtist(UtilService.dataToBlob(payload), image);
+
+      this.destroyInputs();
+    } else {
+      if (!artistName.valid) {
+        this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
+      } else if (this.genre.length === 0) {
+        this.defaultSnackBar.openSnackBar('Genres cannot be empty', true);
+      } else if (!isNotNullOrUndefined(this.artistCroppedImageBase64)) {
+        this.defaultSnackBar.openSnackBar('Please upload a Artist image', true);
+      }
+    }
+  }
+
+  private destroyInputs(): void {
+    this.artistAddingFormGroup.reset();
+    this.genre.splice(0);
+    this.artistCroppedImageBase64 = null;
+    this.artistOriginalImageBase64 = null;
+    this.artistCroppedImagePositions = null;
   }
 }
