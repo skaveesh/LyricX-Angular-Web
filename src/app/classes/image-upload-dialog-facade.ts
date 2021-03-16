@@ -1,7 +1,6 @@
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
-import {Constants} from '../constants/constants';
 import {ImageUploadDialogComponent} from '../components/popups-and-modals/image-upload-dialog/image-upload-dialog.component';
-import {DialogData} from '../dto/dialog-data';
+import {ImageSelectingDialogData} from '../dto/image-selecting-dialog-data';
 import {MatDialog} from '@angular/material';
 import {CropperPosition} from 'ngx-image-cropper';
 import {ImageUploadData} from '../dto/image-upload-data';
@@ -19,13 +18,15 @@ export class ImageUploadDialogFacade {
     this.dialog = dialog;
   }
 
-  public openDialog(injectedTitle: string, croppedImageBase64: string | ArrayBuffer, originalImageBase64: string | ArrayBuffer, croppedImagePositions: CropperPosition): Observable<ImageUploadData> {
+  public openImageSelectingDialog(injectedTitle: string, croppedImageBase64: string | ArrayBuffer,
+                                  originalImageBase64: string | ArrayBuffer,
+                                  croppedImagePositions: CropperPosition): Observable<ImageUploadData> {
 
     this.croppedImageBase64Result = croppedImageBase64;
     this.originalImageBase64Result = originalImageBase64;
     this.croppedImagePositionsResult = croppedImagePositions;
 
-    const dataObj: DialogData = isNotNullOrUndefined(croppedImageBase64) ?
+    const dataObj: ImageSelectingDialogData = isNotNullOrUndefined(croppedImageBase64) ?
       {injectedTitle: injectedTitle, originalImageBase64: originalImageBase64, croppedImagePositions: croppedImagePositions, croppedImageBase64: null} :
       {injectedTitle: injectedTitle, originalImageBase64: null, croppedImagePositions: null, croppedImageBase64: null};
 
@@ -37,7 +38,7 @@ export class ImageUploadDialogFacade {
 
     const imageUploadDataSubject = new Subject<ImageUploadData>();
 
-    dialogRef.afterClosed().subscribe((result: DialogData) => {
+    dialogRef.afterClosed().subscribe((result: ImageSelectingDialogData) => {
       if (isNotNullOrUndefined(result)) {
         if (isNotNullOrUndefined(result.originalImageBase64)) {
           this.originalImageBase64Result = result.originalImageBase64;
@@ -63,5 +64,3 @@ export class ImageUploadDialogFacade {
     return imageUploadDataSubject;
   }
 }
-
-

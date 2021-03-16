@@ -70,7 +70,8 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
   }
 
   getArtistImage(): string | ArrayBuffer {
-    if (isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) && this.artistImageUploadData.croppedImageBase64.toString().length > 0) {
+    if (isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) &&
+      this.artistImageUploadData.croppedImageBase64.toString().length > 0) {
       return this.artistImageUploadData.croppedImageBase64;
     }
 
@@ -78,7 +79,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
   }
 
   openArtistImageUploadDialog() {
-    this.artistImageUploadDialogFacade.openDialog(AppConstant.ARTIST, this.artistImageUploadData.croppedImageBase64,
+    this.artistImageUploadDialogFacade.openImageSelectingDialog(AppConstant.ARTIST, this.artistImageUploadData.croppedImageBase64,
       this.artistImageUploadData.originalImageBase64, this.artistImageUploadData.croppedImagePositions)
       .subscribe(result => this.artistImageUploadData = result);
   }
@@ -86,8 +87,9 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
   public submitArtist(): void {
     const artistName = this.artistAddingFormGroup.get('artistNameCtrl');
 
-    if (artistName.valid && this.genreController.genre.length > 0
-      && isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) && this.artistImageUploadData.croppedImageBase64.toString().length > 0) {
+    if (artistName.valid && this.genreController.genre.length > 0 && isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) &&
+      this.artistImageUploadData.croppedImageBase64.toString().length > 0) {
+
       const image = UtilService.base64URItoBlob(this.artistImageUploadData.croppedImageBase64.toString());
 
       const payload: ArtistCreateRequest = {

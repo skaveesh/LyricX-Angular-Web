@@ -108,7 +108,7 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
   }
 
   openAlbumImageUploadDialog() {
-    this.albumImageUploadDialogFacade.openDialog(AppConstant.ALBUM, this.albumImageUploadData.croppedImageBase64,
+    this.albumImageUploadDialogFacade.openImageSelectingDialog(AppConstant.ALBUM, this.albumImageUploadData.croppedImageBase64,
       this.albumImageUploadData.originalImageBase64, this.albumImageUploadData.croppedImagePositions)
       .subscribe(result => {this.albumImageUploadData = result;
       });
@@ -119,8 +119,9 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     const artistName = this.albumAddingFormGroup.get('artistCtrl');
     const year = this.albumAddingFormGroup.get('albumYearCtrl');
 
-    if (albumName.valid && artistName.valid && year.valid
-      && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) && this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
+    if (albumName.valid && artistName.valid && year.valid && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) &&
+      this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
+
       const image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
 
       const payload: AlbumCreateRequest = {

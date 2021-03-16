@@ -57,5 +57,3 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
   }
 }
-
-

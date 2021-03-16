@@ -4,4 +4,4 @@ interface InjectedTitle {
   injectedTitle: string;
 }
 
-export type DialogData = InjectedTitle & ImageUploadData;
+export type ImageSelectingDialogData = InjectedTitle & ImageUploadData;

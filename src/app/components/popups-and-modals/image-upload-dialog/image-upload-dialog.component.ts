@@ -2,7 +2,7 @@ import {Component, Inject, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA,  MatDialogRef} from '@angular/material';
 import {ImageCroppedEvent, ImageCropperComponent} from 'ngx-image-cropper';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
-import {DialogData} from '../../../dto/dialog-data';
+import {ImageSelectingDialogData} from '../../../dto/image-selecting-dialog-data';
 import {DefaultSnackBarComponent} from '../default-snack-bar/default-snack-bar.component';
 
 @Component({
@@ -16,7 +16,7 @@ export class ImageUploadDialogComponent {
 
   imageChangedEvent: any = '';
 
-  constructor(public dialogRef: MatDialogRef<ImageUploadDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData, private defaultSnackBar: DefaultSnackBarComponent) {}
+  constructor(public dialogRef: MatDialogRef<ImageUploadDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: ImageSelectingDialogData, private defaultSnackBar: DefaultSnackBarComponent) {}
 
   isCropperReady = false;
 
@@ -64,5 +64,4 @@ export class ImageUploadDialogComponent {
   loadImageFailed() {
     this.defaultSnackBar.openSnackBar('Image loading failed. Please try again. (Only png, gif and jpg are allowed.)', true);
   }
-
 }
