@@ -98,7 +98,7 @@ export class MultiDatepickerComponent implements ControlValueAccessor, AfterView
       this._yearPickerCtrl.reset();
       this._monthPickerCtrl.reset();
       this._regularPickerCtrl.reset();
-    } 
+    }
 
     if (date) {
       this._writeValue(date);

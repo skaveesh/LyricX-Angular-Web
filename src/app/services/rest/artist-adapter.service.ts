@@ -17,7 +17,9 @@ export class ArtistAdapterService extends HttpRoot {
     super();
   }
 
-  public createArtist(payload: Blob, image: Blob): void {
+  public createArtist(payload: Blob, image: Blob): boolean {
+
+    let isSuccess = false;
 
     this.loadingStatus.startLoading();
 
@@ -32,6 +34,7 @@ export class ArtistAdapterService extends HttpRoot {
         map(response => response.body),
         first())
       .subscribe(response => {
+        isSuccess = true;
         this.snackBar.openSnackBar('Artist Creation Successful', false);
       }, error => {
         console.error(error);
@@ -39,5 +42,7 @@ export class ArtistAdapterService extends HttpRoot {
       }).add(() => {
         this.loadingStatus.stopLoading();
     });
+
+    return isSuccess;
   }
 }

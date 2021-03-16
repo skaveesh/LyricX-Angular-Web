@@ -1,0 +1,12 @@
+.song-form-inner-component-width{
+  width: var(--var-song-form-width);
+}
+
+.upload-custom-album-art-button-default{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.song-add-chip-list {
+  width: var(--var-song-form-width);
+}

@@ -17,7 +17,7 @@
 
       <img alt="artist image" [src]="getArtistImage()" class="artist-image"/>
 
-      <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openDialog()">
+      <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openArtistImageUploadDialog()">
         Upload Artist Image
       </button>
 
@@ -36,10 +36,10 @@
         <mat-chip-list #chipGenreList aria-label="Genre selection">
 
           <mat-chip
-            *ngFor="let singleGenre of genre"
+            *ngFor="let singleGenre of genreController.genre"
             [selectable]="selectable"
             [removable]="removable"
-            (removed)="remove(singleGenre)">
+            (removed)="genreController.remove(singleGenre)">
             {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
             <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
           </mat-chip>
@@ -53,16 +53,16 @@
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                  [matChipInputAddOnBlur]="addOnBlur"
                  [multiple]="false"
-                 (matChipInputTokenEnd)="add($event)"
-                 (keyup)="onKey($event)">
+                 (matChipInputTokenEnd)="genreController.add($event)"
+                 (keyup)="genreController.onKey($event)">
 
           <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
 
         </mat-chip-list>
 
-        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="selected($event)">
+        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="genreController.selected($event)">
 
-          <mat-option *ngFor="let singleGenre of filteredGenre | async" [value]="singleGenre">
+          <mat-option *ngFor="let singleGenre of genreController.filteredGenre | async" [value]="singleGenre">
             {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
           </mat-option>
 

@@ -13,6 +13,8 @@
   --var-color-white: #fff;
   --var-album-artist-form-width: 340px;
   --var-album-artist-button-width: 240px;
+  --var-song-form-width: 340px;
+  --var-song-button-width: 240px;
 }
 
 * {

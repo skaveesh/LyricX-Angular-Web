@@ -17,7 +17,7 @@
 
       <img alt="album image" [src]="getAlbumImage()" class="album-image"/>
 
-      <button mat-button mat-raised-button color="warn" class="button-default button-album-image" (click)="openDialog()">
+      <button mat-button mat-raised-button color="warn" class="button-default button-album-image" (click)="openAlbumImageUploadDialog()">
         Upload Album Image
       </button>
 
@@ -76,10 +76,6 @@
 
       <button mat-mini-fab color="warn" aria-label="Submit Album" (click)="submitAlbum()">
         <mat-icon>add_task</mat-icon>
-      </button>
-
-      <button mat-mini-fab color="warn" aria-label="Submit Album" (click)="destroyInputs()">
-        <mat-icon>add_task</mat-icon> destr
       </button>
 
     </div>

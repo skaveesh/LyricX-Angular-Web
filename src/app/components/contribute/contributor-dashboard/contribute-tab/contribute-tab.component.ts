@@ -13,20 +13,20 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
 
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
+  albumArtistAddingFormGroup: FormGroup;
+  songAddingFormGroup: FormGroup;
 
   constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router) {
   }
 
   ngOnInit(): void {
-    this.firstFormGroup = this._formBuilder.group({
+    this.albumArtistAddingFormGroup = this._formBuilder.group({
       albumCtrl: '',
       artistCtrl: ''
     });
 
-    this.secondFormGroup = this._formBuilder.group({
-      thirdCtrl: ''
+    this.songAddingFormGroup = this._formBuilder.group({
+      songNameCtrl: ''
     });
   }
 
@@ -34,13 +34,13 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
   }
 
-  isInputsInvalid(): boolean {
+  isAlbumArtistInputsInvalid(): boolean {
     return this.albumAndAuthorAddingDashboardComponent === undefined ||
       this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum === undefined ||
       this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum.chipSelectedItems.length !== 1;
   }
 
-  mandatoryInputNames(): string {
+  getMandatoryInputNames(): string {
     if (this.albumAndAuthorAddingDashboardComponent === undefined ||
       this.albumAndAuthorAddingDashboardComponent.albumInput === undefined) {
       return null;

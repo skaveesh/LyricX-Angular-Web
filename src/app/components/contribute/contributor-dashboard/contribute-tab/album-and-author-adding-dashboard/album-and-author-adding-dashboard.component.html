@@ -1,4 +1,4 @@
-<div [formGroup]="firstFormGroup">
+<div [formGroup]="albumAndAuthorAddingDashboardFormGroup">
 
   <div fxLayout="row">
 
@@ -8,7 +8,7 @@
 
       <mat-divider fxFlexAlign="left" class="album-form-inner-component-width"></mat-divider>
 
-      <mat-form-field class="chip-list">
+      <mat-form-field class="song-name-input">
 
         <mat-chip-list #chipAlbumList aria-label="Album selection">
 
@@ -46,7 +46,7 @@
       </mat-form-field>
 
       <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top">
-                  *Create an album named 'Singles' for single song releases per artist if doesn't exist.</span>
+                  * Create an album named 'Singles' for single song releases per artist if doesn't exist.</span>
 
       <div style="height: 50px">
         <!--vertical space between two components-->
@@ -56,7 +56,7 @@
 
       <mat-divider fxFlexAlign="left" class="artist-form-inner-component-width"></mat-divider>
 
-      <mat-form-field class="chip-list">
+      <mat-form-field class="song-name-input">
 
         <mat-chip-list #chipArtistList aria-label="Artist selection">
 

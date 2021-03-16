@@ -1,23 +1,23 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Constants} from '../../../../../constants/constants';
-import {AbstractControl, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete, MatDialog} from '@angular/material';
 import {SuggestionService} from '../../../../../services/suggestion.service';
 import {SuggestedItem} from '../../../../../dto/item-suggest';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
-import {ImageUploadDialogComponent} from '../../../../popups-and-modals/image-upload-dialog/image-upload-dialog.component';
-import {DialogData} from '../../../../../dto/dialog-data';
 import {ArtistSuggest} from '../../../../../dto/artist';
-import {CropperPosition} from 'ngx-image-cropper';
 import moment from 'moment';
 import {UtilService} from '../../../../../services/util.service';
 import {AlbumCreateRequest} from '../../../../../dto/album';
 import {AlbumAdapterService} from '../../../../../services/rest/album-adapter.service';
 import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {YearPickerComponent} from '../../../../popups-and-modals/multidatepicker/year-picker-component/year-picker.component';
+import {ImageUploadData} from '../../../../../dto/image-upload-data';
+import {ImageUploadDialogFacade} from '../../../../../classes/image-upload-dialog-facade';
+import AppConstant = Constants.AppConstant;
 
 @Component({
   selector: 'app-add-album',
@@ -25,9 +25,14 @@ import {YearPickerComponent} from '../../../../popups-and-modals/multidatepicker
   styleUrls: ['./add-album.component.css']
 })
 export class AddAlbumComponent implements OnInit, AfterViewInit {
-  private albumCroppedImageBase64: string;
-  private albumOriginalImageBase64: string;
-  private albumCroppedImagePositions: CropperPosition;
+
+  private albumImageUploadData: ImageUploadData = {
+    croppedImageBase64: null,
+    croppedImagePositions: null,
+    originalImageBase64: null
+  };
+
+  private albumImageUploadDialogFacade: ImageUploadDialogFacade;
 
   currentYear: number;
   // albumYearCtrl: Date;
@@ -52,6 +57,8 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private _formBuilder: FormBuilder, private albumAdapter: AlbumAdapterService,
               private suggestionService: SuggestionService, public dialog: MatDialog, private defaultSnackBar: DefaultSnackBarComponent) {
+
+    this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
 
     this.suggestionUserInterfaceArtist = new SuggestionUserInterface(this.suggestionService, this.artistCtrl, false,
       res => this.suggestionService.getArtistSuggestion(res));
@@ -92,41 +99,19 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE);
   }
 
-  getAlbumImage(): string {
-    if (isNotNullOrUndefined(this.albumCroppedImageBase64) && this.albumCroppedImageBase64.length > 0) {
-      return this.albumCroppedImageBase64;
+  getAlbumImage(): string | ArrayBuffer {
+    if (isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) && this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
+      return this.albumImageUploadData.croppedImageBase64;
     }
 
     return Constants.Assert.ALBUM_IMAGE;
   }
 
-  openDialog(): void {
-
-    const dataObj = isNotNullOrUndefined(this.albumCroppedImageBase64) ?
-      {injectedTitle: Constants.AppConstant.ALBUM, originalImageBase64: this.albumOriginalImageBase64, cropperPositions: this.albumCroppedImagePositions} :
-      {injectedTitle: Constants.AppConstant.ALBUM};
-
-    const dialogRef = this.dialog.open(ImageUploadDialogComponent, {
-      disableClose: true,
-      maxWidth: '90vw',
-      data: dataObj
-    });
-
-    dialogRef.afterClosed().subscribe((result: DialogData) => {
-      if (isNotNullOrUndefined(result)) {
-        if (isNotNullOrUndefined(result.originalImageBase64)) {
-          this.albumOriginalImageBase64 = result.originalImageBase64;
-        }
-
-        if (isNotNullOrUndefined(result.croppedImageBase64)) {
-          this.albumCroppedImageBase64 = result.croppedImageBase64;
-        }
-
-        if (isNotNullOrUndefined(result.cropperPositions)) {
-          this.albumCroppedImagePositions = result.cropperPositions;
-        }
-      }
-    });
+  openAlbumImageUploadDialog() {
+    this.albumImageUploadDialogFacade.openDialog(AppConstant.ALBUM, this.albumImageUploadData.croppedImageBase64,
+      this.albumImageUploadData.originalImageBase64, this.albumImageUploadData.croppedImagePositions)
+      .subscribe(result => {this.albumImageUploadData = result;
+      });
   }
 
   public submitAlbum(): void {
@@ -135,8 +120,8 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     const year = this.albumAddingFormGroup.get('albumYearCtrl');
 
     if (albumName.valid && artistName.valid && year.valid
-      && isNotNullOrUndefined(this.albumCroppedImageBase64) && this.albumCroppedImageBase64.length > 0) {
-      const image = UtilService.base64URItoBlob(this.albumCroppedImageBase64);
+      && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) && this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
+      const image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
 
       const payload: AlbumCreateRequest = {
         name: albumName.value,
@@ -144,9 +129,9 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
         year: new Date(year.value).getFullYear()
       };
 
-      this.albumAdapter.createAlbum(UtilService.dataToBlob(payload), image);
-
-      this.destroyInputs(year);
+      if (this.albumAdapter.createAlbum(UtilService.dataToBlob(payload), image)) {
+        this.destroyInputs();
+      }
 
     } else {
       if (!albumName.valid) {
@@ -155,18 +140,18 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
         this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
       } else if (!year.valid) {
         this.defaultSnackBar.openSnackBar('Year is invalid', true);
-      } else if (!isNotNullOrUndefined(this.albumCroppedImageBase64)) {
+      } else if (!isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64)) {
         this.defaultSnackBar.openSnackBar('Please upload a Album image', true);
       }
     }
   }
 
-  public destroyInputs(y: AbstractControl): void {
+  public destroyInputs(): void {
     this.suggestionUserInterfaceArtist.chipSelectedItems.splice(0);
     this.yearPickerComponent.writeValue(null);
     this.albumAddingFormGroup.reset();
-    this.albumCroppedImageBase64 = null;
-    this.albumOriginalImageBase64 = null;
-    this.albumCroppedImagePositions = null;
+    this.albumImageUploadData.croppedImageBase64 = null;
+    this.albumImageUploadData.originalImageBase64 = null;
+    this.albumImageUploadData.croppedImagePositions = null;
   }
 }

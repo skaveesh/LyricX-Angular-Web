@@ -17,7 +17,9 @@ export class AlbumAdapterService extends HttpRoot {
     super();
   }
 
-  public createAlbum(payload: Blob, image: Blob): void {
+  public createAlbum(payload: Blob, image: Blob): boolean {
+
+    let isSuccess = false;
 
     this.loadingStatus.startLoading();
 
@@ -32,6 +34,7 @@ export class AlbumAdapterService extends HttpRoot {
         map(response => response.body),
         first())
       .subscribe(response => {
+        isSuccess = true;
         this.snackBar.openSnackBar('Album Creation Successful', false);
       }, error => {
         console.error(error);
@@ -39,5 +42,7 @@ export class AlbumAdapterService extends HttpRoot {
       }).add(() => {
       this.loadingStatus.stopLoading();
     });
+
+    return isSuccess;
   }
 }

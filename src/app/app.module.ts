@@ -7,7 +7,9 @@ import {
   MatAutocompleteModule,
   MatButtonModule,
   MatCheckboxModule,
-  MatChipsModule, MatDialogModule,
+  MatChipsModule,
+  MatDatepickerModule,
+  MatDialogModule,
   MatDividerModule,
   MatFormFieldModule,
   MatIconModule,
@@ -22,8 +24,7 @@ import {
   MatStepperModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule,
-  MatDatepickerModule
+  MatTooltipModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -40,6 +41,8 @@ import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFireAuthGuard, redirectLoggedInTo, redirectUnauthorizedTo} from '@angular/fire/auth-guard';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {Constants} from './constants/constants';
+import {ImageCropperModule} from 'ngx-image-cropper';
 import {LoginComponent} from './components/contribute/login/login.component';
 import {ContributorDashboardComponent} from './components/contribute/contributor-dashboard/contributor-dashboard.component';
 import {MyProfileTabComponent} from './components/contribute/contributor-dashboard/my-profile-tab/my-profile-tab.component';
@@ -48,10 +51,9 @@ import {ContributeTabComponent} from './components/contribute/contributor-dashbo
 import {AlbumAndAuthorAddingDashboardComponent} from './components/contribute/contributor-dashboard/contribute-tab/album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 import {AddArtistComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-artist/add-artist.component';
 import {AddAlbumComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
-import {Constants} from './constants/constants';
-import { ImageUploadDialogComponent } from './components/popups-and-modals/image-upload-dialog/image-upload-dialog.component';
-import { ImageCropperModule } from 'ngx-image-cropper';
+import {ImageUploadDialogComponent} from './components/popups-and-modals/image-upload-dialog/image-upload-dialog.component';
 import {MultiDatepickerModule} from './components/popups-and-modals/multidatepicker/multidatepicker.module';
+import {SongAddingDashboardComponent} from './components/contribute/contributor-dashboard/contribute-tab/song-adding-dashboard/song-adding-dashboard.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -73,7 +75,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     AlbumAndAuthorAddingDashboardComponent,
     AddArtistComponent,
     AddAlbumComponent,
-    ImageUploadDialogComponent
+    ImageUploadDialogComponent,
+    SongAddingDashboardComponent
   ],
   imports: [
     BrowserModule,
