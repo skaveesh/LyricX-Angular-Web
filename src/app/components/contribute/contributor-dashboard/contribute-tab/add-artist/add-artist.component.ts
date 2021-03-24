@@ -10,10 +10,10 @@ import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-sn
 import {UtilService} from '../../../../../services/util.service';
 import {ArtistAdapterService} from '../../../../../services/rest/artist-adapter.service';
 import {ArtistCreateRequest} from '../../../../../dto/artist';
-import {GenreController} from '../../../../../classes/genre-controller';
 import {ImageUploadDialogFacade} from '../../../../../classes/image-upload-dialog-facade';
 import {ImageUploadData} from '../../../../../dto/image-upload-data';
 import AppConstant = Constants.AppConstant;
+import {StaticSelectionController} from '../../../../../classes/static-selection-controller';
 
 @Component({
   selector: 'app-add-artist',
@@ -38,7 +38,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
   addOnBlur = true;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  genreController: GenreController;
+  genreController: StaticSelectionController;
   genreCtrl = new FormControl();
 
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
@@ -50,7 +50,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
 
     this.artistImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
 
-    this.genreController = new GenreController(this.genreAdapter, this.genreCtrl);
+    this.genreController = new StaticSelectionController(this.genreAdapter, this.genreCtrl, true);
   }
 
   ngOnInit() {
@@ -62,7 +62,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.genreController.setMatAutoComplete(this.matAutocomplete);
-    this.genreController.setGenreInput(this.genreInput);
+    this.genreController.setStaticSelectionInput(this.genreInput);
   }
 
   backToContributor() {
@@ -87,14 +87,14 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
   public submitArtist(): void {
     const artistName = this.artistAddingFormGroup.get('artistNameCtrl');
 
-    if (artistName.valid && this.genreController.genre.length > 0 && isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) &&
+    if (artistName.valid && this.genreController.staticSelection.length > 0 && isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64) &&
       this.artistImageUploadData.croppedImageBase64.toString().length > 0) {
 
       const image = UtilService.base64URItoBlob(this.artistImageUploadData.croppedImageBase64.toString());
 
       const payload: ArtistCreateRequest = {
         name: artistName.value,
-        genreIdList: UtilService.extractIdsFromChipListArray(this.genreController.genre)
+        genreIdList: UtilService.extractIdsFromChipListArray(this.genreController.staticSelection)
       };
 
       if (this.artistAdapter.createArtist(UtilService.dataToBlob(payload), image)) {
@@ -104,7 +104,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
     } else {
       if (!artistName.valid) {
         this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
-      } else if (this.genreController.genre.length === 0) {
+      } else if (this.genreController.staticSelection.length === 0) {
         this.defaultSnackBar.openSnackBar('Genres cannot be empty', true);
       } else if (!isNotNullOrUndefined(this.artistImageUploadData.croppedImageBase64)) {
         this.defaultSnackBar.openSnackBar('Please upload a Artist image', true);
@@ -114,7 +114,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
 
   private destroyInputs(): void {
     this.artistAddingFormGroup.reset();
-    this.genreController.genre.splice(0);
+    this.genreController.staticSelection.splice(0);
     this.artistImageUploadData.croppedImageBase64 = null;
     this.artistImageUploadData.originalImageBase64 = null;
     this.artistImageUploadData.croppedImagePositions = null;

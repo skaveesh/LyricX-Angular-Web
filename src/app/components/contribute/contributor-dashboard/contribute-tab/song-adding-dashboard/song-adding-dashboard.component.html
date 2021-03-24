@@ -6,11 +6,11 @@
 
       <h6 class="color-light-grey" fxFlexAlign="start">Name</h6>
 
-      <mat-divider fxFlexAlign="left" class="album-form-inner-component-width"></mat-divider>
+      <mat-divider fxFlexAlign="left" class="song-form-inner-component-width"></mat-divider>
 
       <mat-form-field class="song-name-input">
 
-        <input matInput name="ArtistName"
+        <input matInput name="SongName"
                placeholder="Enter Song Name"
                formControlName="songNameCtrl">
 
@@ -18,11 +18,35 @@
 
       </mat-form-field>
 
+      <div style="height: 50px" *ngIf="albumImageUploadData.croppedImageBase64">
+        <!--vertical space between two components-->
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="space-around center" style="align-content: center" *ngIf="albumImageUploadData.croppedImageBase64">
+
+        <div  style="width: 146px; height: 146px; position: relative;">
+
+          <div style="position: absolute; top: 0; right: 0">
+            <img alt="album image" [src]="getAlbumImage()" class="album-image"/>
+          </div>
+
+          <div style="position: absolute; top: -10px; right: -10px;">
+            <button color="warn" mat-mini-fab aria-label="Remove" (click)="destroyAlbumImageUploadData()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
       <div style="height: 50px">
         <!--vertical space between two components-->
       </div>
 
-      <button mat-button mat-raised-button color="warn" class="upload-custom-album-art-button-default button-default">Upload Custom Album Art for this Song</button>
+      <button mat-button mat-raised-button color="warn" class="upload-custom-album-art-button-default button-default" (click)="openAlbumImageUploadDialog()">
+        Upload Custom Album Art for this Song
+      </button>
 
       <span class="color-warn song-form-inner-component-width" style="font-size: 0.7em; float: top">
         * Optional
@@ -38,44 +62,87 @@
 
       <mat-divider fxFlexAlign="left" class="artist-form-inner-component-width"></mat-divider>
 
-<!--      <mat-form-field class="song-add-chip-list">-->
+      <mat-form-field class="song-add-chip-list">
 
-<!--        <mat-chip-list #chipGenreList aria-label="Genre selection">-->
+        <mat-chip-list #chipGenreList aria-label="Genre selection">
 
-<!--          <mat-chip-->
-<!--            *ngFor="let singleGenre of genre"-->
-<!--            [selectable]="selectable"-->
-<!--            [removable]="removable"-->
-<!--            (removed)="remove(singleGenre)">-->
-<!--            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}-->
-<!--            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>-->
-<!--          </mat-chip>-->
+          <mat-chip
+            *ngFor="let singleGenre of genreController.staticSelection"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="genreController.remove(singleGenre)">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
 
-<!--          <input #genreInput matInput-->
-<!--                 name="Genre"-->
-<!--                 placeholder="Search an Genre"-->
-<!--                 formControlName="genreCtrl"-->
-<!--                 [matAutocomplete]="autoCompleteGenre"-->
-<!--                 [matChipInputFor]="chipGenreList"-->
-<!--                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"-->
-<!--                 [matChipInputAddOnBlur]="addOnBlur"-->
-<!--                 [multiple]="false"-->
-<!--                 (matChipInputTokenEnd)="add($event)"-->
-<!--                 (keyup)="onKey($event)">-->
+          <input #genreInput matInput
+                 name="Genre"
+                 placeholder="Search an Genre"
+                 formControlName="genreCtrl"
+                 [matAutocomplete]="autoCompleteGenre"
+                 [matChipInputFor]="chipGenreList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="true"
+                 (matChipInputTokenEnd)="genreController.add($event)"
+                 (keyup)="genreController.onKey($event)">
 
-<!--          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>-->
+          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
 
-<!--        </mat-chip-list>-->
+        </mat-chip-list>
 
-<!--        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="selected($event)">-->
+        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="genreController.selected($event)">
 
-<!--          <mat-option *ngFor="let singleGenre of filteredGenre | async" [value]="singleGenre">-->
-<!--            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}-->
-<!--          </mat-option>-->
+          <mat-option *ngFor="let singleGenre of genreController.filteredStaticSelection | async" [value]="singleGenre">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+          </mat-option>
 
-<!--        </mat-autocomplete>-->
+        </mat-autocomplete>
 
-<!--      </mat-form-field>-->
+      </mat-form-field>
+
+        <div style="height: 50px">
+          <!--vertical space between two components-->
+        </div>
+
+        <mat-form-field class="song-add-chip-list">
+
+          <mat-chip-list #chipLanguageList aria-label="Language selection">
+
+            <mat-chip
+              *ngFor="let singleLanguage of languageController.staticSelection"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="languageController.remove(singleLanguage)">
+              {{singleLanguage.substring(0, singleLanguage.lastIndexOf("$"))}}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+
+            <input #languageInput matInput
+                   name="Language"
+                   placeholder="Search an Language"
+                   formControlName="languageCtrl"
+                   [matAutocomplete]="autoCompleteLanguage"
+                   [matChipInputFor]="chipLanguageList"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                   [matChipInputAddOnBlur]="addOnBlur"
+                   [multiple]="false"
+                   (matChipInputTokenEnd)="languageController.add($event)"
+                   (keyup)="languageController.onKey($event)">
+
+            <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+          </mat-chip-list>
+
+          <mat-autocomplete #autoCompleteLanguage="matAutocomplete" (optionSelected)="languageController.selected($event)">
+
+            <mat-option *ngFor="let singleLanguage of languageController.filteredStaticSelection | async" [value]="singleLanguage">
+              {{singleLanguage.substring(0, singleLanguage.lastIndexOf("$"))}}
+            </mat-option>
+
+          </mat-autocomplete>
+
+      </mat-form-field>
 
     </div>
 

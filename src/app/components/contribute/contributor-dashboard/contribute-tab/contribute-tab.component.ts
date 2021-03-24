@@ -49,11 +49,11 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     }
   }
 
-  navigateToAlbumCreation(){
+  navigateToAlbumCreation() {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ALBUM);
   }
 
-  navigateToArtistCreation(){
+  navigateToArtistCreation() {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
   }
 }

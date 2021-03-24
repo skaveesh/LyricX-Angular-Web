@@ -36,7 +36,7 @@
         <mat-chip-list #chipGenreList aria-label="Genre selection">
 
           <mat-chip
-            *ngFor="let singleGenre of genreController.genre"
+            *ngFor="let singleGenre of genreController.staticSelection"
             [selectable]="selectable"
             [removable]="removable"
             (removed)="genreController.remove(singleGenre)">
@@ -52,7 +52,7 @@
                  [matChipInputFor]="chipGenreList"
                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                  [matChipInputAddOnBlur]="addOnBlur"
-                 [multiple]="false"
+                 [multiple]="true"
                  (matChipInputTokenEnd)="genreController.add($event)"
                  (keyup)="genreController.onKey($event)">
 
@@ -62,7 +62,7 @@
 
         <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="genreController.selected($event)">
 
-          <mat-option *ngFor="let singleGenre of genreController.filteredGenre | async" [value]="singleGenre">
+          <mat-option *ngFor="let singleGenre of genreController.filteredStaticSelection | async" [value]="singleGenre">
             {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
           </mat-option>
 

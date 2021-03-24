@@ -10,3 +10,11 @@
 .song-add-chip-list {
   width: var(--var-song-form-width);
 }
+
+.album-image {
+  width: 146px;
+  height: 146px;
+  border: 8px solid;
+  border-color: var(--var-color-warn);
+  horiz-align: center;
+}
