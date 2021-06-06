@@ -6,13 +6,14 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 import {Constants} from '../../../../../constants/constants';
 import {ImageUploadData} from '../../../../../dto/image-upload-data';
-import AppConstant = Constants.AppConstant;
 import {ImageUploadDialogFacade} from '../../../../../classes/image-upload-dialog-facade';
-import {UtilService} from '../../../../../services/util.service';
-import {AlbumCreateRequest} from '../../../../../dto/album';
 import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LanguageAdapterService} from '../../../../../services/rest/language-adapter.service';
 import {StaticSelectionController} from '../../../../../classes/static-selection-controller';
+import {UtilService} from '../../../../../services/util.service';
+import {SongAdapterService} from '../../../../../services/rest/song-adapter.service';
+import {SongSaveRequest} from '../../../../../dto/song';
+import AppConstant = Constants.AppConstant;
 
 @Component({
   selector: 'app-song-adding-dashboard',
@@ -21,7 +22,7 @@ import {StaticSelectionController} from '../../../../../classes/static-selection
 })
 export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
 
-  private albumImageUploadData: ImageUploadData = {
+  public songAlbumArtUploadData: ImageUploadData = {
     croppedImageBase64: null,
     croppedImagePositions: null,
     originalImageBase64: null
@@ -31,8 +32,6 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
 
   @Input() songAddingDashboardFormGroup: FormGroup;
 
-  songNameCtrl = new FormControl();
-
   visible = true;
   selectable = true;
   removable = true;
@@ -40,10 +39,12 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
   genreController: StaticSelectionController;
-  genreCtrl = new FormControl();
+  public genreCtrl = new FormControl();
 
   languageController: StaticSelectionController;
-  languageCtrl = new FormControl();
+  public languageCtrl = new FormControl();
+
+  guitarKeys: String[] = ['Ab', 'A', 'A#', 'Bb', 'B', 'C', 'C#', 'Db', 'D', 'D#', 'Eb', 'E', 'F', 'F#', 'Gb', 'G', 'G#'];
 
   @ViewChild('genreInput', {static: false}) genreInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteGenre', {static: false}) matAutocompleteGenre: MatAutocomplete;
@@ -51,22 +52,23 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('languageInput', {static: false}) languageInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteLanguage', {static: false}) matAutocompleteLanguage: MatAutocomplete;
 
-  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService, public dialog: MatDialog,
-              private defaultSnackBar: DefaultSnackBarComponent) {
+  @ViewChild('lyricsTextArea', {static: false}) matLyricsTextArea: ElementRef<HTMLElement>;
+  private matLyricsTextAreaInitialized = false;
+
+  public lyricsCtrl = new FormControl('', Validators.compose([Validators.minLength(10), Validators.required]));
+  lyric: string;
+  lyricWithoutChords: string;
+
+  public surrogateKey: string = null;
+
+  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService, public dialog: MatDialog) {
 
     this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
-
-    this.genreController = new StaticSelectionController(this.genreAdapter, this.genreCtrl, true);
-    this.languageController = new StaticSelectionController(this.languageAdapter, this.languageCtrl, false);
   }
 
   ngOnInit() {
-    this.songAddingDashboardFormGroup = this._formBuilder.group({
-      songNameCtrl: ['', Validators.required],
-      genreCtrl: '',
-      languageCtrl: ''
-    });
-
+    this.genreController = new StaticSelectionController(this.genreAdapter, this.genreCtrl, true);
+    this.languageController = new StaticSelectionController(this.languageAdapter, this.languageCtrl, false);
   }
 
   ngAfterViewInit(): void {
@@ -74,21 +76,58 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
     this.genreController.setStaticSelectionInput(this.genreInput);
     this.languageController.setMatAutoComplete(this.matAutocompleteLanguage);
     this.languageController.setStaticSelectionInput(this.languageInput);
+    this.initializeLyricsTextArea();
+  }
+
+  private initializeLyricsTextArea() {
+    this.lyricsCtrl.setValue(sessionStorage.getItem(Constants.Session.SONG_LYRIC));
+    const event = new KeyboardEvent('keyup', { key: 'Enter' });
+    this.matLyricsTextArea.nativeElement.dispatchEvent(event);
   }
 
   getAlbumImage(): string | ArrayBuffer {
-    if (isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) && this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
-      return this.albumImageUploadData.croppedImageBase64;
+    if (isNotNullOrUndefined(this.songAlbumArtUploadData.croppedImageBase64) && this.songAlbumArtUploadData.croppedImageBase64.toString().length > 0) {
+      return this.songAlbumArtUploadData.croppedImageBase64;
     }
 
     return Constants.Assert.ALBUM_IMAGE;
   }
 
   openAlbumImageUploadDialog() {
-    this.albumImageUploadDialogFacade.openImageSelectingDialog(AppConstant.ALBUM, this.albumImageUploadData.croppedImageBase64,
-      this.albumImageUploadData.originalImageBase64, this.albumImageUploadData.croppedImagePositions)
-      .subscribe(result => {this.albumImageUploadData = result;
+    this.albumImageUploadDialogFacade.openImageSelectingDialog(AppConstant.ALBUM, this.songAlbumArtUploadData.croppedImageBase64,
+      this.songAlbumArtUploadData.originalImageBase64, this.songAlbumArtUploadData.croppedImagePositions)
+      .subscribe(result => {this.songAlbumArtUploadData = result;
       });
+  }
+
+  autoGeneratePreview(e) {
+
+    if (e.target.value === null || this.lyricsCtrl.value === null) {
+      return;
+    }
+
+    e.target.style.height = '0px';
+    e.target.style.height = (e.target.scrollHeight + 25) + 'px';
+
+    this.lyric = this.lyricsCtrl.value;
+
+    const guitarTableMatches = this.lyric.match(/\$[a-zA-Z0-9!\\\/|\-+,.?%~=@()*^&#\n\t ]+\$/g);
+
+    if (guitarTableMatches !== null) {
+      guitarTableMatches.forEach(x => {
+        this.lyric = this.lyric.replace(x, '<span class=\"lyric-guitar-table-font-style\">' + x.substring(1, x.length - 1) + '</span>');
+      });
+    }
+
+    const chordMatches = this.lyric.match(/`[a-zA-Z0-9!\\\/|\-+,.?%~=@()*^&#\n\t ]+`/g);
+
+    if (chordMatches !== null) {
+      chordMatches.forEach(x => {
+        this.lyric = this.lyric.replace(x, '<span class=\"lyric-guitar-chord-font-style\">  ' + x.substring(1, x.length - 1) + '  </span>');
+      });
+    }
+
+    sessionStorage.setItem(Constants.Session.SONG_LYRIC, this.lyricsCtrl.value);
   }
 
   // TODO change this to submit a song
@@ -135,8 +174,19 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
   // }
 
   private destroyAlbumImageUploadData(): void {
-    this.albumImageUploadData.croppedImageBase64 = null;
-    this.albumImageUploadData.originalImageBase64 = null;
-    this.albumImageUploadData.croppedImagePositions = null;
+    this.songAlbumArtUploadData.croppedImageBase64 = null;
+    this.songAlbumArtUploadData.originalImageBase64 = null;
+    this.songAlbumArtUploadData.croppedImagePositions = null;
   }
+
+  public isSongFormValid(): boolean {
+    return this.songAddingDashboardFormGroup.valid && this.lyricsCtrl.valid && this.languageCtrl.value.length === 1
+      && this.genreCtrl.value.length > 0;
+  }
+
+  public saveSong(): void {
+
+  }
+
+  get guitarKeyAbstractCtrl() { return this.songAddingDashboardFormGroup.get( 'guitarKeyCtrl' ); }
 }

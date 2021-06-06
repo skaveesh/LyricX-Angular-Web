@@ -1,3 +1,7 @@
 .song-name-input {
   width: 100%;
 }
+
+.album-and-author-adding-form-inner-component-generic-width{
+  width: var(--var-album-artist-form-width) !important;
+}

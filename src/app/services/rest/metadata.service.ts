@@ -24,7 +24,7 @@ export class MetadataService extends HttpRoot {
         first())
       .subscribe(v => MetadataService.BASE_IMAGE_URL = v.data.baseImageBucketURL,
         e => {
-          console.log(e);
+          console.error(e);
           throw new Error('Couldn\'t fetch Metadata');
         });
   }

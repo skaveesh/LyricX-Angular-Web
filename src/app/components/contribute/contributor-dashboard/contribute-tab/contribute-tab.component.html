@@ -2,40 +2,36 @@
 
   <mat-step [completed]="!isAlbumArtistInputsInvalid()">
 
-    <form [formGroup]="albumArtistAddingFormGroup">
+    <ng-template matStepLabel>Album</ng-template>
 
-      <ng-template matStepLabel>Album</ng-template>
+    <div fxLayout="row">
 
-      <div fxLayout="row">
+      <div fxLayout="column" fxFlex="100%">
 
-        <div fxLayout="column" fxFlex="100%">
+        <app-album-and-author-adding-dashboard></app-album-and-author-adding-dashboard>
 
-          <app-album-and-author-adding-dashboard [albumAndAuthorAddingDashboardFormGroup]="albumArtistAddingFormGroup"></app-album-and-author-adding-dashboard>
+        <div fxLayout="row" fxFlex fxLayoutAlign="start" style="margin-top: 2em">
+          <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top;"
+                [hidden]="!isAlbumArtistInputsInvalid() && getMandatoryInputNames() != null">
+            *{{getMandatoryInputNames()}} field is mandatory.
+          </span>
+        </div>
 
-          <div fxLayout="row" fxFlex fxLayoutAlign="start" style="margin-top: 2em">
-            <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top;"
-                  [hidden]="!isAlbumArtistInputsInvalid() && getMandatoryInputNames() != null">
-              *{{getMandatoryInputNames()}} field is mandatory.
-            </span>
-          </div>
+        <div fxLayout="row">
 
-          <div fxLayout="row">
+          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
 
-            <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
+            <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToAlbumCreation()">
+              Create a New Album
+            </button>
 
-              <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToAlbumCreation()">
-                Create a New Album
-              </button>
+            <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToArtistCreation()">
+              Create a New Artist
+            </button>
 
-              <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToArtistCreation()">
-                Create a New Artist
-              </button>
-
-              <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" [disabled]="isAlbumArtistInputsInvalid()">
-                Next
-              </button>
-
-            </div>
+            <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" [disabled]="isAlbumArtistInputsInvalid()">
+              Next
+            </button>
 
           </div>
 
@@ -43,7 +39,7 @@
 
       </div>
 
-    </form>
+    </div>
 
   </mat-step>
 
@@ -57,15 +53,13 @@
 
         <div fxLayout="column" fxFlex="100%">
 
-          <app-song-adding-dashboard [songAddingDashboardFormGroup]="songAddingFormGroup"></app-song-adding-dashboard>
+          <app-song-adding-dashboard [songAddingDashboardFormGroup]="songAddingFormGroup" ></app-song-adding-dashboard>
 
           <div fxLayout="row">
 
             <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
 
-              <button matStepperPrevious mat-button mat-raised-button color="warn" class="button-default">Back</button>
-
-              <button matStepperNext mat-button mat-raised-button color="warn" class="button-default">Next</button>
+              <button mat-button mat-raised-button color="warn" class="button-default" (click)="saveSong()">Save</button>
 
             </div>
 

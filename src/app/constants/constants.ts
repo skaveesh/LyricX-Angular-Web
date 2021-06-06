@@ -46,7 +46,8 @@ export namespace Constants {
 
   export enum Session {
     USER_TOKEN = 'userToken',
-    AFTER_LOGIN_PATH_KEY = 'afterLoginPathKey'
+    AFTER_LOGIN_PATH_KEY = 'afterLoginPathKey',
+    SONG_LYRIC = 'songLyric'
   }
 
   export enum FormFieldConstants {

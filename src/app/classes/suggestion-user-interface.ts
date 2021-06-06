@@ -78,7 +78,10 @@ export class SuggestionUserInterface {
 
   private resetInputs() {
     this.itemInput.nativeElement.value = '';
-    this.itemCtrl.setValue(null);
+
+    // Do not reset FormControl input as we are setting it to the array of items selected
+    // this.itemCtrl.setValue(null);
+    this.setFormControlValue();
   }
 
   private filterOnValueChange(itemName: string | null): String[] {
@@ -196,5 +199,13 @@ export class SuggestionUserInterface {
 
     // filter items when item list is updated
     this.filteredItems = of(this.filterOnValueChange(this.itemCtrl.value));
+  }
+
+  /**
+   * when form input change it's values set the value for FormControl
+   */
+  private setFormControlValue(): void {
+    const arrayOfChipSelectedItems = this.chipSelectedItems.map(chipItem => chipItem.surrogateKey);
+    this.itemCtrl.setValue(arrayOfChipSelectedItems);
   }
 }

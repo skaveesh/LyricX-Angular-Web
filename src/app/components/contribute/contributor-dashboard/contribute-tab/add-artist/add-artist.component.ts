@@ -94,12 +94,16 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
 
       const payload: ArtistCreateRequest = {
         name: artistName.value,
-        genreIdList: UtilService.extractIdsFromChipListArray(this.genreController.staticSelection)
+        genreIdList: this.genreCtrl.value
       };
 
-      if (this.artistAdapter.createArtist(UtilService.dataToBlob(payload), image)) {
+      this.artistAdapter.createArtist(payload, image).subscribe(response => {
+        this.defaultSnackBar.openSnackBar('Artist Creation Successful', false);
         this.destroyInputs();
-      }
+      }, error => {
+        console.error(error);
+        this.defaultSnackBar.openSnackBar('Artist Creation Failed', true);
+      });
 
     } else {
       if (!artistName.valid) {

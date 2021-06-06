@@ -15,10 +15,10 @@ import {SuggestedItem} from '../../../../../dto/item-suggest';
 })
 export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterViewInit {
 
-  @Input() albumAndAuthorAddingDashboardFormGroup: FormGroup;
+  // @Input() albumAndAuthorAddingDashboardFormGroup: FormGroup;
 
-  albumCtrl = new FormControl();
-  artistCtrl = new FormControl();
+  public albumCtrl = new FormControl();
+  public artistCtrl = new FormControl();
 
   visible = true;
   selectable = true;

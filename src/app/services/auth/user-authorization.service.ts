@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs';
@@ -45,5 +45,13 @@ export class UserAuthorizationService {
     this.afAuth.auth.signOut();
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
     sessionStorage.clear();
+  }
+
+  refreshUserOrLogout() {
+    if (this.getUser() !== null) {
+      this.getRefreshToken(true);
+    } else {
+      this.logout();
+    }
   }
 }

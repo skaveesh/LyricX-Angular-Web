@@ -1,9 +1,10 @@
-import {map, startWith, take} from 'rxjs/operators';
+import {map, startWith, take, takeUntil, tap} from 'rxjs/operators';
 import {FormControl} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {MatAutocomplete, MatAutocompleteSelectedEvent, MatChipInputEvent} from '@angular/material';
 import {ElementRef} from '@angular/core';
 import {StaticSelectionAdapter} from '../services/rest/static-selection-adapter';
+import {Constants} from '../constants/constants';
 
 export class StaticSelectionController {
 
@@ -93,13 +94,21 @@ export class StaticSelectionController {
 
     if (index >= 0) {
       this.staticSelection.splice(index, 1);
+      this.resetInput();
     }
   }
 
   private pipeOnValueChanges() {
+    const stopSignal$ = new Subject();
     this.filteredStaticSelection = this.staticSelectionCtrl.valueChanges.pipe(
+      tap(value => {
+        if (value instanceof Array) {
+          stopSignal$.next();
+        }
+      }),
       startWith(null),
-      map((staticSelection: string | null) => staticSelection ? this._filter(staticSelection) : this.displayedStaticSelection.slice()));
+      map((staticSelection: string | null) => staticSelection ? this._filter(staticSelection) : this.displayedStaticSelection.slice()),
+      takeUntil(stopSignal$));
   }
 
   public selected(event: MatAutocompleteSelectedEvent): void {
@@ -121,7 +130,10 @@ export class StaticSelectionController {
 
   private resetInput(): void {
     this.staticSelectionInput.nativeElement.value = '';
-    this.staticSelectionCtrl.setValue(null);
+
+    // Do not reset FormControl input as we are setting it to the array of items selected
+    // this.staticSelectionCtrl.setValue(null);
+    this.setFormControlValue();
   }
 
   private _filter(value: string): string[] {
@@ -130,4 +142,11 @@ export class StaticSelectionController {
     return this.displayedStaticSelection.filter(staticSelection => staticSelection.toLowerCase().indexOf(filterValue) === 0);
   }
 
+  /**
+   * when form input change it's values set the value for FormControl
+   */
+  private setFormControlValue(): void {
+    const arrayOfChipSelectedItems = this.staticSelection.map(item => item.substring(item.lastIndexOf(Constants.Symbol.DOLLAR_SIGN) + 1));
+    this.staticSelectionCtrl.setValue(arrayOfChipSelectedItems);
+  }
 }

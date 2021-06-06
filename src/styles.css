@@ -141,3 +141,23 @@ mat-icon{
   -webkit-user-drag: none;
   -webkit-tap-highlight-color: transparent;
 }
+
+.near-max-width-element {
+  width: 60vw;
+}
+
+
+.lyric-guitar-table-font-style {
+  font-family: monospace !important;
+  font-weight: 900;
+  color: var(--var-color-warn) !important;
+}
+
+.lyric-guitar-chord-font-style {
+  color: var(--var-color-warn) !important;
+}
+
+.lyric-font-style {
+  font-family: 'Fredoka One', cursive;
+  color: black;
+}

@@ -21,7 +21,7 @@ export class LanguageAdapterService extends StaticSelectionAdapter {
         .pipe(
           map(payload => payload.body),
           map(payload => payload.data),
-          map(payload => payload.map(x => x.languageName + '$' + x.id)),
+          map(payload => payload.map(x => x.languageName + '$' + x.languageCode)),
           tap(payload => this.allSelections.next(payload)),
           first())
         .subscribe(v => '',

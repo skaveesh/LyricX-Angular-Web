@@ -33,7 +33,9 @@ export class RestTemplateBuilder {
     if (isNotNullOrUndefined(userToken)) {
       return AppConstant.BEARER + Symbol.WHITESPACE + userToken;
     } else {
-      throw new Error(Constants.Error.USER_TOKEN_NOT_FOUNT);
+      console.error(Constants.Error.USER_TOKEN_NOT_FOUNT);
+
+      userAuthorizationService.refreshUserOrLogout();
     }
   }
 

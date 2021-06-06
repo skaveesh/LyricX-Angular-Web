@@ -18,3 +18,11 @@
   border-color: var(--var-color-warn);
   horiz-align: center;
 }
+
+.song-adding-dashboard-generic-input {
+  width: 100%;
+}
+
+.song-adding-form-inner-component-generic-width {
+  width: var(--var-album-artist-form-width) !important;
+}

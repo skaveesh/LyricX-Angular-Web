@@ -1,4 +1,4 @@
-.album-form-inner-component-width{
-  width: var(--var-album-artist-form-width);
+.album-form-inner-component-width {
+  width: var(--var-album-artist-form-width) !important;
 }
 

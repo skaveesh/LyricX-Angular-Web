@@ -1,8 +1,13 @@
 import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AlbumAndAuthorAddingDashboardComponent} from './album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 import {Router} from '@angular/router';
 import {Constants} from '../../../../constants/constants';
+import {SongAddingDashboardComponent} from './song-adding-dashboard/song-adding-dashboard.component';
+import {UtilService} from '../../../../services/util.service';
+import {SongSaveRequest} from '../../../../dto/song';
+import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
+import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 
 @Component({
   selector: 'app-contribute-tab',
@@ -12,21 +17,25 @@ import {Constants} from '../../../../constants/constants';
 export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
+  @ViewChild(SongAddingDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddingDashboardComponent;
 
-  albumArtistAddingFormGroup: FormGroup;
+  // albumArtistAddingFormGroup: FormGroup;
   songAddingFormGroup: FormGroup;
 
-  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router) {
+  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router,
+              private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent) {
   }
 
   ngOnInit(): void {
-    this.albumArtistAddingFormGroup = this._formBuilder.group({
-      albumCtrl: '',
-      artistCtrl: ''
-    });
-
     this.songAddingFormGroup = this._formBuilder.group({
-      songNameCtrl: ''
+      songNameCtrl: ['', Validators.required],
+      guitarKeyCtrl: ['', Validators.required],
+      songBeatCtrl: '',
+      songKeywordsCtrl: ['', Validators.required],
+      songYouTubeLinkCtrl: ['', Validators.required],
+      songSpotifyLinkCtrl: '',
+      songDeezerLinkCtrl: '',
+      songExplicitCtrl: false
     });
   }
 
@@ -55,5 +64,45 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   navigateToArtistCreation() {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
+  }
+
+  saveSong() {
+
+    if (!this.songAddingDashboardComponent.isSongFormValid() || this.albumAndAuthorAddingDashboardComponent.albumCtrl.value.length === 0) {
+      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+      return;
+    }
+
+    let isAlbumArtAvailable = false;
+    const image = null;
+    if (this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64 != null) {
+      UtilService.base64URItoBlob(this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64.toString());
+      isAlbumArtAvailable = true;
+    }
+
+    const payload: SongSaveRequest = {
+      surrogateKey: this.songAddingDashboardComponent.surrogateKey,
+      name: this.songAddingFormGroup.controls.songNameCtrl.value,
+      albumSurrogateKey: this.albumAndAuthorAddingDashboardComponent.albumCtrl.value[0],
+      guitarKey: this.songAddingFormGroup.controls.guitarKeyCtrl.value,
+      beat: this.songAddingFormGroup.controls.songBeatCtrl.value,
+      languageCode: this.songAddingDashboardComponent.languageCtrl.value[0],
+      keywords: this.songAddingFormGroup.controls.songKeywordsCtrl.value,
+      lyrics: UtilService.base64EncodeUnicode(this.songAddingDashboardComponent.lyricsCtrl.value),
+      youTubeLink: this.songAddingFormGroup.controls.songYouTubeLinkCtrl.value,
+      spotifyLink: this.songAddingFormGroup.controls.songSpotifyLinkCtrl.value,
+      deezerLink: this.songAddingFormGroup.controls.songDeezerLinkCtrl.value,
+      isExplicit: this.songAddingFormGroup.controls.songExplicitCtrl.value,
+      artistSurrogateKeyList: this.albumAndAuthorAddingDashboardComponent.artistCtrl.value,
+      genreIdList: this.songAddingDashboardComponent.genreCtrl.value.map(Number),
+    };
+
+    this.songAdapter.saveSong(payload, image, isAlbumArtAvailable).subscribe(response => {
+      this.songAddingDashboardComponent.surrogateKey = (<SongSaveRequest>response.data).surrogateKey;
+      this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
+    }, error => {
+      console.error(error);
+      this.defaultSnackBar.openSnackBar('Song Saving Failed', true);
+    });
   }
 }

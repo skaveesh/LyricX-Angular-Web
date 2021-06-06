@@ -1,26 +1,28 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {HttpRoot} from './http-root';
+import {DefaultSnackBarComponent} from '../../components/popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {LoadingStatusService} from '../loading-status.service';
+import {SongSaveRequest} from '../../dto/song';
+import {UtilService} from '../util.service';
 import {RestTemplateBuilder} from './rest-template-builder';
 import {BasicHttpResponse} from '../../dto/base-http-response';
 import {first, map, share} from 'rxjs/operators';
-import {DefaultSnackBarComponent} from '../../components/popups-and-modals/default-snack-bar/default-snack-bar.component';
-import {LoadingStatusService} from '../loading-status.service';
 import {Constants} from '../../constants/constants';
-import {UtilService} from '../util.service';
-import {ArtistCreateRequest} from '../../dto/artist';
-import {Observable} from 'rxjs';
 import AppConstant = Constants.AppConstant;
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ArtistAdapterService extends HttpRoot {
+export class SongAdapterService extends HttpRoot {
 
   constructor(private snackBar: DefaultSnackBarComponent, private loadingStatus: LoadingStatusService) {
     super();
   }
 
-  public createArtist(payload: ArtistCreateRequest, image: Blob): Observable<BasicHttpResponse> {
+  public saveSong(payload: SongSaveRequest, image: Blob, withAlbumArt: boolean = false): Observable<BasicHttpResponse> {
+
+    const url = withAlbumArt ? this.SAVE_SONG_ALBUMART_URL : this.SAVE_SONG_DETAILS_URL;
 
     this.loadingStatus.startLoading();
 
@@ -30,7 +32,7 @@ export class ArtistAdapterService extends HttpRoot {
 
     const observable = (new RestTemplateBuilder())
       .withAuthHeader()
-      .put<FormData, BasicHttpResponse>(this.CREATE_ARTIST_URL, formData)
+      .put<FormData, BasicHttpResponse>(url, formData)
       .pipe(
         map(response => response.body),
         first(),

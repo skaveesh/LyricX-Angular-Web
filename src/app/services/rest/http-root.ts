@@ -6,4 +6,6 @@ export class HttpRoot {
   readonly GET_ALL_LANGUAGE_URL = this.ROOT_URL + 'language/all';
   readonly CREATE_ARTIST_URL = this.ROOT_URL + 'artist/create';
   readonly CREATE_ALBUM_URL = this.ROOT_URL + 'album/create';
+  readonly SAVE_SONG_DETAILS_URL = this.ROOT_URL + 'song/save/details';
+  readonly SAVE_SONG_ALBUMART_URL = this.ROOT_URL + 'song/save/albumart';
 }

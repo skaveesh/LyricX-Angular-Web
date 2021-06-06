@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {Constants} from '../../../../../constants/constants';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete, MatDialog} from '@angular/material';
 import {SuggestionService} from '../../../../../services/suggestion.service';
@@ -74,8 +74,7 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.albumAddingFormGroup = this._formBuilder.group({
-      albumNameCtrl: '',
-      artistCtrl: '',
+      albumNameCtrl: ['', Validators.required],
       albumYearCtrl: ''
     });
 
@@ -116,28 +115,32 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
 
   public submitAlbum(): void {
     const albumName = this.albumAddingFormGroup.get('albumNameCtrl');
-    const artistName = this.albumAddingFormGroup.get('artistCtrl');
+    const artistName = this.artistCtrl;
     const year = this.albumAddingFormGroup.get('albumYearCtrl');
 
-    if (albumName.valid && artistName.valid && year.valid && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) &&
+    if (this.albumAddingFormGroup.valid && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) &&
       this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
 
       const image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
 
       const payload: AlbumCreateRequest = {
         name: albumName.value,
-        artistSurrogateKey: artistName.value.substring(artistName.value.lastIndexOf(Constants.Symbol.DOLLAR_SIGN) + 1),
+        artistSurrogateKey: artistName.value[0],
         year: new Date(year.value).getFullYear()
       };
 
-      if (this.albumAdapter.createAlbum(UtilService.dataToBlob(payload), image)) {
+      this.albumAdapter.createAlbum(payload, image).subscribe(response => {
+        this.defaultSnackBar.openSnackBar('Album Creation Successful', false);
         this.destroyInputs();
-      }
+      }, error => {
+        console.error(error);
+        this.defaultSnackBar.openSnackBar('Album Creation Failed', true);
+      });
 
     } else {
       if (!albumName.valid) {
         this.defaultSnackBar.openSnackBar('Album name is invalid', true);
-      } else if (!artistName.valid) {
+      } else if (artistName.value.length !== 0) {
         this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
       } else if (!year.valid) {
         this.defaultSnackBar.openSnackBar('Year is invalid', true);

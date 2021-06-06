@@ -4,9 +4,12 @@ import {DefaultSnackBarComponent} from '../../components/popups-and-modals/defau
 import {LoadingStatusService} from '../loading-status.service';
 import {RestTemplateBuilder} from './rest-template-builder';
 import {BasicHttpResponse} from '../../dto/base-http-response';
-import {first, map} from 'rxjs/operators';
+import {first, map, share} from 'rxjs/operators';
 import {Constants} from '../../constants/constants';
 import AppConstant = Constants.AppConstant;
+import {UtilService} from '../util.service';
+import {AlbumCreateRequest} from '../../dto/album';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -17,32 +20,26 @@ export class AlbumAdapterService extends HttpRoot {
     super();
   }
 
-  public createAlbum(payload: Blob, image: Blob): boolean {
-
-    let isSuccess = false;
+  public createAlbum(payload: AlbumCreateRequest, image: Blob): Observable<BasicHttpResponse> {
 
     this.loadingStatus.startLoading();
 
     const formData: FormData = new FormData();
-    formData.append(AppConstant.PAYLOAD, payload);
+    formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
     formData.append(AppConstant.IMAGE, image);
 
-    (new RestTemplateBuilder())
+    const observable = (new RestTemplateBuilder())
       .withAuthHeader()
       .put<FormData, BasicHttpResponse>(this.CREATE_ALBUM_URL, formData)
       .pipe(
         map(response => response.body),
-        first())
-      .subscribe(response => {
-        isSuccess = true;
-        this.snackBar.openSnackBar('Album Creation Successful', false);
-      }, error => {
-        console.error(error);
-        this.snackBar.openSnackBar('Album Creation Failed', true);
-      }).add(() => {
+        first(),
+        share());
+
+    observable.subscribe().add(() => {
       this.loadingStatus.stopLoading();
     });
 
-    return isSuccess;
+    return observable;
   }
 }

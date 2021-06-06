@@ -24,7 +24,8 @@ import {
   MatStepperModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatExpansionModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -109,6 +110,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MultiDatepickerModule,
     ImageCropperModule,
     MatDatepickerModule,
+    MatExpansionModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     RouterModule.forRoot([
