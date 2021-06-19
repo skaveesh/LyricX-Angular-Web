@@ -9,12 +9,17 @@ import {StaticSelectionAdapter} from './static-selection-adapter';
 })
 export class GenreAdapterService extends StaticSelectionAdapter {
 
+  private isAlreadyBeenCalled = false;
+
   constructor() {
     super();
   }
 
   getAllSelections(): void {
-    if (this.allSelections.getValue().length <= 0) {
+    if (!this.isAlreadyBeenCalled && this.allSelections.getValue().length <= 0) {
+
+      this.isAlreadyBeenCalled = true;
+
       (new RestTemplateBuilder())
         .withAuthHeader()
         .get<AllGenre>(this.GET_ALL_GENRE_URL)

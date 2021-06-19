@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {AlbumAndAuthorAddingDashboardComponent} from './album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 import {Router} from '@angular/router';
 import {Constants} from '../../../../constants/constants';
-import {SongAddingDashboardComponent} from './song-adding-dashboard/song-adding-dashboard.component';
+import {SongAddUpdateDashboardComponent} from '../../generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
 import {UtilService} from '../../../../services/util.service';
 import {SongSaveRequest} from '../../../../dto/song';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
@@ -17,7 +17,7 @@ import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack
 export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
-  @ViewChild(SongAddingDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddingDashboardComponent;
+  @ViewChild(SongAddUpdateDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddUpdateDashboardComponent;
 
   // albumArtistAddingFormGroup: FormGroup;
   songAddingFormGroup: FormGroup;
@@ -35,6 +35,7 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
       songYouTubeLinkCtrl: ['', Validators.required],
       songSpotifyLinkCtrl: '',
       songDeezerLinkCtrl: '',
+      songAppleMusicLinkCtrl: '',
       songExplicitCtrl: false
     });
   }
@@ -74,9 +75,9 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     }
 
     let isAlbumArtAvailable = false;
-    const image = null;
+    let image = null;
     if (this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64 != null) {
-      UtilService.base64URItoBlob(this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64.toString());
+      image = UtilService.base64URItoBlob(this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64.toString());
       isAlbumArtAvailable = true;
     }
 
@@ -92,6 +93,7 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
       youTubeLink: this.songAddingFormGroup.controls.songYouTubeLinkCtrl.value,
       spotifyLink: this.songAddingFormGroup.controls.songSpotifyLinkCtrl.value,
       deezerLink: this.songAddingFormGroup.controls.songDeezerLinkCtrl.value,
+      appleMusicLink: this.songAddingFormGroup.controls.songAppleMusicCtrl.value,
       isExplicit: this.songAddingFormGroup.controls.songExplicitCtrl.value,
       artistSurrogateKeyList: this.albumAndAuthorAddingDashboardComponent.artistCtrl.value,
       genreIdList: this.songAddingDashboardComponent.genreCtrl.value.map(Number),
@@ -100,6 +102,7 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     this.songAdapter.saveSong(payload, image, isAlbumArtAvailable).subscribe(response => {
       this.songAddingDashboardComponent.surrogateKey = (<SongSaveRequest>response.data).surrogateKey;
       this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
+      this.songAddingDashboardComponent.destroyAlbumImageUploadData();
     }, error => {
       console.error(error);
       this.defaultSnackBar.openSnackBar('Song Saving Failed', true);

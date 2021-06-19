@@ -14,6 +14,10 @@ export namespace Constants {
     IMAGE = 'image'
   }
 
+  export enum Param {
+    SURROGATE_KEY = 'surrogateKey'
+  }
+
   export enum Assert {
     ARTIST_IMAGE = '/assets/artist_image.png',
     ALBUM_IMAGE = '/assets/album_image.png'

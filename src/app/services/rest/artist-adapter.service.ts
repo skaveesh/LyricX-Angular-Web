@@ -1,40 +1,36 @@
 import {Injectable} from '@angular/core';
-import {HttpRoot} from './http-root';
-import {RestTemplateBuilder} from './rest-template-builder';
 import {BasicHttpResponse} from '../../dto/base-http-response';
-import {first, map, share} from 'rxjs/operators';
-import {DefaultSnackBarComponent} from '../../components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LoadingStatusService} from '../loading-status.service';
-import {Constants} from '../../constants/constants';
-import {UtilService} from '../util.service';
-import {ArtistCreateRequest} from '../../dto/artist';
+import {ArtistCreateRequest, ArtistGetResponse} from '../../dto/artist';
 import {Observable} from 'rxjs';
-import AppConstant = Constants.AppConstant;
+import {GenericAdapter} from './generic-adapter';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ArtistAdapterService extends HttpRoot {
+export class ArtistAdapterService extends GenericAdapter<ArtistGetResponse, ArtistCreateRequest, BasicHttpResponse> {
 
-  constructor(private snackBar: DefaultSnackBarComponent, private loadingStatus: LoadingStatusService) {
+  constructor(private loadingStatus: LoadingStatusService) {
     super();
+  }
+
+  public getArtist(surrogateKey: string, doRefresh: boolean): Observable<ArtistGetResponse> {
+    this.loadingStatus.startLoading();
+
+    const observable = super.getObjectBySurrogateKey(this.GET_ARTIST_URL, surrogateKey, doRefresh);
+
+    observable.subscribe().add(() => {
+      this.loadingStatus.stopLoading();
+    });
+
+    return observable;
   }
 
   public createArtist(payload: ArtistCreateRequest, image: Blob): Observable<BasicHttpResponse> {
 
     this.loadingStatus.startLoading();
 
-    const formData: FormData = new FormData();
-    formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
-    formData.append(AppConstant.IMAGE, image);
-
-    const observable = (new RestTemplateBuilder())
-      .withAuthHeader()
-      .put<FormData, BasicHttpResponse>(this.CREATE_ARTIST_URL, formData)
-      .pipe(
-        map(response => response.body),
-        first(),
-        share());
+    const observable = super.createObject(this.CREATE_ARTIST_URL, payload, image);
 
     observable.subscribe().add(() => {
       this.loadingStatus.stopLoading();

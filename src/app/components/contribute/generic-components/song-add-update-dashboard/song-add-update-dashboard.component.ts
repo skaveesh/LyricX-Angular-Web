@@ -1,26 +1,26 @@
 import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatAutocomplete, MatDialog} from '@angular/material';
-import {GenreAdapterService} from '../../../../../services/rest/genre-adapter.service';
+import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
-import {Constants} from '../../../../../constants/constants';
-import {ImageUploadData} from '../../../../../dto/image-upload-data';
-import {ImageUploadDialogFacade} from '../../../../../classes/image-upload-dialog-facade';
-import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
-import {LanguageAdapterService} from '../../../../../services/rest/language-adapter.service';
-import {StaticSelectionController} from '../../../../../classes/static-selection-controller';
-import {UtilService} from '../../../../../services/util.service';
-import {SongAdapterService} from '../../../../../services/rest/song-adapter.service';
-import {SongSaveRequest} from '../../../../../dto/song';
+import {Constants} from '../../../../constants/constants';
+import {ImageUploadData} from '../../../../dto/image-upload-data';
+import {ImageUploadDialogFacade} from '../../../../classes/image-upload-dialog-facade';
+import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {LanguageAdapterService} from '../../../../services/rest/language-adapter.service';
+import {StaticSelectionController} from '../../../../classes/static-selection-controller';
+import {UtilService} from '../../../../services/util.service';
+import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
+import {SongSaveRequest} from '../../../../dto/song';
 import AppConstant = Constants.AppConstant;
 
 @Component({
-  selector: 'app-song-adding-dashboard',
-  templateUrl: './song-adding-dashboard.component.html',
-  styleUrls: ['./song-adding-dashboard.component.css']
+  selector: 'app-song-add-update-dashboard',
+  templateUrl: './song-add-update-dashboard.component.html',
+  styleUrls: ['./song-add-update-dashboard.component.css']
 })
-export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
+export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   public songAlbumArtUploadData: ImageUploadData = {
     croppedImageBase64: null,
@@ -173,7 +173,7 @@ export class SongAddingDashboardComponent implements OnInit, AfterViewInit {
   //   this.albumImageUploadData.croppedImagePositions = null;
   // }
 
-  private destroyAlbumImageUploadData(): void {
+  public destroyAlbumImageUploadData(): void {
     this.songAlbumArtUploadData.croppedImageBase64 = null;
     this.songAlbumArtUploadData.originalImageBase64 = null;
     this.songAlbumArtUploadData.croppedImagePositions = null;

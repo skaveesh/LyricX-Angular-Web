@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpRoot} from './http-root';
 import {DefaultSnackBarComponent} from '../../components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LoadingStatusService} from '../loading-status.service';
@@ -8,8 +8,8 @@ import {RestTemplateBuilder} from './rest-template-builder';
 import {BasicHttpResponse} from '../../dto/base-http-response';
 import {first, map, share} from 'rxjs/operators';
 import {Constants} from '../../constants/constants';
-import AppConstant = Constants.AppConstant;
 import {Observable} from 'rxjs';
+import AppConstant = Constants.AppConstant;
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,10 @@ export class SongAdapterService extends HttpRoot {
 
     const formData: FormData = new FormData();
     formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
-    formData.append(AppConstant.IMAGE, image);
+
+    if (withAlbumArt) {
+      formData.append(AppConstant.IMAGE, image);
+    }
 
     const observable = (new RestTemplateBuilder())
       .withAuthHeader()

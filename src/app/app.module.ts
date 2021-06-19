@@ -25,7 +25,8 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatSlideToggleModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -54,7 +55,8 @@ import {AddArtistComponent} from './components/contribute/contributor-dashboard/
 import {AddAlbumComponent} from './components/contribute/contributor-dashboard/contribute-tab/add-album/add-album.component';
 import {ImageUploadDialogComponent} from './components/popups-and-modals/image-upload-dialog/image-upload-dialog.component';
 import {MultiDatepickerModule} from './components/popups-and-modals/multidatepicker/multidatepicker.module';
-import {SongAddingDashboardComponent} from './components/contribute/contributor-dashboard/contribute-tab/song-adding-dashboard/song-adding-dashboard.component';
+import {SongAddUpdateDashboardComponent} from './components/contribute/generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
+import { SongViewDashboardComponent } from './components/contribute/generic-components/song-view-dashboard/song-view-dashboard.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -77,7 +79,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     AddArtistComponent,
     AddAlbumComponent,
     ImageUploadDialogComponent,
-    SongAddingDashboardComponent
+    SongAddUpdateDashboardComponent,
+    SongViewDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -107,6 +110,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MatAutocompleteModule,
     MatRippleModule,
     MatDialogModule,
+    MatSlideToggleModule,
     MultiDatepickerModule,
     ImageCropperModule,
     MatDatepickerModule,

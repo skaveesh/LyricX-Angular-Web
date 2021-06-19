@@ -143,7 +143,7 @@ mat-icon{
 }
 
 .near-max-width-element {
-  width: 60vw;
+  width: 80vw;
 }
 
 
@@ -153,6 +153,10 @@ mat-icon{
   color: var(--var-color-warn) !important;
 }
 
+.lyric-guitar-table-font-size {
+  font-size: 0.9em !important;
+}
+
 .lyric-guitar-chord-font-style {
   color: var(--var-color-warn) !important;
 }
@@ -160,4 +164,8 @@ mat-icon{
 .lyric-font-style {
   font-family: 'Fredoka One', cursive;
   color: black;
+}
+
+.lyric-font-size {
+  font-size: 1.3em;
 }

@@ -53,7 +53,7 @@
 
         <div fxLayout="column" fxFlex="100%">
 
-          <app-song-adding-dashboard [songAddingDashboardFormGroup]="songAddingFormGroup" ></app-song-adding-dashboard>
+          <app-song-add-update-dashboard [songAddingDashboardFormGroup]="songAddingFormGroup" ></app-song-add-update-dashboard>
 
           <div fxLayout="row">
 
@@ -76,9 +76,25 @@
   <mat-step>
 
     <ng-template matStepLabel>Publish</ng-template>
-    You are now done.
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
+
+    <div fxLayout="row">
+
+      <div fxLayout="column" fxFlex="100%">
+
+        <app-song-view-dashboard></app-song-view-dashboard>
+
+        <div fxLayout="row">
+
+          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
+
+            <button mat-button mat-raised-button color="warn" class="button-default" matStepperPrevious>Back</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
   </mat-step>
