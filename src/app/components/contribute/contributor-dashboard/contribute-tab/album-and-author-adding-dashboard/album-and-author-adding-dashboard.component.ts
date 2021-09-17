@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {FormControl} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete} from '@angular/material/autocomplete';
@@ -14,8 +14,6 @@ import {SuggestedItem} from '../../../../../dto/item-suggest';
   styleUrls: ['./album-and-author-adding-dashboard.component.css']
 })
 export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterViewInit {
-
-  // @Input() albumAndAuthorAddingDashboardFormGroup: FormGroup;
 
   public albumCtrl = new FormControl();
   public artistCtrl = new FormControl();

@@ -17,10 +17,16 @@ interface BaseHttpResponseWithAlbumResponseData {
 
 export interface AlbumResponseData {
   surrogateKey: string;
-  name: string;
   artistSurrogateKey: string;
   year: string;
+  name: string;
+  imgUrl: string;
+  addedDate: string;
+  lastModifiedDate: string;
+  addedById: string;
+  lastModifiedById: string;
   approvedStatus: boolean;
+  songsSurrogateKeys: string[];
 }
 
 export type AlbumGetResponse = BaseHttpResponse & BaseHttpResponseWithAlbumResponseData;

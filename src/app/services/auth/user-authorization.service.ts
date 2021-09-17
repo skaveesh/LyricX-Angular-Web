@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {Constants} from '../../constants/constants';
+import {first} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -12,19 +13,33 @@ export class UserAuthorizationService {
   public token: string;
   public forceToken: string;
   public emailVerifyText = 'Verify your email';
+  public isLoggedOut = new BehaviorSubject<boolean>(null);
 
-  constructor(public afAuth: AngularFireAuth, private router: Router) { }
+  constructor(public afAuth: AngularFireAuth, private router: Router) {
+    this.getUser().pipe(first()).toPromise().then((res) => {
+      if (res !== null) {
+        this.getRefreshToken(true);
+      } else {
+        this.logout();
+      }
+    }).catch(error => {
+      console.error('Error fetching the user.');
+      this.logout();
+    });
+  }
 
   public getUser(): Observable<firebase.User> {
     return this.afAuth.user;
   }
 
-  getRefreshToken(forceRefresh: boolean) {
-    this.afAuth.auth.currentUser.getIdToken(forceRefresh).then((res) => {
+  public getRefreshToken(forceRefresh: boolean): Promise<void> {
+    return this.afAuth.auth.currentUser.getIdToken(forceRefresh).then((res) => {
       this.forceToken = res;
       sessionStorage.setItem(Constants.Session.USER_TOKEN, res);
+      this.isLoggedOut.next(false);
     }).catch((error) => {
-      console.log(error);
+      this.isLoggedOut.next(true);
+      console.error(error);
     });
   }
 
@@ -32,26 +47,28 @@ export class UserAuthorizationService {
     this.afAuth.auth.currentUser.sendEmailVerification().then((res) => {
       this.emailVerifyText = 'Verification E-Mail sent to your inbox.';
     }).catch((error) => {
-      console.log(error);
+      console.error(error);
       this.emailVerifyText = 'Verify your email';
     });
   }
 
   signInWithEmailAndPassword(email: string, password: string): Promise<firebase.auth.UserCredential> {
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password);
+    const userCredential: Promise<firebase.auth.UserCredential> = this.afAuth.auth.signInWithEmailAndPassword(email, password);
+
+    userCredential.then(() => this.isLoggedOut.next(false))
+      .catch(() => this.isLoggedOut.next(true));
+
+    return userCredential;
   }
 
   logout() {
-    this.afAuth.auth.signOut();
-    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
-    sessionStorage.clear();
-  }
-
-  refreshUserOrLogout() {
-    if (this.getUser() !== null) {
-      this.getRefreshToken(true);
-    } else {
-      this.logout();
-    }
+    this.afAuth.auth.signOut().then((res) => {
+      this.isLoggedOut.next(true);
+      this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
+      sessionStorage.clear();
+    }).catch((err) => {
+      this.isLoggedOut.next(true);
+      console.error(err);
+    });
   }
 }

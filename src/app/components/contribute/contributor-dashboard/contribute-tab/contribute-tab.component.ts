@@ -1,13 +1,12 @@
 import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {AlbumAndAuthorAddingDashboardComponent} from './album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 import {Router} from '@angular/router';
 import {Constants} from '../../../../constants/constants';
 import {SongAddUpdateDashboardComponent} from '../../generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
-import {UtilService} from '../../../../services/util.service';
-import {SongSaveRequest} from '../../../../dto/song';
-import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
-import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {MatHorizontalStepper, MatStepper} from '@angular/material';
+import {ViewportScroller} from '@angular/common';
+import {SongViewDashboardComponent} from '../../generic-components/song-view-dashboard/song-view-dashboard.component';
 
 @Component({
   selector: 'app-contribute-tab',
@@ -18,26 +17,14 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
   @ViewChild(SongAddUpdateDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddUpdateDashboardComponent;
+  @ViewChild(SongViewDashboardComponent, {static: false}) songViewDashboardComponent: SongViewDashboardComponent;
 
-  // albumArtistAddingFormGroup: FormGroup;
-  songAddingFormGroup: FormGroup;
+  private _hasSongAddingRequestCompleted = false;
 
-  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router,
-              private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent) {
+  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router, private viewportScroller: ViewportScroller) {
   }
 
   ngOnInit(): void {
-    this.songAddingFormGroup = this._formBuilder.group({
-      songNameCtrl: ['', Validators.required],
-      guitarKeyCtrl: ['', Validators.required],
-      songBeatCtrl: '',
-      songKeywordsCtrl: ['', Validators.required],
-      songYouTubeLinkCtrl: ['', Validators.required],
-      songSpotifyLinkCtrl: '',
-      songDeezerLinkCtrl: '',
-      songAppleMusicLinkCtrl: '',
-      songExplicitCtrl: false
-    });
   }
 
   ngAfterViewInit(): void {
@@ -67,45 +54,58 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
     this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
   }
 
-  saveSong() {
-
-    if (!this.songAddingDashboardComponent.isSongFormValid() || this.albumAndAuthorAddingDashboardComponent.albumCtrl.value.length === 0) {
-      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
-      return;
-    }
-
-    let isAlbumArtAvailable = false;
-    let image = null;
-    if (this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64 != null) {
-      image = UtilService.base64URItoBlob(this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64.toString());
-      isAlbumArtAvailable = true;
-    }
-
-    const payload: SongSaveRequest = {
-      surrogateKey: this.songAddingDashboardComponent.surrogateKey,
-      name: this.songAddingFormGroup.controls.songNameCtrl.value,
-      albumSurrogateKey: this.albumAndAuthorAddingDashboardComponent.albumCtrl.value[0],
-      guitarKey: this.songAddingFormGroup.controls.guitarKeyCtrl.value,
-      beat: this.songAddingFormGroup.controls.songBeatCtrl.value,
-      languageCode: this.songAddingDashboardComponent.languageCtrl.value[0],
-      keywords: this.songAddingFormGroup.controls.songKeywordsCtrl.value,
-      lyrics: UtilService.base64EncodeUnicode(this.songAddingDashboardComponent.lyricsCtrl.value),
-      youTubeLink: this.songAddingFormGroup.controls.songYouTubeLinkCtrl.value,
-      spotifyLink: this.songAddingFormGroup.controls.songSpotifyLinkCtrl.value,
-      deezerLink: this.songAddingFormGroup.controls.songDeezerLinkCtrl.value,
-      appleMusicLink: this.songAddingFormGroup.controls.songAppleMusicCtrl.value,
-      isExplicit: this.songAddingFormGroup.controls.songExplicitCtrl.value,
-      artistSurrogateKeyList: this.albumAndAuthorAddingDashboardComponent.artistCtrl.value,
-      genreIdList: this.songAddingDashboardComponent.genreCtrl.value.map(Number),
-    };
-
-    this.songAdapter.saveSong(payload, image, isAlbumArtAvailable).subscribe(response => {
-      this.songAddingDashboardComponent.surrogateKey = (<SongSaveRequest>response.data).surrogateKey;
-      this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
-      this.songAddingDashboardComponent.destroyAlbumImageUploadData();
-    }, error => {
-      console.error(error);
-      this.defaultSnackBar.openSnackBar('Song Saving Failed', true);
+  delegateSaveSong(matStepper: MatStepper) {
+    this.viewportScroller.scrollToPosition([0, 0]);
+    this.songAddingDashboardComponent.saveSong(this.albumAndAuthorAddingDashboardComponent.albumCtrl,
+      this.albumAndAuthorAddingDashboardComponent.artistCtrl, () => {
+        // adding timeout to propagate the changes
+        setTimeout(() => {
+            matStepper.next();
+            document.getElementsByTagName('mat-drawer-content')[0].scrollTo({top: 0, behavior: 'smooth'});
+          }, 500);
+      }).subscribe(res => {
+      setTimeout(() => {
+        // adding timeout to propagate the changes
+        this.songViewDashboardComponent.songDataBehaviourSubject.next(res);
+        }, 500);
     });
+  }
+
+  get hasSongAddingRequestCompleted(): boolean {
+    return this._hasSongAddingRequestCompleted;
+  }
+
+  set hasSongAddingRequestCompleted(value: boolean) {
+    this._hasSongAddingRequestCompleted = value;
+  }
+
+  private resetEveryFieldOnContributorTabAndStepper(): void {
+
+    this.albumAndAuthorAddingDashboardComponent.artistCtrl.reset();
+    this.albumAndAuthorAddingDashboardComponent.albumCtrl.reset();
+    this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceArtist.chipSelectedItems.splice(0);
+    this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum.chipSelectedItems.splice(0);
+
+    this.songAddingDashboardComponent.genreCtrl.reset();
+    this.songAddingDashboardComponent.languageCtrl.reset();
+    this.songAddingDashboardComponent.lyricsCtrl.reset();
+    this.songAddingDashboardComponent.songAddUpdateFormGroup.reset();
+    this.songAddingDashboardComponent.genreController.staticSelection.splice(0);
+    this.songAddingDashboardComponent.languageController.staticSelection.splice(0);
+    this.songAddingDashboardComponent.songAlbumArtUploadData.originalImageBase64 = null;
+    this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64 = null;
+    this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImagePositions = null;
+    this.songAddingDashboardComponent.resetLyricsFieldHeight();
+
+    this.songViewDashboardComponent.guitarChordToggle = false;
+    this.songViewDashboardComponent.displayPublishComponents = false;
+    this.songViewDashboardComponent.displayDiffComponent = false;
+    this.songViewDashboardComponent.songData = null;
+
+  }
+
+  resetStepper(contributorStepper: MatHorizontalStepper) {
+    contributorStepper.reset();
+    this.resetEveryFieldOnContributorTabAndStepper();
   }
 }

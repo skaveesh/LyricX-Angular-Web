@@ -19,8 +19,8 @@ export namespace Constants {
   }
 
   export enum Assert {
-    ARTIST_IMAGE = '/assets/artist_image.png',
-    ALBUM_IMAGE = '/assets/album_image.png'
+    ARTIST_IMAGE = '/assets/images/artist_image.png',
+    ALBUM_IMAGE = '/assets/images/album_image.png'
   }
 
   export enum Error {
@@ -51,7 +51,8 @@ export namespace Constants {
   export enum Session {
     USER_TOKEN = 'userToken',
     AFTER_LOGIN_PATH_KEY = 'afterLoginPathKey',
-    SONG_LYRIC = 'songLyric'
+    SONG_LYRIC = 'songLyric',
+    CONTRIBUTOR_OBJ = 'contributorObj'
   }
 
   export enum FormFieldConstants {

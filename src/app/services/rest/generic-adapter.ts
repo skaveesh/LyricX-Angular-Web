@@ -22,9 +22,8 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
    */
   public getObjectBySurrogateKey(url: string, surrogateKey: string, doRefresh: boolean): Observable<GetResponse> {
     let observable: Observable<GetResponse>;
-
-    if (!doRefresh && this.objectMap.size > 0 && this.objectMap.get(surrogateKey) !== null) {
-      observable = of<GetResponse>(this.objectMap.get(surrogateKey)).pipe(first(), share());
+    if (!doRefresh && this.objectMap.size > 0 && !!this.objectMap.get(surrogateKey)) {
+      observable = of<GetResponse>(this.objectMap.get(surrogateKey)).pipe(share());
     } else {
       observable = (new RestTemplateBuilder())
         .withAuthHeader()
@@ -32,7 +31,6 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
         .get<GetResponse>(url)
         .pipe(
           map(response => response.body),
-          first(),
           share());
 
       observable.subscribe(value => this.objectMap.set(surrogateKey, value));

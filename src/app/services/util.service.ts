@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Observable, throwError} from 'rxjs';
 import {Constants} from '../constants/constants';
 import AppConstant = Constants.AppConstant;
 import Symbol = Constants.Symbol;
+import {ResourceUrl} from '../constants/resource-url';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +51,18 @@ export class UtilService {
     return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
+  }
+
+  public static openLinkInNewTab(url: string) {
+    window.open(url, '_blank');
+  }
+
+  public static constructSongAlbumArtResourceUrl(resourceNameWithExtension: string) {
+    return ResourceUrl.ImageResource.SONG_ALBUM_ART_BASE_URL + resourceNameWithExtension;
+  }
+
+  public static constructAlbumArtResourceUrl(resourceNameWithExtension: string) {
+    return ResourceUrl.ImageResource.ALBUM_ART_BASE_URL + resourceNameWithExtension;
   }
 
   /**

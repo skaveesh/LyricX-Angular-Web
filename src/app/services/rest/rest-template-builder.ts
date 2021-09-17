@@ -3,11 +3,12 @@ import {Observable} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {UserAuthorizationService} from '../auth/user-authorization.service';
 import {Constants} from '../../constants/constants';
-import AppConstant = Constants.AppConstant;
-import Symbol = Constants.Symbol;
 import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 import {catchError} from 'rxjs/operators';
 import {UtilService} from '../util.service';
+import AppConstant = Constants.AppConstant;
+import Symbol = Constants.Symbol;
+import {UserTokenError} from '../../errors/user-token-error';
 
 let httpClient: HttpClient;
 let userAuthorizationService: UserAuthorizationService;
@@ -28,15 +29,16 @@ export class RestTemplateBuilder {
   private params = new HttpParams();
 
   private static getBearerToken(): string {
+
     const userToken = sessionStorage.getItem(Constants.Session.USER_TOKEN);
 
-    if (isNotNullOrUndefined(userToken)) {
-      return AppConstant.BEARER + Symbol.WHITESPACE + userToken;
-    } else {
+    if (!isNotNullOrUndefined(userToken)) {
       console.error(Constants.Error.USER_TOKEN_NOT_FOUNT);
-
-      userAuthorizationService.refreshUserOrLogout();
+      userAuthorizationService.logout();
+      throw new UserTokenError('User logged-out. Pending request cancelled');
     }
+
+    return AppConstant.BEARER + Symbol.WHITESPACE + userToken;
   }
 
   public withJsonContentType(): RestTemplateBuilder {

@@ -1,12 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 import {SongSaveResponse} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
-import {take} from 'rxjs/operators';
+import {first, skipWhile, take, tap} from 'rxjs/operators';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
 import {AlbumGetResponse} from '../../../../dto/album';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
 import {UtilService} from '../../../../services/util.service';
+import {BehaviorSubject} from 'rxjs';
+import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {ContributorAdapterService} from '../../../../services/rest/contributor-adapter.service';
+import {ContributorResponseData} from '../../../../dto/contributor';
+import {LoadingStatusService} from '../../../../services/loading-status.service';
 
 @Component({
   selector: 'app-song-view-dashboard',
@@ -15,78 +20,49 @@ import {UtilService} from '../../../../services/util.service';
 })
 export class SongViewDashboardComponent implements OnInit {
 
+  // parent: contributeTabComponent
+  @Output() contributeTabComponent$HasSongAddingRequestCompleted = new EventEmitter<boolean>();
+  @Output() contributeTabComponent$ResetFields = new EventEmitter<boolean>();
+
   private _genreNameListOfTheSong: string[] = [];
   private _album: AlbumGetResponse = null;
+  private _contributor: ContributorResponseData = null;
   private _artist: string;
   private _featuringArtistList: string[] = [];
   private _lyric: string;
   private _lyricWithoutChords: string;
 
-  guitarChordToggle = false;
+  private _guitarChordToggle = false;
 
-  displayPublishComponents = false;
+  private _displayPublishComponents = false;
 
-  displayDiffComponent = false;
+  private _displayDiffComponent = false;
 
-  public songData: SongSaveResponse = {
-    timestamp: '2021-06-06T20:14:25.617',
-    message: 'Song saved successfully.',
-    errorCode: null,
-    data: {
-      surrogateKey: '66a83324-66ae-4366-8553-d8e8ed026f80',
-      name: 'Helo $ ne & @$ WSong',
-      albumSurrogateKey: '6ce3d08b-a3b6-4536-ab15-764798462438',
-      guitarKey: 'D',
-      beat: '3/4',
-      languageCode: 'si',
-      keywords: 'fds\nsinhala',
-      lyrics: 'JAplfC0tMy0tMC0tLS0tMy0tMC0tLS0tMy0tMC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfAoKQnwtLS0tLS0tLTMtLS0tLS0tLTMtLS0tLS0tLTMtLS01LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwKCkd8LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS18CgpEfC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tfAoKQXwtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLXwKCkV8LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS18CiQKCmBGYCBgQ2AgIGBHYCBgQW1gCgpgRmAgYENgICBgR2AgYEFtYAoKLS0tLS0KCmBGYCAgICAgICAgICBgQ2AKCiAgICBXaGVuIEkgd2FzIGEga2lkCgogICAgICAgICAgYEdgICAgICAgICAgICAgICAgYEFtYAoKSSB1c2VkIHRvIGJ1eSBhbmQgc2VsbCBncmF2aXR5CgpgRmAgICAgICAgICAgYENgCgogICAgSSBrbmV3IGhvdyB0byBmbHkKCiAgICAgICAgICAgIGBHYCAgICAgICAgICAgICAgIGBBbWAKCkFuZCBJIHdvdWxkIHRlYWNoIHlvdSBmb3IgYSBmZWUKCmBGYCAgICAgICAgICAgICAgIGBDYAoKICAgIEJyb2tlIGV2ZXJ5IHdpbmRvdwoKICAgICAgYEdgICAgICAgYEFtYAoKSW4gbXkgaG90ZWwgaGVhcnQKCmBGYCAgICAgICAgICAgICAgYENgCgogICAgV2hlbiBJIHdhcyBvbmx5IDUgeWVhcnMgb2xkCgogICAgYEdgICAgICAgICAgICBgQW1gCgpidXQgMTIgeWVhcnMgc2NhcnJlZAoKYEZgICAgICAgICAgICBgQ2AKCiAgICBBbmQgSSdkIGhlYXIgdGhlIHNhbWUgdm9pY2UKCmBHYCAgICAgICAgICBgQW1g',
-      youTubeLink: 'http://youtube.com/fwaiofhawif(_R#H',
-      spotifyLink: '',
-      deezerLink: '',
-      appleMusicLink: '',
-      imgUrl: 'https://upload.wikimedia.org/wikipedia/en/9/96/OneRepublic_-_Native.png',
-      isExplicit: false,
-      addedBy: {
-        firstName: 'Samintha',
-        lastName: 'Kaveesh',
-        description: null,
-        imgUrl: 'http://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Centered_square_number_25.svg/146px-Centered_square_number_25.svg.png',
-        contactLink: null,
-        seniorContributor: true,
-        addedDate: null,
-        lastModifiedDate: null
-      },
-      lastModifiedBy: {
-        firstName: 'Samintha',
-        lastName: 'Kaveesh',
-        description: null,
-        imgUrl: 'http://www.myimage.com/contributorimage',
-        contactLink: null,
-        seniorContributor: true,
-        addedDate: null,
-        lastModifiedDate: null
-      },
-      publishedBy: null,
-      addedDate: new Date('2021-06-06T20:04:34.907'),
-      lastModifiedDate: new Date('2021-06-06T20:14:24.592'),
-      publishedDate: null,
-      publishedState: false,
-      songModifiesRequestsAvailable: false,
-      artistSurrogateKeyList: [
-        '0150129b-e45f-4c6c-8e9c-078d2ebcde32'
-      ],
-      genreIdList: [
-        1,
-        19,
-        15
-      ]
-    }
-  };
+  private _songData: SongSaveResponse = null;
 
-  constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService, private artistAdapterService: ArtistAdapterService) {
+  public songDataBehaviourSubject = new BehaviorSubject<SongSaveResponse>(null);
+
+  constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService,
+              private artistAdapterService: ArtistAdapterService, private contributorAdapterService: ContributorAdapterService,
+              private snackBarComponent: DefaultSnackBarComponent, private loadingStatusService: LoadingStatusService) {
     // only initialize this component after save song was called in previous component
-    this.afterSaveSongInit();
+    this.songDataBehaviourSubject.pipe(skipWhile(res => res === null)).subscribe((res) => {
+      this._songData = res;
+      this.afterSaveSongInit();
+    }, error => {
+      console.error('Error while loading song data');
+      this.snackBarComponent.openSnackBar('Error while loading song data', true);
+    });
+
+    // get contributor
+    this.contributorAdapterService.requestContributorDetails()
+      .pipe(tap(() => this.loadingStatusService.startLoading()))
+      .subscribe((res) => {
+      this._contributor = res;
+    }, (error) => {
+      console.error('Error occurred while fetching contributor details.');
+      console.error(error);
+    }, () => this.loadingStatusService.stopLoading());
   }
 
   ngOnInit() {
@@ -105,11 +81,12 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeGenre(): void {
+    this._genreNameListOfTheSong.splice(0);
     this.genreAdapterService.allSelections.pipe(
       take(this.genreAdapterService.allSelections.getValue().length <= 0 ? 2 : 1)
     ).subscribe(value => {
 
-      const genreIdList = this.songData.data.genreIdList.map(String);
+      const genreIdList = this._songData.data.genreIdList.map(String);
 
       if (value.length > 0) {
         value.forEach(genreItem => {
@@ -128,8 +105,11 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeAlbum(): void {
-    this.albumAdapterService.getAlbum(this.songData.data.albumSurrogateKey, false).subscribe(value => {
+    this.albumAdapterService.getAlbum(this._songData.data.albumSurrogateKey, false)
+      .pipe(first())
+      .subscribe(value => {
       this._album = value;
+      console.log('init album', value);
       this.initializeArtist();
       this.initializeFeaturingArtistList();
     }, error => {
@@ -139,7 +119,9 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeArtist(): void {
-    this.artistAdapterService.getArtist(this.album.data.artistSurrogateKey, false).subscribe(value => {
+    this.artistAdapterService.getArtist(this._album.data.artistSurrogateKey, false)
+      .pipe(first())
+      .subscribe(value => {
       this._artist = value.data.name;
     }, error => {
       console.error(error);
@@ -148,8 +130,11 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeFeaturingArtistList(): void {
-    this.songData.data.artistSurrogateKeyList.forEach(artistSurrogateKey => {
-      this.artistAdapterService.getArtist(artistSurrogateKey, false).subscribe(value => {
+    this._featuringArtistList.splice(0);
+    this._songData.data.artistSurrogateKeyList.forEach(artistSurrogateKey => {
+      this.artistAdapterService.getArtist(artistSurrogateKey, false)
+        .pipe(first())
+        .subscribe(value => {
         this._featuringArtistList.push(value.data.name);
       }, error => {
         console.error(error);
@@ -158,13 +143,17 @@ export class SongViewDashboardComponent implements OnInit {
     });
   }
 
-  formatDate(date: Date) {
-    return moment(date.toISOString().substring(0, 10), 'yyyy-mm-dd').format('MMM Do YYYY');
+  formatDate(dateString: string): string {
+    if (dateString === null || dateString.length === 0) {
+      return null;
+    }
+    const date: Date = new Date(dateString);
+    return moment(date.toISOString().substring(0, 10), 'YYYY-MM-DD').format('MMM Do YYYY');
   }
 
   private initializeLyricsView(): void {
 
-    this._lyric = UtilService.base64DecodeUnicode(this.songData.data.lyrics);
+    this._lyric = UtilService.base64DecodeUnicode(this._songData.data.lyrics);
     this._lyricWithoutChords = this._lyric;
 
     const guitarTableMatches = this._lyric.match(/\$[a-zA-Z0-9!\\\/|\-+,.?%~=@()*^&#\n\t ]+\$/g);
@@ -197,6 +186,10 @@ export class SongViewDashboardComponent implements OnInit {
     return this._album;
   }
 
+  get contributor(): ContributorResponseData {
+    return this._contributor;
+  }
+
   get artist(): string {
     return this._artist;
   }
@@ -213,32 +206,77 @@ export class SongViewDashboardComponent implements OnInit {
     return this._lyricWithoutChords;
   }
 
-  get youtubeLink(): string {
-    return this.songData.data.youTubeLink;
-  }
-
-  get spotifyLink(): string {
-    return this.songData.data.spotifyLink;
-  }
-
-  get deezerLink(): string {
-    return this.songData.data.deezerLink;
-  }
-
-  get appleMusicLink(): string {
-    return this.songData.data.appleMusicLink;
-  }
-
   get facebookLink(): string {
-    return "https://facebook";
+    return 'https://facebook';
   }
 
   get twitterLink(): string {
-    return "https://facebook";
+    return 'https://facebook';
   }
 
   get instagramLink(): string {
-    return "https://facebook";
+    return 'https://facebook';
   }
 
+  get guitarChordToggle(): boolean {
+    return this._guitarChordToggle;
+  }
+
+  set guitarChordToggle(value: boolean) {
+    this._guitarChordToggle = value;
+  }
+
+  get displayPublishComponents(): boolean {
+    return this._displayPublishComponents;
+  }
+
+  set displayPublishComponents(value: boolean) {
+    this._displayPublishComponents = value;
+  }
+
+  get displayDiffComponent(): boolean {
+    return this._displayDiffComponent;
+  }
+
+  set displayDiffComponent(value: boolean) {
+    this._displayDiffComponent = value;
+  }
+
+  get songData(): SongSaveResponse {
+    return this._songData;
+  }
+
+  set songData(value: SongSaveResponse) {
+    this._songData = value;
+  }
+
+  openInNewTab(url: string): void {
+    UtilService.openLinkInNewTab(url);
+  }
+
+  constructSongAlbumArtUrl(imgUrl: string): string {
+    return UtilService.constructSongAlbumArtResourceUrl(imgUrl);
+  }
+
+  constructAlbumArtUrl(imgUrl: string): string {
+    return UtilService.constructAlbumArtResourceUrl(imgUrl);
+  }
+
+  publishLater(): void {
+    this.snackBarComponent.openSnackBar('Saved for Publishing Later', false);
+    this.contributeTabComponent$HasSongAddingRequestCompleted.emit(false);
+    this.resetAndNavigateToContributorMainTab();
+  }
+
+  publishNow(): void {
+    //this.contributeTabComponent.isSongAddingRequestInProgress = false;
+  }
+
+  submitForReview(): void {
+    //this.contributeTabComponent.isSongAddingRequestInProgress = false;
+  }
+
+  private resetAndNavigateToContributorMainTab(): void {
+    this.contributeTabComponent$ResetFields.emit(true);
+  }
 }

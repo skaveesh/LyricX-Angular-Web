@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 
 @Injectable({
@@ -13,11 +13,11 @@ export class LoadingStatusService {
   private loadingStatus$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(LoadingStatusService.LOADING_STATUS);
 
   startLoading() {
-    this.loadingStatus$.next(true);
+    setTimeout(() => this.loadingStatus$.next(true), 500);
   }
 
   stopLoading() {
-    this.loadingStatus$.next(false);
+    setTimeout(() => this.loadingStatus$.next(false), 500);
   }
 
   getLoading() {

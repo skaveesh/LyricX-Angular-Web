@@ -43,6 +43,10 @@
 
     </mat-form-field>
 
+    <span *ngIf="albumCtrl && albumCtrl.touched && albumCtrl.value.length !== 1" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+    </span>
+
     <span class="color-warn" style="font-size: 0.7em; float: top">
                 * Create an album named 'Singles' for single song releases per artist if doesn't exist.</span>
 

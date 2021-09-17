@@ -1,24 +1,25 @@
-<div fxLayout="column">
+<div fxLayout="column" *ngIf="songData?.data && album && artist">
 
   <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around center">
 
     <div fxFlex="25%" fxLayoutGap="0.5%">
 
-      <img style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="songData.data.imgUrl"/>
+      <img *ngIf="songData?.data?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructSongAlbumArtUrl(songData?.data?.imgUrl)"/>
+      <img *ngIf="!songData?.data?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructAlbumArtUrl(album?.data?.imgUrl)"/>
 
     </div>
 
     <div fxFlex="65%" fxLayoutGap="0.5%">
 
-      <h1>{{songData.data.name}}</h1>
+      <h1>{{songData?.data?.name}}</h1>
 
       <h5 class="color-dark-grey" *ngIf="album" [innerText]="album.data.name"></h5>
       <h5 class="color-dark-grey" *ngIf="artist && featuringArtistList.length === 0" [innerText]="artist"></h5>
       <h5 class="color-dark-grey" *ngIf="artist && featuringArtistList.length > 0" [innerText]="artist + ' featuring ' + featuringArtistList.toString().split(',').join(', ')"></h5>
       <h5 class="color-dark-grey" *ngIf="genreNameListOfTheSong.length > 0" [innerText]="genreNameListOfTheSong.toString().split(',').join(', ')"></h5>
-      <span class="color-light-grey">Added by {{songData.data.addedBy.firstName}} {{songData.data.addedBy.lastName}}</span> <br />
-      <span class="color-light-grey">Last modified by {{songData.data.lastModifiedBy.firstName}} {{songData.data.lastModifiedBy.lastName}}</span> <br />
-      <span class="color-light-grey">Added on {{formatDate(songData.data.addedDate)}}, Last modified on {{formatDate(songData.data.lastModifiedDate)}}</span> <br />
+      <span class="color-light-grey">Added by {{songData?.data?.addedBy?.firstName}} {{songData?.data?.addedBy?.lastName}}</span> <br />
+      <span class="color-light-grey">Last modified by {{songData?.data?.lastModifiedBy?.firstName}} {{songData?.data?.lastModifiedBy?.lastName}}</span> <br />
+      <span class="color-light-grey">Added on {{formatDate(songData?.data?.addedDate)}}, Last modified on {{formatDate(songData?.data?.lastModifiedDate)}}</span> <br />
 
     </div>
 
@@ -51,15 +52,15 @@
             Hide Guitar Chords
           </td>
         </tr>
-        <tr *ngIf="songData.data.guitarKey">
+        <tr *ngIf="songData?.data?.guitarKey">
           <td>Key</td>
           <td>:</td>
-          <td [innerText]="songData.data.guitarKey"></td>
+          <td [innerText]="songData?.data?.guitarKey"></td>
         </tr>
-        <tr *ngIf="songData.data.beat">
+        <tr *ngIf="songData?.data?.beat">
           <td>Beat</td>
           <td>:</td>
-          <td [innerText]="songData.data.beat"></td>
+          <td [innerText]="songData?.data?.beat"></td>
         </tr>
       </table>
 
@@ -92,16 +93,16 @@
             <span class="color-dark-grey">Listen on</span>
           </td>
           <td>
-            <img src="/assets/icons/youtube.svg" alt="youtube icon" *ngIf="youtubeLink" (click)="youtubeLink">
+            <img src="/assets/icons/youtube.svg" alt="youtube icon" *ngIf="this.songData?.data?.youTubeLink" (click)="openInNewTab(this.songData?.data?.youTubeLink)">
           </td>
           <td>
-            <img src="/assets/icons/spotify.svg" alt="spotify icon" *ngIf="spotifyLink" (click)="spotifyLink">
+            <img src="/assets/icons/spotify.svg" alt="spotify icon" *ngIf="this.songData?.data?.spotifyLink" (click)="openInNewTab(this.songData?.data?.spotifyLink)">
           </td>
           <td>
-            <img src="/assets/icons/deezer.svg" alt="deezer icon" *ngIf="deezerLink" (click)="deezerLink">
+            <img src="/assets/icons/deezer.svg" alt="deezer icon" *ngIf="this.songData?.data?.deezerLink" (click)="openInNewTab(this.songData?.data?.deezerLink)">
           </td>
           <td>
-            <img src="/assets/icons/applemusic.svg" alt="apple music icon" *ngIf="appleMusicLink" (click)="appleMusicLink">
+            <img src="/assets/icons/applemusic.svg" alt="apple music icon" *ngIf="this.songData?.data?.appleMusicLink" (click)="openInNewTab(this.songData?.data?.appleMusicLink)">
           </td>
         </tr>
       </table>
@@ -135,24 +136,57 @@
     <!--vertical space between two components-->
   </div>
 
-  <div #publishComponent>
+  <div fxLayout="column" [hidden]="displayPublishComponents" #publishComponent>
 
-    <span>Publish</span>
-
-    <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
-
-
-    <button></button>
-
-  </div>
-
-  <div #diffComponent>
+    <h6 class="color-light-grey" fxFlexAlign="start">Publish</h6>
 
     <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
 
+    <div *ngIf="contributor && contributor.seniorContributor" fxLayout="column" #seniorContributorPublishComponent>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="publishLater()">
+          Publish Later
+        </button>
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="publishNow()">
+          Publish Now
+        </button>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="contributor && !contributor.seniorContributor" fxLayout="column" #juniorContributorPublishComponent>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="submitForReview()">
+          Submit for Review
+        </button>
+
+      </div>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <span class="color-warn" style="font-size: 0.7em; float: top; margin: 10px">
+        * Only senior members can publish a song. You can submit the song to be reviewed by a senior member.
+        </span>
+
+      </div>
+
+    </div>
 
   </div>
 
+  <div fxLayout="column" [hidden]="displayDiffComponent" #diffComponent>
+
+    <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+<!--    TODO implement diff component here-->
+
+  </div>
 
 </div>
 

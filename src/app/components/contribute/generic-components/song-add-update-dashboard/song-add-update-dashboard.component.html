@@ -1,4 +1,4 @@
-<div [formGroup]="songAddingDashboardFormGroup">
+<div [formGroup]="songAddUpdateFormGroup">
 
   <div fxLayout="row">
 
@@ -15,6 +15,10 @@
         <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
 
       </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.songNameCtrl && songAddUpdateFormGroup.controls.songNameCtrl.touched && songAddUpdateFormGroup.controls.songNameCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
 
       <div style="height: 50px" *ngIf="songAlbumArtUploadData.croppedImageBase64">
         <!--vertical space between two components-->
@@ -99,9 +103,13 @@
 
       </mat-form-field>
 
-        <div style="height: 50px">
-          <!--vertical space between two components-->
-        </div>
+      <span *ngIf="genreCtrl && genreCtrl.touched && genreCtrl.value.length !== 1" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
 
       <h6 class="color-light-grey" fxFlexAlign="start">Language</h6>
 
@@ -147,6 +155,10 @@
 
       </mat-form-field>
 
+      <span *ngIf="languageCtrl && languageCtrl.touched && languageCtrl.value.length !== 1" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
       <div style="height: 50px">
         <!--vertical space between two components-->
       </div>
@@ -169,6 +181,10 @@
         <mat-error *ngIf="guitarKeyAbstractCtrl.hasError('required')">Please choose a key</mat-error>
 
       </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.guitarKeyCtrl && songAddUpdateFormGroup.controls.guitarKeyCtrl.touched && songAddUpdateFormGroup.controls.guitarKeyCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
 
       <mat-form-field>
 
@@ -194,6 +210,10 @@
                   (keyup)="autoGeneratePreview($event)" class="near-max-width-element"></textarea>
 
       </mat-form-field>
+
+      <span *ngIf="lyricsCtrl && lyricsCtrl.touched && lyricsCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field. Lyric should have at least 50 characters.
+      </span>
 
       <span class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
         * Preserve spacing.
@@ -246,6 +266,10 @@
 
       </mat-form-field>
 
+      <span *ngIf="songAddUpdateFormGroup.controls.songKeywordsCtrl && songAddUpdateFormGroup.controls.songKeywordsCtrl.touched && songAddUpdateFormGroup.controls.songKeywordsCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
       <span class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
         * Enter keywords related to the song which users will more likely search.
         <br/>
@@ -268,6 +292,10 @@
         <mat-icon class="mat-icon-white" matSuffix>link</mat-icon>
 
       </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.songYouTubeLinkCtrl && songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.touched && songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
 
       <mat-form-field>
 

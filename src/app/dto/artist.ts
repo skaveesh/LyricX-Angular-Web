@@ -15,10 +15,17 @@ interface BaseHttpResponseWithArtistResponseData {
 }
 
 export interface ArtistResponseData {
-  surrogateKey:   string;
-  name:           string;
+  surrogateKey: string;
+  name: string;
+  imgUrl: string;
+  addedById: string;
+  lastModifiedById: string;
   approvedStatus: boolean;
-  genreIdList:    number[];
+  addedDate: string;
+  lastModifiedDate: string;
+  genreIdList: number[];
+  albumsSurrogateKeyList: string[];
+  artistSongsSurrogateKeyList: string[];
 }
 
 export type ArtistGetResponse = BaseHttpResponse & BaseHttpResponseWithArtistResponseData;

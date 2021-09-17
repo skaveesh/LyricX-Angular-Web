@@ -1,4 +1,4 @@
-<mat-horizontal-stepper linear #stepper>
+<mat-horizontal-stepper linear #contributorStepper>
 
   <mat-step [completed]="!isAlbumArtistInputsInvalid()">
 
@@ -43,25 +43,21 @@
 
   </mat-step>
 
-  <mat-step>
+  <mat-step [completed]="hasSongAddingRequestCompleted">
 
-    <form [formGroup]="songAddingFormGroup">
+    <ng-template matStepLabel>Lyrics</ng-template>
 
-      <ng-template matStepLabel>Lyrics</ng-template>
+    <div fxLayout="row">
 
-      <div fxLayout="row">
+      <div fxLayout="column" fxFlex="100%">
 
-        <div fxLayout="column" fxFlex="100%">
+        <app-song-add-update-dashboard (contributeTabComponent$HasSongAddingRequestCompleted)="hasSongAddingRequestCompleted=$event"></app-song-add-update-dashboard>
 
-          <app-song-add-update-dashboard [songAddingDashboardFormGroup]="songAddingFormGroup" ></app-song-add-update-dashboard>
+        <div fxLayout="row">
 
-          <div fxLayout="row">
+          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
 
-            <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
-
-              <button mat-button mat-raised-button color="warn" class="button-default" (click)="saveSong()">Save</button>
-
-            </div>
+            <button mat-button mat-raised-button color="warn" class="button-default" (click)="delegateSaveSong(contributorStepper)">Save</button>
 
           </div>
 
@@ -69,7 +65,7 @@
 
       </div>
 
-    </form>
+    </div>
 
   </mat-step>
 
@@ -79,19 +75,16 @@
 
     <div fxLayout="row">
 
-      <div fxLayout="column" fxFlex="100%">
+      <div fxLayout="column" fxFlex="100%" *ngIf="hasSongAddingRequestCompleted">
 
-        <app-song-view-dashboard></app-song-view-dashboard>
+        <app-song-view-dashboard (contributeTabComponent$HasSongAddingRequestCompleted)="hasSongAddingRequestCompleted=$event"
+        (contributeTabComponent$ResetFields)="resetStepper(contributorStepper)"></app-song-view-dashboard>
 
-        <div fxLayout="row">
+      </div>
 
-          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
+      <div fxLayout="column" fxFlex="100%" *ngIf="!hasSongAddingRequestCompleted">
 
-            <button mat-button mat-raised-button color="warn" class="button-default" matStepperPrevious>Back</button>
-
-          </div>
-
-        </div>
+        <h3>Uh.oh.. you should never see this page.</h3>
 
       </div>
 

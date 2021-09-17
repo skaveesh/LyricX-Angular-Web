@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatAutocomplete, MatDialog} from '@angular/material';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
@@ -14,6 +14,8 @@ import {UtilService} from '../../../../services/util.service';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
 import {SongSaveRequest} from '../../../../dto/song';
 import AppConstant = Constants.AppConstant;
+import {Observable} from 'rxjs';
+import {BasicHttpResponse} from '../../../../dto/base-http-response';
 
 @Component({
   selector: 'app-song-add-update-dashboard',
@@ -30,7 +32,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   private albumImageUploadDialogFacade: ImageUploadDialogFacade;
 
-  @Input() songAddingDashboardFormGroup: FormGroup;
+  songAddUpdateFormGroup: FormGroup;
 
   visible = true;
   selectable = true;
@@ -55,18 +57,33 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('lyricsTextArea', {static: false}) matLyricsTextArea: ElementRef<HTMLElement>;
   private matLyricsTextAreaInitialized = false;
 
-  public lyricsCtrl = new FormControl('', Validators.compose([Validators.minLength(10), Validators.required]));
+  // parent: contributeTabComponent
+  @Output() contributeTabComponent$HasSongAddingRequestCompleted = new EventEmitter<boolean>();
+
+  public lyricsCtrl = new FormControl('', Validators.compose([Validators.minLength(50), Validators.required]));
   lyric: string;
   lyricWithoutChords: string;
 
   public surrogateKey: string = null;
 
-  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService, public dialog: MatDialog) {
+  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService, private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent, public dialog: MatDialog) {
 
     this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
   }
 
   ngOnInit() {
+    this.songAddUpdateFormGroup = this._formBuilder.group({
+      songNameCtrl: ['', Validators.required],
+      guitarKeyCtrl: ['', Validators.required],
+      songBeatCtrl: '',
+      songKeywordsCtrl: ['', Validators.required],
+      songYouTubeLinkCtrl: ['', Validators.required],
+      songSpotifyLinkCtrl: '',
+      songDeezerLinkCtrl: '',
+      songAppleMusicLinkCtrl: '',
+      songExplicitCtrl: false
+    });
+
     this.genreController = new StaticSelectionController(this.genreAdapter, this.genreCtrl, true);
     this.languageController = new StaticSelectionController(this.languageAdapter, this.languageCtrl, false);
   }
@@ -130,49 +147,6 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     sessionStorage.setItem(Constants.Session.SONG_LYRIC, this.lyricsCtrl.value);
   }
 
-  // TODO change this to submit a song
-  // public submitAlbum(): void {
-  //   const albumName = this.albumAddingFormGroup.get('albumNameCtrl');
-  //   const artistName = this.albumAddingFormGroup.get('artistCtrl');
-  //   const year = this.albumAddingFormGroup.get('albumYearCtrl');
-  //
-  //   if (albumName.valid && artistName.valid && year.valid && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) &&
-  //     this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
-  //
-  //     const image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
-  //
-  //     const payload: AlbumCreateRequest = {
-  //       name: albumName.value,
-  //       artistSurrogateKey: artistName.value.substring(artistName.value.lastIndexOf(Constants.Symbol.DOLLAR_SIGN) + 1),
-  //       year: new Date(year.value).getFullYear()
-  //     };
-  //
-  //     if (this.albumAdapter.createAlbum(UtilService.dataToBlob(payload), image)) {
-  //       this.destroyInputs();
-  //     }
-  //
-  //   } else {
-  //     if (!albumName.valid) {
-  //       this.defaultSnackBar.openSnackBar('Album name is invalid', true);
-  //     } else if (!artistName.valid) {
-  //       this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
-  //     } else if (!year.valid) {
-  //       this.defaultSnackBar.openSnackBar('Year is invalid', true);
-  //     } else if (!isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64)) {
-  //       this.defaultSnackBar.openSnackBar('Please upload a Album image', true);
-  //     }
-  //   }
-  // }
-  //
-  // public destroyInputs(): void {
-  //   this.suggestionUserInterfaceArtist.chipSelectedItems.splice(0);
-  //   this.yearPickerComponent.writeValue(null);
-  //   this.albumAddingFormGroup.reset();
-  //   this.albumImageUploadData.croppedImageBase64 = null;
-  //   this.albumImageUploadData.originalImageBase64 = null;
-  //   this.albumImageUploadData.croppedImagePositions = null;
-  // }
-
   public destroyAlbumImageUploadData(): void {
     this.songAlbumArtUploadData.croppedImageBase64 = null;
     this.songAlbumArtUploadData.originalImageBase64 = null;
@@ -180,13 +154,75 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
   }
 
   public isSongFormValid(): boolean {
-    return this.songAddingDashboardFormGroup.valid && this.lyricsCtrl.valid && this.languageCtrl.value.length === 1
+
+    const isValid: boolean = this.songAddUpdateFormGroup.valid && this.lyricsCtrl.valid && this.languageCtrl.value.length === 1
       && this.genreCtrl.value.length > 0;
+
+    if (!isValid) {
+      this.defaultSnackBar.openSnackBar('Please fill the required fields.', true);
+      return isValid;
+    }
+
+    return isValid;
   }
 
-  public saveSong(): void {
+  public saveSong(albumCtrl: FormControl, artistCtrl: FormControl, callbackIfSaveComplete: any): Observable<BasicHttpResponse> {
 
+    this.contributeTabComponent$HasSongAddingRequestCompleted.emit(false);
+
+    if (!this.isSongFormValid() || albumCtrl.value.length === 0) {
+      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+      return;
+    }
+
+    let isAlbumArtAvailable = false;
+    let image = null;
+    if (this.songAlbumArtUploadData.croppedImageBase64 != null) {
+      image = UtilService.base64URItoBlob(this.songAlbumArtUploadData.croppedImageBase64.toString());
+      isAlbumArtAvailable = true;
+    }
+
+    const payload: SongSaveRequest = {
+      surrogateKey: this.surrogateKey,
+      name: this.songAddUpdateFormGroup.controls.songNameCtrl.value,
+      albumSurrogateKey: albumCtrl.value[0],
+      guitarKey: this.songAddUpdateFormGroup.controls.guitarKeyCtrl.value,
+      beat: this.songAddUpdateFormGroup.controls.songBeatCtrl.value,
+      languageCode: this.languageCtrl.value[0],
+      keywords: this.songAddUpdateFormGroup.controls.songKeywordsCtrl.value,
+      lyrics: UtilService.base64EncodeUnicode(this.lyricsCtrl.value),
+      youTubeLink: this.songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.value,
+      spotifyLink: this.songAddUpdateFormGroup.controls.songSpotifyLinkCtrl.value,
+      deezerLink: this.songAddUpdateFormGroup.controls.songDeezerLinkCtrl.value,
+      appleMusicLink: this.songAddUpdateFormGroup.controls.songAppleMusicLinkCtrl.value,
+      isExplicit: this.songAddUpdateFormGroup.controls.songExplicitCtrl.value,
+      artistSurrogateKeyList: artistCtrl.value,
+      genreIdList: this.genreCtrl.value.map(Number),
+    };
+
+    const saveSongObservable: Observable<BasicHttpResponse> = this.songAdapter.saveSong(payload, image, isAlbumArtAvailable);
+
+    saveSongObservable.subscribe(response => {
+      this.surrogateKey = (<SongSaveRequest>response.data).surrogateKey;
+      this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
+      this.destroyAlbumImageUploadData();
+      sessionStorage.removeItem(Constants.Session.SONG_LYRIC);
+      this.contributeTabComponent$HasSongAddingRequestCompleted.emit(true);
+      callbackIfSaveComplete();
+    }, error => {
+      console.error(error);
+      this.defaultSnackBar.openSnackBar('Song Saving Failed', true);
+    });
+
+    return saveSongObservable;
   }
 
-  get guitarKeyAbstractCtrl() { return this.songAddingDashboardFormGroup.get( 'guitarKeyCtrl' ); }
+  public resetLyricsFieldHeight(): void {
+    this.matLyricsTextArea.nativeElement.style.height = '25px';
+  }
+
+  get guitarKeyAbstractCtrl() {
+    return this.songAddUpdateFormGroup.get( 'guitarKeyCtrl' );
+  }
+
 }

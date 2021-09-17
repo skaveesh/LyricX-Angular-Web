@@ -17,19 +17,23 @@
   --var-song-button-width: 240px;
 }
 
+
+html { height: 100%; overflow:auto; }
+body { height: 100%; }
+
 * {
   font-family: 'Fredoka One', cursive;
   color: var(--var-color-text-default);
 }
 
-*:not(.mat-autocomplete-panel) {
-  -ms-overflow-style: none;  /* IE and Edge - hide the scrollbar */
-  scrollbar-width: none;  /* Firefox - hide the scrollbar */
-}
+/**:not(.mat-autocomplete-panel) {*/
+/*  -ms-overflow-style: none;  !* IE and Edge - hide the scrollbar *!*/
+/*  scrollbar-width: none;  !* Firefox - hide the scrollbar *!*/
+/*}*/
 
-*:not(.mat-autocomplete-panel)::-webkit-scrollbar {
-  display: none; /* Chrome, Safari and Opera - hide the scrollbar */
-}
+/**:not(.mat-autocomplete-panel)::-webkit-scrollbar {*/
+/*  display: none; !* Chrome, Safari and Opera - hide the scrollbar *!*/
+/*}*/
 
 ul:focus {
   outline: none !important;

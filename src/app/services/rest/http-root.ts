@@ -12,4 +12,7 @@ export class HttpRoot {
   readonly CREATE_ALBUM_URL = this.ROOT_URL + 'album/create';
   readonly SAVE_SONG_DETAILS_URL = this.ROOT_URL + 'song/save/details';
   readonly SAVE_SONG_ALBUMART_URL = this.ROOT_URL + 'song/save/albumart';
+
+  readonly GET_CONTRIBUTOR_URL = this.ROOT_URL + 'contributor/get';
+
 }

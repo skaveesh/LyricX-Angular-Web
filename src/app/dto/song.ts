@@ -40,9 +40,9 @@ interface SongResponseData {
   addedBy: Contributor;
   lastModifiedBy: Contributor;
   publishedBy: Contributor;
-  addedDate: Date;
-  lastModifiedDate: Date;
-  publishedDate: Date;
+  addedDate: string;
+  lastModifiedDate: string;
+  publishedDate: string;
   publishedState: boolean;
   songModifiesRequestsAvailable: boolean;
   artistSurrogateKeyList: string[];
@@ -56,8 +56,8 @@ interface Contributor {
   imgUrl: string;
   contactLink: string;
   seniorContributor: boolean;
-  addedDate: Date;
-  lastModifiedDate: Date;
+  addedDate: string;
+  lastModifiedDate: string;
 }
 
 export type SongSaveResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;
