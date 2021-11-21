@@ -1,21 +1,22 @@
 import {BaseHttpResponse} from './base-http-response';
 
-export interface SongSaveRequest {
+export interface SongSaveUpdateRequest {
   surrogateKey: string;
-  name: string;
-  albumSurrogateKey: string;
-  guitarKey: string;
-  beat: string;
-  languageCode: string;
-  keywords: string;
-  lyrics: string;
-  youTubeLink: string;
-  spotifyLink: string;
-  deezerLink: string;
-  appleMusicLink: string;
-  isExplicit: boolean;
-  artistSurrogateKeyList: string[];
-  genreIdList: number[];
+  name?: string;
+  albumSurrogateKey?: string;
+  guitarKey?: string;
+  beat?: string;
+  languageCode?: string;
+  keywords?: string;
+  lyrics?: string;
+  youTubeLink?: string;
+  spotifyLink?: string;
+  deezerLink?: string;
+  appleMusicLink?: string;
+  isExplicit?: boolean;
+  artistSurrogateKeyList?: string[];
+  genreIdList?: number[];
+  publishedState?: boolean;
 }
 
 interface BaseHttpResponseWithSongResponseData {

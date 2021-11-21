@@ -12,7 +12,7 @@ import {LanguageAdapterService} from '../../../../services/rest/language-adapter
 import {StaticSelectionController} from '../../../../classes/static-selection-controller';
 import {UtilService} from '../../../../services/util.service';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
-import {SongSaveRequest} from '../../../../dto/song';
+import {SongSaveUpdateRequest} from '../../../../dto/song';
 import AppConstant = Constants.AppConstant;
 import {Observable} from 'rxjs';
 import {BasicHttpResponse} from '../../../../dto/base-http-response';
@@ -175,14 +175,12 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let isAlbumArtAvailable = false;
     let image = null;
     if (this.songAlbumArtUploadData.croppedImageBase64 != null) {
       image = UtilService.base64URItoBlob(this.songAlbumArtUploadData.croppedImageBase64.toString());
-      isAlbumArtAvailable = true;
     }
 
-    const payload: SongSaveRequest = {
+    const payload: SongSaveUpdateRequest = {
       surrogateKey: this.surrogateKey,
       name: this.songAddUpdateFormGroup.controls.songNameCtrl.value,
       albumSurrogateKey: albumCtrl.value[0],
@@ -198,12 +196,13 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
       isExplicit: this.songAddUpdateFormGroup.controls.songExplicitCtrl.value,
       artistSurrogateKeyList: artistCtrl.value,
       genreIdList: this.genreCtrl.value.map(Number),
+      publishedState: false
     };
 
-    const saveSongObservable: Observable<BasicHttpResponse> = this.songAdapter.saveSong(payload, image, isAlbumArtAvailable);
+    const saveSongObservable: Observable<BasicHttpResponse> = this.songAdapter.saveSong(payload, image);
 
     saveSongObservable.subscribe(response => {
-      this.surrogateKey = (<SongSaveRequest>response.data).surrogateKey;
+      this.surrogateKey = (<SongSaveUpdateRequest>response.data).surrogateKey;
       this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
       this.destroyAlbumImageUploadData();
       sessionStorage.removeItem(Constants.Session.SONG_LYRIC);

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpRoot} from './http-root';
 import {DefaultSnackBarComponent} from '../../components/popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LoadingStatusService} from '../loading-status.service';
-import {SongSaveRequest} from '../../dto/song';
+import {SongSaveUpdateRequest} from '../../dto/song';
 import {UtilService} from '../util.service';
 import {RestTemplateBuilder} from './rest-template-builder';
 import {BasicHttpResponse} from '../../dto/base-http-response';
@@ -20,16 +20,16 @@ export class SongAdapterService extends HttpRoot {
     super();
   }
 
-  public saveSong(payload: SongSaveRequest, image: Blob, withAlbumArt: boolean = false): Observable<BasicHttpResponse> {
+  public saveSong(payload: SongSaveUpdateRequest, image: Blob = null): Observable<BasicHttpResponse> {
 
-    const url = withAlbumArt ? this.SAVE_SONG_ALBUMART_URL : this.SAVE_SONG_DETAILS_URL;
+    const url = image ? this.SAVE_SONG_ALBUMART_URL : this.SAVE_SONG_DETAILS_URL;
 
     this.loadingStatus.startLoading();
 
     const formData: FormData = new FormData();
     formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
 
-    if (withAlbumArt) {
+    if (image) {
       formData.append(AppConstant.IMAGE, image);
     }
 

@@ -1,5 +1,5 @@
 import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import {SongSaveResponse} from '../../../../dto/song';
+import {SongSaveUpdateRequest, SongSaveResponse} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
 import {first, skipWhile, take, tap} from 'rxjs/operators';
@@ -12,6 +12,7 @@ import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack
 import {ContributorAdapterService} from '../../../../services/rest/contributor-adapter.service';
 import {ContributorResponseData} from '../../../../dto/contributor';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
+import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
 
 @Component({
   selector: 'app-song-view-dashboard',
@@ -20,8 +21,6 @@ import {LoadingStatusService} from '../../../../services/loading-status.service'
 })
 export class SongViewDashboardComponent implements OnInit {
 
-  // parent: contributeTabComponent
-  @Output() contributeTabComponent$HasSongAddingRequestCompleted = new EventEmitter<boolean>();
   @Output() contributeTabComponent$ResetFields = new EventEmitter<boolean>();
 
   private _genreNameListOfTheSong: string[] = [];
@@ -44,7 +43,8 @@ export class SongViewDashboardComponent implements OnInit {
 
   constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService, private contributorAdapterService: ContributorAdapterService,
-              private snackBarComponent: DefaultSnackBarComponent, private loadingStatusService: LoadingStatusService) {
+              private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
+              private loadingStatusService: LoadingStatusService) {
     // only initialize this component after save song was called in previous component
     this.songDataBehaviourSubject.pipe(skipWhile(res => res === null)).subscribe((res) => {
       this._songData = res;
@@ -264,19 +264,35 @@ export class SongViewDashboardComponent implements OnInit {
 
   publishLater(): void {
     this.snackBarComponent.openSnackBar('Saved for Publishing Later', false);
-    this.contributeTabComponent$HasSongAddingRequestCompleted.emit(false);
     this.resetAndNavigateToContributorMainTab();
   }
 
   publishNow(): void {
-    //this.contributeTabComponent.isSongAddingRequestInProgress = false;
+    this.snackBarComponent.openSnackBar('Publishing Now', false);
+    this.publishSong();
+    this.resetAndNavigateToContributorMainTab();
   }
 
   submitForReview(): void {
-    //this.contributeTabComponent.isSongAddingRequestInProgress = false;
+    this.snackBarComponent.openSnackBar('Saved for Reviewing', false);
+    this.resetAndNavigateToContributorMainTab();
   }
 
   private resetAndNavigateToContributorMainTab(): void {
     this.contributeTabComponent$ResetFields.emit(true);
+  }
+
+  private publishSong() {
+    const payload: SongSaveUpdateRequest = {
+      surrogateKey: this._songData.data.surrogateKey,
+      publishedState: true
+    };
+
+    this.songAdapter.saveSong(payload).subscribe(response => {
+      this.snackBarComponent.openSnackBar('Song Publishing Successful', false);
+    }, error => {
+      console.error(error);
+      this.snackBarComponent.openSnackBar('Song Publishing Failed', true);
+    });
   }
 }

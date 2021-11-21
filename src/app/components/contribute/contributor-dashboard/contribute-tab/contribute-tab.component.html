@@ -77,14 +77,14 @@
 
       <div fxLayout="column" fxFlex="100%" *ngIf="hasSongAddingRequestCompleted">
 
-        <app-song-view-dashboard (contributeTabComponent$HasSongAddingRequestCompleted)="hasSongAddingRequestCompleted=$event"
+        <app-song-view-dashboard
         (contributeTabComponent$ResetFields)="resetStepper(contributorStepper)"></app-song-view-dashboard>
 
       </div>
 
       <div fxLayout="column" fxFlex="100%" *ngIf="!hasSongAddingRequestCompleted">
 
-        <h3>Uh.oh.. you should never see this page.</h3>
+        <h3>Uh.oh.. you're not suppose to see this page.</h3>
 
       </div>
 
