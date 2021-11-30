@@ -57,6 +57,7 @@ import {ImageUploadDialogComponent} from './components/popups-and-modals/image-u
 import {MultiDatepickerModule} from './components/popups-and-modals/multidatepicker/multidatepicker.module';
 import {SongAddUpdateDashboardComponent} from './components/contribute/generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
 import { SongViewDashboardComponent } from './components/contribute/generic-components/song-view-dashboard/song-view-dashboard.component';
+import { MyContributionTabComponent } from './components/contribute/contributor-dashboard/my-contribution-tab/my-contribution-tab.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -80,7 +81,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     AddAlbumComponent,
     ImageUploadDialogComponent,
     SongAddUpdateDashboardComponent,
-    SongViewDashboardComponent
+    SongViewDashboardComponent,
+    MyContributionTabComponent
   ],
   imports: [
     BrowserModule,
