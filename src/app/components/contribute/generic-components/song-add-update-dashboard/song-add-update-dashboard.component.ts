@@ -107,7 +107,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
       return this.songAlbumArtUploadData.croppedImageBase64;
     }
 
-    return Constants.Assert.ALBUM_IMAGE;
+    return Constants.Asset.ALBUM_IMAGE;
   }
 
   openAlbumImageUploadDialog() {

@@ -26,7 +26,9 @@ import {
   MatToolbarModule,
   MatTooltipModule,
   MatExpansionModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatListModule,
+  MatPaginatorModule
 } from '@angular/material';
 import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
@@ -112,6 +114,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     MatAutocompleteModule,
     MatRippleModule,
     MatDialogModule,
+    MatListModule,
+    MatPaginatorModule,
     MatSlideToggleModule,
     MultiDatepickerModule,
     ImageCropperModule,

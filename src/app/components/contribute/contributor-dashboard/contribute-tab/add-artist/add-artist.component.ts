@@ -75,7 +75,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
       return this.artistImageUploadData.croppedImageBase64;
     }
 
-    return Constants.Assert.ARTIST_IMAGE;
+    return Constants.Asset.ARTIST_IMAGE;
   }
 
   openArtistImageUploadDialog() {

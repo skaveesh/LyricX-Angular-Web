@@ -4,7 +4,10 @@ import {BasicHttpResponse} from '../../dto/base-http-response';
 import {first, map, share} from 'rxjs/operators';
 import {HttpRoot} from './http-root';
 import {Constants} from '../../constants/constants';
-import {ContributorResponseData} from '../../dto/contributor';
+import {
+  ContributorResponseData,
+  MyContributionMetadataResponse,
+} from '../../dto/contributor';
 import {Observable, of} from 'rxjs';
 
 @Injectable({
@@ -36,6 +39,24 @@ export class ContributorAdapterService extends HttpRoot {
         console.error('Error requesting details of contributor.', error);
       });
     }
+
+    return observable;
+  }
+
+  public requestMyContributions(pageNumber: number, pageSize: number): Observable<MyContributionMetadataResponse> {
+
+    const observable: Observable<MyContributionMetadataResponse> = (new RestTemplateBuilder())
+      .withAuthHeader()
+      .withParam(Constants.Param.PAGE_NUMBER, pageNumber.toString())
+      .withParam(Constants.Param.PAGE_SIZE, pageSize.toString())
+      .get<BasicHttpResponse>(this.GET_MY_CONTRIBUTIONS_URL)
+      .pipe(first(), share(), map(response => response.body.data));
+
+    observable.subscribe((res) => {
+      sessionStorage.setItem(Constants.Session.CONTRIBUTOR_OBJ, JSON.stringify(res));
+    }, error => {
+      console.error('Error requesting details of contributor.', error);
+    });
 
     return observable;
   }

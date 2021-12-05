@@ -15,10 +15,12 @@ export namespace Constants {
   }
 
   export enum Param {
-    SURROGATE_KEY = 'surrogateKey'
+    SURROGATE_KEY = 'surrogateKey',
+    PAGE_NUMBER = 'pageNumber',
+    PAGE_SIZE = 'pageSize'
   }
 
-  export enum Assert {
+  export enum Asset {
     ARTIST_IMAGE = '/assets/images/artist_image.png',
     ALBUM_IMAGE = '/assets/images/album_image.png'
   }

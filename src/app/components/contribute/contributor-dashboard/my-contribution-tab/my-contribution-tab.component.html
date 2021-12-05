@@ -1,1 +1,29 @@
-<p>my-contribution-tab works!</p>
+<table class="item-selection-table" *ngIf="songWithAlbumAndArtist && songWithAlbumAndArtist.length > 0">
+  <tr class="item-selection" *ngFor="let contribution of songWithAlbumAndArtist">
+    <td>
+      <img style="width: 50px; height: 50px; border-radius: 50px"
+           src="{{constructSongAlbumArtUrl(contribution.song?.imgUrl)}}"
+           alt="contribution image for {{contribution.song?.name}}"/>
+    </td>
+    <td>
+      <span mat-line>{{contribution.song?.name}}</span>
+    </td>
+    <td>
+      <span mat-line>{{contribution.album?.data?.name}}</span>
+    </td>
+    <td>
+      <span mat-line>{{contribution.artist?.data?.name}}</span>
+    </td>
+    <td>
+      <button mat-button mat-raised-button color="accent" class="mat-button-sea">
+        View
+      </button>
+    </td>
+  </tr>
+</table>
+
+<mat-paginator [length]="length"
+               [pageSize]="pageSize"
+               [pageSizeOptions]="pageSizeOptions"
+               (page)="gotoPage($event)">
+</mat-paginator>

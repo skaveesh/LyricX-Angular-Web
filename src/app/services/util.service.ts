@@ -58,10 +58,18 @@ export class UtilService {
   }
 
   public static constructSongAlbumArtResourceUrl(resourceNameWithExtension: string) {
+    if (resourceNameWithExtension === null || resourceNameWithExtension.trim().length === 0) {
+      return Constants.Asset.ALBUM_IMAGE;
+    }
+
     return ResourceUrl.ImageResource.SONG_ALBUM_ART_BASE_URL + resourceNameWithExtension;
   }
 
   public static constructAlbumArtResourceUrl(resourceNameWithExtension: string) {
+    if (resourceNameWithExtension === null || resourceNameWithExtension.trim().length === 0) {
+      return Constants.Asset.ALBUM_IMAGE;
+    }
+
     return ResourceUrl.ImageResource.ALBUM_ART_BASE_URL + resourceNameWithExtension;
   }
 

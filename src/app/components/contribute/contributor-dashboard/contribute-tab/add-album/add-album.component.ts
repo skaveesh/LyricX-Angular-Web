@@ -103,7 +103,7 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
       return this.albumImageUploadData.croppedImageBase64;
     }
 
-    return Constants.Assert.ALBUM_IMAGE;
+    return Constants.Asset.ALBUM_IMAGE;
   }
 
   openAlbumImageUploadDialog() {
