@@ -1,6 +1,6 @@
 import {BaseHttpResponse} from './base-http-response';
-import {ArtistGetResponse} from './artist';
-import {AlbumGetResponse} from './album';
+import {ArtistResponseData} from './artist';
+import {AlbumResponseData} from './album';
 
 export interface SongSaveUpdateRequest {
   surrogateKey: string;
@@ -65,8 +65,8 @@ interface Contributor {
 
 export interface SongWithAlbumAndArtist {
   song: SongResponseData;
-  album?: AlbumGetResponse;
-  artist?: ArtistGetResponse;
+  album?: AlbumResponseData;
+  artist?: ArtistResponseData;
 }
 
 export type SongSaveResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;
