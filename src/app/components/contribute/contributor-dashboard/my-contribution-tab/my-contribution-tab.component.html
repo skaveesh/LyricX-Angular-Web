@@ -9,15 +9,19 @@
       <span mat-line>{{contribution.song?.name}}</span>
     </td>
     <td>
-      <span mat-line>{{contribution.album?.data?.name}}</span>
+      <span mat-line>{{contribution.album?.name}}</span>
     </td>
     <td>
-      <span mat-line>{{contribution.artist?.data?.name}}</span>
+      <span mat-line>{{contribution.artist?.name}}</span>
     </td>
     <td>
-      <button mat-button mat-raised-button color="accent" class="mat-button-sea">
+      <button (click)="editSong(contribution.song.surrogateKey)" mat-button mat-raised-button color="accent" class="mat-button-sea">
         View
       </button>
+    </td>
+    <td>
+      <mat-icon  *ngIf="contribution.song?.publishedState === true" style="color: limegreen" aria-hidden="false" aria-label="Published song" matTooltip="Public">verified</mat-icon>
+      <mat-icon *ngIf="contribution.song?.publishedState === false" style="color: rgba(202,0,26,0.79)" aria-hidden="false" aria-label="Non-Published song" matTooltip="This song has not been published yet">public_off</mat-icon>
     </td>
   </tr>
 </table>
