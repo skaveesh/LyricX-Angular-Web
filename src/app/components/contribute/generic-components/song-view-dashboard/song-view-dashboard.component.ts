@@ -1,18 +1,18 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import {SongSaveUpdateRequest, SongSaveResponse} from '../../../../dto/song';
+import {Component, OnInit} from '@angular/core';
+import {SongSaveUpdateRequest, SongResponseData} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
-import {first, skipWhile, take, tap} from 'rxjs/operators';
+import {filter, first, take, tap} from 'rxjs/operators';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
-import {AlbumGetResponse} from '../../../../dto/album';
+import {AlbumResponseData} from '../../../../dto/album';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
 import {UtilService} from '../../../../services/util.service';
-import {BehaviorSubject} from 'rxjs';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ContributorAdapterService} from '../../../../services/rest/contributor-adapter.service';
 import {ContributorResponseData} from '../../../../dto/contributor';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
+import {ContributorUtilService} from '../../../../services/contributor-util.service';
 
 @Component({
   selector: 'app-song-view-dashboard',
@@ -21,10 +21,8 @@ import {SongAdapterService} from '../../../../services/rest/song-adapter.service
 })
 export class SongViewDashboardComponent implements OnInit {
 
-  @Output() contributeTabComponent$ResetFields = new EventEmitter<boolean>();
-
   private _genreNameListOfTheSong: string[] = [];
-  private _album: AlbumGetResponse = null;
+  private _album: AlbumResponseData = null;
   private _contributor: ContributorResponseData = null;
   private _artist: string;
   private _featuringArtistList: string[] = [];
@@ -37,16 +35,14 @@ export class SongViewDashboardComponent implements OnInit {
 
   private _displayDiffComponent = false;
 
-  private _songData: SongSaveResponse = null;
-
-  public songDataBehaviourSubject = new BehaviorSubject<SongSaveResponse>(null);
+  private _songData: SongResponseData = null;
 
   constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService, private contributorAdapterService: ContributorAdapterService,
               private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
-              private loadingStatusService: LoadingStatusService) {
+              private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService) {
     // only initialize this component after save song was called in previous component
-    this.songDataBehaviourSubject.pipe(skipWhile(res => res === null)).subscribe((res) => {
+    this.contributorUtilService.getSongViewData().pipe(filter(res => res !== null)).subscribe((res) => {
       this._songData = res;
       this.afterSaveSongInit();
     }, error => {
@@ -86,7 +82,7 @@ export class SongViewDashboardComponent implements OnInit {
       take(this.genreAdapterService.allSelections.getValue().length <= 0 ? 2 : 1)
     ).subscribe(value => {
 
-      const genreIdList = this._songData.data.genreIdList.map(String);
+      const genreIdList = this._songData.genreIdList.map(String);
 
       if (value.length > 0) {
         value.forEach(genreItem => {
@@ -105,11 +101,10 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeAlbum(): void {
-    this.albumAdapterService.getAlbum(this._songData.data.albumSurrogateKey, false)
+    this.albumAdapterService.getAlbum(this._songData.albumSurrogateKey, false)
       .pipe(first())
       .subscribe(value => {
-      this._album = value;
-      console.log('init album', value);
+      this._album = value.data;
       this.initializeArtist();
       this.initializeFeaturingArtistList();
     }, error => {
@@ -119,7 +114,7 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private initializeArtist(): void {
-    this.artistAdapterService.getArtist(this._album.data.artistSurrogateKey, false)
+    this.artistAdapterService.getArtist(this._album.artistSurrogateKey, false)
       .pipe(first())
       .subscribe(value => {
       this._artist = value.data.name;
@@ -131,7 +126,7 @@ export class SongViewDashboardComponent implements OnInit {
 
   private initializeFeaturingArtistList(): void {
     this._featuringArtistList.splice(0);
-    this._songData.data.artistSurrogateKeyList.forEach(artistSurrogateKey => {
+    this._songData.artistSurrogateKeyList.forEach(artistSurrogateKey => {
       this.artistAdapterService.getArtist(artistSurrogateKey, false)
         .pipe(first())
         .subscribe(value => {
@@ -153,7 +148,7 @@ export class SongViewDashboardComponent implements OnInit {
 
   private initializeLyricsView(): void {
 
-    this._lyric = UtilService.base64DecodeUnicode(this._songData.data.lyrics);
+    this._lyric = UtilService.base64DecodeUnicode(this._songData.lyrics);
     this._lyricWithoutChords = this._lyric;
 
     const guitarTableMatches = this._lyric.match(/\$[a-zA-Z0-9!\\\/|\-+,.?%~=@()*^&#\n\t ]+\$/g);
@@ -182,7 +177,7 @@ export class SongViewDashboardComponent implements OnInit {
     return this._genreNameListOfTheSong;
   }
 
-  get album(): AlbumGetResponse {
+  get album(): AlbumResponseData {
     return this._album;
   }
 
@@ -242,11 +237,11 @@ export class SongViewDashboardComponent implements OnInit {
     this._displayDiffComponent = value;
   }
 
-  get songData(): SongSaveResponse {
+  get songData(): SongResponseData {
     return this._songData;
   }
 
-  set songData(value: SongSaveResponse) {
+  set songData(value: SongResponseData) {
     this._songData = value;
   }
 
@@ -279,16 +274,16 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   private resetAndNavigateToContributorMainTab(): void {
-    this.contributeTabComponent$ResetFields.emit(true);
+    this.contributorUtilService.resetContributorFields();
   }
 
   private publishSong() {
     const payload: SongSaveUpdateRequest = {
-      surrogateKey: this._songData.data.surrogateKey,
+      surrogateKey: this._songData.surrogateKey,
       publishedState: true
     };
 
-    this.songAdapter.saveSong(payload).subscribe(response => {
+    this.songAdapter.saveSong(payload).subscribe(() => {
       this.snackBarComponent.openSnackBar('Song Publishing Successful', false);
     }, error => {
       console.error(error);

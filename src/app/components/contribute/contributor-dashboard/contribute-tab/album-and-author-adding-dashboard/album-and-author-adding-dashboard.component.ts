@@ -4,9 +4,17 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete} from '@angular/material/autocomplete';
 import {SuggestionService} from '../../../../../services/suggestion.service';
-import {AlbumSuggest} from '../../../../../dto/album';
-import {ArtistSuggest} from '../../../../../dto/artist';
+import {AlbumResponseData, AlbumSuggest} from '../../../../../dto/album';
+import {ArtistResponseData, ArtistSuggest} from '../../../../../dto/artist';
 import {SuggestedItem} from '../../../../../dto/item-suggest';
+import {AlbumAdapterService} from '../../../../../services/rest/album-adapter.service';
+import {ContributorUtilService} from '../../../../../services/contributor-util.service';
+import {filter, mergeMap, toArray} from 'rxjs/operators';
+import {SongResponseData, SongWithAlbumAndArtist} from '../../../../../dto/song';
+import {forkJoin, from} from 'rxjs';
+import {LoadingStatusService} from '../../../../../services/loading-status.service';
+import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
+import {ArtistAdapterService} from '../../../../../services/rest/artist-adapter.service';
 
 @Component({
   selector: 'app-album-and-author-adding-dashboard',
@@ -33,7 +41,9 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
   @ViewChild('autoCompleteAlbum', {static: false}) matAutocompleteAlbum: MatAutocomplete;
   @ViewChild('autoCompleteArtist', {static: false}) matAutocompleteArtist: MatAutocomplete;
 
-  constructor(private suggestionService: SuggestionService) {
+  constructor(private suggestionService: SuggestionService, private albumAdapterService: AlbumAdapterService,
+              private artistAdapterService: ArtistAdapterService, private contributorUtilService: ContributorUtilService,
+              private loadingStatusService: LoadingStatusService, private defaultSnackBar: DefaultSnackBarComponent) {
     this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService, this.albumCtrl, false,
       res => this.suggestionService.getAlbumSuggestion(res));
 
@@ -47,6 +57,10 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
 
     this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocompleteArtist);
     this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
+
+    this.contributorUtilService.getSongEditData()
+      .pipe(filter(res => res !== null))
+      .subscribe(res => this.autoFillContributorEditFields(res));
   }
 
   ngOnInit(): void {
@@ -80,6 +94,62 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
         this.suggestionUserInterfaceArtist.pushDataToAllItems(itemSuggestArray);
       }
     });
+  }
+
+  // TODO remove this later
+  filll() {
+
+    const cx: SongWithAlbumAndArtist = new class implements SongWithAlbumAndArtist {
+      album: AlbumResponseData;
+      artist: ArtistResponseData;
+      song: SongResponseData;
+    };
+
+    this.autoFillContributorEditFields(cx);
+  }
+
+  autoFillContributorEditFields(songWithAlbumAndArtist: SongWithAlbumAndArtist) {
+
+    this.loadingStatusService.startLoading();
+
+    this.albumAdapterService.getAlbum(songWithAlbumAndArtist.album.surrogateKey, false).subscribe(res => {
+        const albumChipSelectedItems: any[] = [];
+
+        const item = ContributorUtilService.defaultSurrogateKeyNameSuggestedItem(res.data.surrogateKey, res.data.name);
+
+        albumChipSelectedItems.push(item);
+        this.suggestionUserInterfaceAlbum.chipSelectedItems.push(item);
+        const arrayOfChipSelectedItems = albumChipSelectedItems.map(chipItem => chipItem.surrogateKey);
+        this.albumCtrl.setValue(arrayOfChipSelectedItems);
+      }, () => this.defaultSnackBar.openSnackBar('Error fetching song details.', true),
+      () => {
+        this.loadingStatusService.stopLoading();
+        // sending two events
+        this.contributorUtilService.sendContributorStepper(true);
+        this.contributorUtilService.sendContributorStepper(true);
+      });
+
+    const artistChipSelectedItems: any[] = [];
+
+    from(songWithAlbumAndArtist.song.artistSurrogateKeyList)
+      .pipe(
+        toArray(),
+        mergeMap(project => {
+          const observables = project.map(artistSurrogateKey => this.artistAdapterService.getArtist(artistSurrogateKey, false));
+          return forkJoin(observables);
+        }),
+      ).subscribe(res => {
+
+      res.forEach(artist => {
+        const item = ContributorUtilService.defaultSurrogateKeyNameSuggestedItem(artist.data.surrogateKey, artist.data.name);
+
+        artistChipSelectedItems.push(item);
+        this.suggestionUserInterfaceArtist.chipSelectedItems.push(item);
+        const arrayOfChipSelectedItems = artistChipSelectedItems.map(chipItem => chipItem.surrogateKey);
+        this.artistCtrl.setValue(arrayOfChipSelectedItems);
+      });
+    });
+
   }
 
 }

@@ -20,7 +20,7 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
    * @param surrogateKey surrogate key
    * @param doRefresh do need to explicitly fetch from the API or not
    */
-  public getObjectBySurrogateKey(url: string, surrogateKey: string, doRefresh: boolean): Observable<GetResponse> {
+  protected getObjectBySurrogateKey(url: string, surrogateKey: string, doRefresh: boolean): Observable<GetResponse> {
     let observable: Observable<GetResponse>;
     if (!doRefresh && this.objectMap.size > 0 && !!this.objectMap.get(surrogateKey)) {
       observable = of<GetResponse>(this.objectMap.get(surrogateKey)).pipe(share());
@@ -39,7 +39,7 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
     return observable;
   }
 
-  public createObject(url: string, payload: CreateRequest, image: Blob): Observable<CreateResponse> {
+  protected createObject(url: string, payload: CreateRequest, image: Blob): Observable<CreateResponse> {
     const formData: FormData = new FormData();
     formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
     formData.append(AppConstant.IMAGE, image);

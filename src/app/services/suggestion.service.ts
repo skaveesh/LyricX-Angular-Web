@@ -44,8 +44,6 @@ export class SuggestionService extends SocketRootService {
 
     this.albumStompClient.connect({}, function (frame) {
 
-      console.log('Connected: ' + frame);
-
       _this.albumStompClient.subscribe('/user/suggested/album', function (message) {
         _this.onAlbumReceived(message);
 
@@ -53,8 +51,6 @@ export class SuggestionService extends SocketRootService {
     });
 
     this.artistStompClient.connect({}, function (frame) {
-
-      console.log('Connected: ' + frame);
 
       _this.artistStompClient.subscribe('/user/suggested/artist', function (message) {
         _this.onArtistReceived(message);

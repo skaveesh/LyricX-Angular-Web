@@ -55,18 +55,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         if (status !== this.progressBarViewStatus) {
           this.progressBarViewStatus = status;
-
-          const allInputElements = this.element.nativeElement.querySelectorAll('button, input, textarea');
-
-          if (status) {
-            allInputElements.forEach((el) => {
-              el.disabled = true;
-            });
-          } else {
-            allInputElements.forEach((el) => {
-              el.disabled = false;
-            });
-          }
         }
       }
     );

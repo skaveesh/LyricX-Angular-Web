@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatAutocomplete, MatDialog} from '@angular/material';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
@@ -12,10 +12,13 @@ import {LanguageAdapterService} from '../../../../services/rest/language-adapter
 import {StaticSelectionController} from '../../../../classes/static-selection-controller';
 import {UtilService} from '../../../../services/util.service';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
-import {SongSaveUpdateRequest} from '../../../../dto/song';
+import {SongSaveUpdateRequest, SongWithAlbumAndArtist} from '../../../../dto/song';
 import AppConstant = Constants.AppConstant;
 import {Observable} from 'rxjs';
 import {BasicHttpResponse} from '../../../../dto/base-http-response';
+import {ContributorUtilService} from '../../../../services/contributor-util.service';
+import {LoadingStatusService} from '../../../../services/loading-status.service';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-song-add-update-dashboard',
@@ -54,7 +57,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild('languageInput', {static: false}) languageInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoCompleteLanguage', {static: false}) matAutocompleteLanguage: MatAutocomplete;
 
-  @ViewChild('lyricsTextArea', {static: false}) matLyricsTextArea: ElementRef<HTMLElement>;
+  @ViewChild('lyricsTextArea', {static: false}) lyricsTextArea: ElementRef<HTMLElement>;
   private matLyricsTextAreaInitialized = false;
 
   // parent: contributeTabComponent
@@ -66,7 +69,9 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   public surrogateKey: string = null;
 
-  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService, private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent, public dialog: MatDialog) {
+  constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService,
+              private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent, public dialog: MatDialog,
+              private contributorUtilService: ContributorUtilService, private loadingStatusService: LoadingStatusService) {
 
     this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
   }
@@ -94,12 +99,20 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     this.languageController.setMatAutoComplete(this.matAutocompleteLanguage);
     this.languageController.setStaticSelectionInput(this.languageInput);
     this.initializeLyricsTextArea();
+
+    this.contributorUtilService.getSongEditData()
+      .pipe(filter(res => res !== null))
+      .subscribe(res => this.autoFillContributorEditFields(res));
   }
 
-  private initializeLyricsTextArea() {
+  private initializeLyricsTextArea(): void {
     this.lyricsCtrl.setValue(sessionStorage.getItem(Constants.Session.SONG_LYRIC));
+    this.dispatchKeyEventLyricsTextArea();
+  }
+
+  private dispatchKeyEventLyricsTextArea(): void {
     const event = new KeyboardEvent('keyup', { key: 'Enter' });
-    this.matLyricsTextArea.nativeElement.dispatchEvent(event);
+    this.lyricsTextArea.nativeElement.dispatchEvent(event);
   }
 
   getAlbumImage(): string | ArrayBuffer {
@@ -110,7 +123,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     return Constants.Asset.ALBUM_IMAGE;
   }
 
-  openAlbumImageUploadDialog() {
+  openAlbumImageUploadDialog(): void {
     this.albumImageUploadDialogFacade.openImageSelectingDialog(AppConstant.ALBUM, this.songAlbumArtUploadData.croppedImageBase64,
       this.songAlbumArtUploadData.originalImageBase64, this.songAlbumArtUploadData.croppedImagePositions)
       .subscribe(result => {this.songAlbumArtUploadData = result;
@@ -168,8 +181,6 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   public saveSong(albumCtrl: FormControl, artistCtrl: FormControl, callbackIfSaveComplete: any): Observable<BasicHttpResponse> {
 
-    this.contributeTabComponent$HasSongAddingRequestCompleted.emit(false);
-
     if (!this.isSongFormValid() || albumCtrl.value.length === 0) {
       this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
       return;
@@ -217,7 +228,41 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
   }
 
   public resetLyricsFieldHeight(): void {
-    this.matLyricsTextArea.nativeElement.style.height = '25px';
+    this.lyricsTextArea.nativeElement.style.height = '25px';
+  }
+
+  autoFillContributorEditFields(songWithAlbumAndArtist: SongWithAlbumAndArtist): void {
+
+    this.surrogateKey = songWithAlbumAndArtist.song.surrogateKey;
+    this.songAddUpdateFormGroup.controls.songNameCtrl.setValue(songWithAlbumAndArtist.song.name);
+    this.songAddUpdateFormGroup.controls.guitarKeyCtrl.setValue(songWithAlbumAndArtist.song.guitarKey);
+    this.songAddUpdateFormGroup.controls.songBeatCtrl.setValue(songWithAlbumAndArtist.song.beat);
+
+    this.languageCtrl.setValue([songWithAlbumAndArtist.song.languageCode]);
+    this.languageController.staticSelection.push(this.languageController.getChipValueByItemCode(songWithAlbumAndArtist.song.languageCode));
+
+    this.songAddUpdateFormGroup.controls.songKeywordsCtrl.setValue(songWithAlbumAndArtist.song.keywords);
+
+    this.lyricsCtrl.setValue(UtilService.base64DecodeUnicode(songWithAlbumAndArtist.song.lyrics));
+    this.dispatchKeyEventLyricsTextArea();
+
+    this.songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.setValue(songWithAlbumAndArtist.song.youTubeLink);
+    this.songAddUpdateFormGroup.controls.songSpotifyLinkCtrl.setValue(songWithAlbumAndArtist.song.spotifyLink);
+    this.songAddUpdateFormGroup.controls.songDeezerLinkCtrl.setValue(songWithAlbumAndArtist.song.deezerLink);
+    this.songAddUpdateFormGroup.controls.songAppleMusicLinkCtrl.setValue(songWithAlbumAndArtist.song.appleMusicLink);
+    this.songAddUpdateFormGroup.controls.songExplicitCtrl.setValue(songWithAlbumAndArtist.song.isExplicit);
+
+    this.genreCtrl.setValue(songWithAlbumAndArtist.song.genreIdList);
+    songWithAlbumAndArtist.song.genreIdList.forEach(genre => this.genreController.staticSelection.push(this.genreController.getChipValueByItemCode(genre.toString())));
+
+    if (!this.isSongFormValid()) {
+      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+      return;
+    }
+
+    this.contributorUtilService.sendSongViewData(songWithAlbumAndArtist.song);
+
+    this.contributeTabComponent$HasSongAddingRequestCompleted.emit(true);
   }
 
   get guitarKeyAbstractCtrl() {

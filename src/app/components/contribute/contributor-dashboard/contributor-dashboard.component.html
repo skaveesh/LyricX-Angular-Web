@@ -1,4 +1,4 @@
-<mat-tab-group color="warn" [selectedIndex]="tab" dynamicHeight>
+<mat-tab-group color="warn" dynamicHeight [selectedIndex]="tab" (selectedTabChange)="onTabChanged($event)" #mainContributorTabGroup>
   <mat-tab label="My Profile">
     <app-my-profile-tab></app-my-profile-tab>
   </mat-tab>

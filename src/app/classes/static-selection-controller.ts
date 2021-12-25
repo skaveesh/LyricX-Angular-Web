@@ -80,9 +80,9 @@ export class StaticSelectionController {
     const value = this.staticSelectionInput.nativeElement.value;
 
     this.displayedStaticSelection = [];
-    this.staticSelectionAdapterService.allSelections.getValue().forEach((x) => {
-      if (x.toLowerCase().includes(value.toLowerCase())) {
-        this.displayedStaticSelection.push(x);
+    this.staticSelectionAdapterService.allSelections.getValue().forEach((item) => {
+      if (item.toLowerCase().includes(value.toLowerCase())) {
+        this.displayedStaticSelection.push(item);
       }
     });
 
@@ -148,5 +148,10 @@ export class StaticSelectionController {
   private setFormControlValue(): void {
     const arrayOfChipSelectedItems = this.staticSelection.map(item => item.substring(item.lastIndexOf(Constants.Symbol.DOLLAR_SIGN) + 1));
     this.staticSelectionCtrl.setValue(arrayOfChipSelectedItems);
+  }
+
+  public getChipValueByItemCode(itemCode: string): string {
+    const result = this.displayedStaticSelection.find(item => item.substring(item.lastIndexOf(Constants.Symbol.DOLLAR_SIGN) + 1) === itemCode);
+    return result ? result : null;
   }
 }

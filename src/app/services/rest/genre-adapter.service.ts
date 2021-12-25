@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {RestTemplateBuilder} from './rest-template-builder';
-import {first, map, skipWhile, take, tap} from 'rxjs/operators';
+import {filter, first, map, take, tap} from 'rxjs/operators';
 import {AllGenre} from '../../dto/genre';
 import {StaticSelectionAdapter} from './static-selection-adapter';
 import {UserAuthorizationService} from '../auth/user-authorization.service';
@@ -17,7 +17,7 @@ export class GenreAdapterService extends StaticSelectionAdapter {
   }
 
   getAllSelections(): void {
-    this.authService.isLoggedOut.pipe(skipWhile(res => res === null), take(1)).toPromise().then(res => {
+    this.authService.isLoggedOut.pipe(filter(res => res !== null), take(1)).toPromise().then(res => {
 
       if (!res) {
 
@@ -36,7 +36,6 @@ export class GenreAdapterService extends StaticSelectionAdapter {
               first())
             .subscribe(v => '',
               e => {
-                console.log(e);
                 throw new Error('Couldn\'t fetch Genres');
               });
         }
