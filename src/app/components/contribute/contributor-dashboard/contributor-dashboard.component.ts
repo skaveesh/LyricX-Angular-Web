@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ContributorUtilService} from '../../../services/contributor-util.service';
 import {filter} from 'rxjs/operators';
 import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
+import {LoadingStatusService} from '../../../services/loading-status.service';
 
 @Component({
   selector: 'app-contributor-dashboard',
@@ -14,7 +15,7 @@ export class ContributorDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('mainContributorTabGroup', {static: false}) tabGroup: MatTabGroup;
 
-  constructor( private contributorUtilService: ContributorUtilService) {
+  constructor(private contributorUtilService: ContributorUtilService, private loadingStatusService: LoadingStatusService) {
     this.tab = 0;
   }
 
@@ -26,10 +27,6 @@ export class ContributorDashboardComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setInterval(() => {
-      this.tab = 1;
-    }, 1000);
-
     this.contributorUtilService.getResetStatus().pipe(filter((res: boolean) => res === true)).subscribe(() => {
       this.tabGroup.selectedIndex = 1;
     });

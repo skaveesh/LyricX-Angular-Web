@@ -92,4 +92,8 @@ export class UtilService {
     console.error('HTTP error occurred');
     return Promise.reject(error.message || error);
   }
+
+  public static urlRegexPattern(isEmptyValid: boolean = false): RegExp {
+    return isEmptyValid ? /(^$|^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])/g : /^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/g;
+  }
 }

@@ -4,13 +4,13 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
 import {MatAutocomplete} from '@angular/material/autocomplete';
 import {SuggestionService} from '../../../../../services/suggestion.service';
-import {AlbumResponseData, AlbumSuggest} from '../../../../../dto/album';
-import {ArtistResponseData, ArtistSuggest} from '../../../../../dto/artist';
+import {AlbumSuggest} from '../../../../../dto/album';
+import {ArtistSuggest} from '../../../../../dto/artist';
 import {SuggestedItem} from '../../../../../dto/item-suggest';
 import {AlbumAdapterService} from '../../../../../services/rest/album-adapter.service';
 import {ContributorUtilService} from '../../../../../services/contributor-util.service';
-import {filter, mergeMap, toArray} from 'rxjs/operators';
-import {SongResponseData, SongWithAlbumAndArtist} from '../../../../../dto/song';
+import {filter, mergeMap, tap, toArray} from 'rxjs/operators';
+import {SongWithAlbumAndArtist} from '../../../../../dto/song';
 import {forkJoin, from} from 'rxjs';
 import {LoadingStatusService} from '../../../../../services/loading-status.service';
 import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
@@ -96,23 +96,11 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
     });
   }
 
-  // TODO remove this later
-  filll() {
+  private autoFillContributorEditFields(songWithAlbumAndArtist: SongWithAlbumAndArtist): void {
 
-    const cx: SongWithAlbumAndArtist = new class implements SongWithAlbumAndArtist {
-      album: AlbumResponseData;
-      artist: ArtistResponseData;
-      song: SongResponseData;
-    };
-
-    this.autoFillContributorEditFields(cx);
-  }
-
-  autoFillContributorEditFields(songWithAlbumAndArtist: SongWithAlbumAndArtist) {
-
-    this.loadingStatusService.startLoading();
-
-    this.albumAdapterService.getAlbum(songWithAlbumAndArtist.album.surrogateKey, false).subscribe(res => {
+    this.albumAdapterService.getAlbum(songWithAlbumAndArtist.album.surrogateKey, false)
+      .pipe(tap(() => this.loadingStatusService.startLoading()))
+      .subscribe(res => {
         const albumChipSelectedItems: any[] = [];
 
         const item = ContributorUtilService.defaultSurrogateKeyNameSuggestedItem(res.data.surrogateKey, res.data.name);

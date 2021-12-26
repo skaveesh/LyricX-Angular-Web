@@ -44,20 +44,11 @@ export class ContributorAdapterService extends HttpRoot {
   }
 
   public requestMyContributions(pageNumber: number, pageSize: number): Observable<MyContributionMetadataResponse> {
-
-    const observable: Observable<MyContributionMetadataResponse> = (new RestTemplateBuilder())
+    return (new RestTemplateBuilder())
       .withAuthHeader()
       .withParam(Constants.Param.PAGE_NUMBER, pageNumber.toString())
       .withParam(Constants.Param.PAGE_SIZE, pageSize.toString())
       .get<BasicHttpResponse>(this.GET_MY_CONTRIBUTIONS_URL)
       .pipe(first(), share(), map(response => response.body.data));
-
-    observable.subscribe((res) => {
-      sessionStorage.setItem(Constants.Session.CONTRIBUTOR_OBJ, JSON.stringify(res));
-    }, error => {
-      console.error('Error requesting details of contributor.', error);
-    });
-
-    return observable;
   }
 }

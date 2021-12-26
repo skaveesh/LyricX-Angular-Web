@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {SongSaveUpdateRequest, SongResponseData} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
-import {filter, first, take, tap} from 'rxjs/operators';
+import {filter, first, mergeMap, take, tap, toArray} from 'rxjs/operators';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
 import {AlbumResponseData} from '../../../../dto/album';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
@@ -13,6 +13,7 @@ import {ContributorResponseData} from '../../../../dto/contributor';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
+import {forkJoin, from} from 'rxjs';
 
 @Component({
   selector: 'app-song-view-dashboard',
@@ -37,35 +38,36 @@ export class SongViewDashboardComponent implements OnInit {
 
   private _songData: SongResponseData = null;
 
+  private loadingStopCounter = 0;
+
   constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService, private contributorAdapterService: ContributorAdapterService,
               private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
               private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService) {
     // only initialize this component after save song was called in previous component
-    this.contributorUtilService.getSongViewData().pipe(filter(res => res !== null)).subscribe((res) => {
+    this.contributorUtilService.getSongViewData()
+      .pipe(filter(res => res !== null), tap(() => this.loadingStatusService.startLoading()))
+      .subscribe((res) => {
       this._songData = res;
       this.afterSaveSongInit();
-    }, error => {
-      console.error('Error while loading song data');
+    }, () => {
       this.snackBarComponent.openSnackBar('Error while loading song data', true);
     });
 
     // get contributor
     this.contributorAdapterService.requestContributorDetails()
-      .pipe(tap(() => this.loadingStatusService.startLoading()))
       .subscribe((res) => {
       this._contributor = res;
-    }, (error) => {
+    }, () => {
       console.error('Error occurred while fetching contributor details.');
-      console.error(error);
-    }, () => this.loadingStatusService.stopLoading());
+    });
   }
 
   ngOnInit() {
   }
 
   // only initialize this component after save song was called in previous component
-  afterSaveSongInit() {
+  afterSaveSongInit(): void {
     this.genreAdapterService.getAllSelections();
     this.init();
   }
@@ -121,21 +123,30 @@ export class SongViewDashboardComponent implements OnInit {
     }, error => {
       console.error(error);
       throw new Error('Error while fetching staticSelections');
-    });
+    }, () => this.finishLoading());
   }
 
   private initializeFeaturingArtistList(): void {
     this._featuringArtistList.splice(0);
-    this._songData.artistSurrogateKeyList.forEach(artistSurrogateKey => {
-      this.artistAdapterService.getArtist(artistSurrogateKey, false)
-        .pipe(first())
-        .subscribe(value => {
-        this._featuringArtistList.push(value.data.name);
-      }, error => {
-        console.error(error);
-        throw new Error('Error while fetching staticSelections');
+
+    from(this._songData.artistSurrogateKeyList)
+      .pipe(
+        toArray(),
+        mergeMap(project => {
+          const observables = project.map(artistSurrogateKey => this.artistAdapterService.getArtist(artistSurrogateKey, false)
+            .pipe(tap(() => console.log('start fetch artist list')), first()));
+
+          return forkJoin(observables);
+        }),
+      ).subscribe(res => {
+      res.forEach(artist => {
+        this._featuringArtistList.push(artist.data.name);
       });
-    });
+    }, error => {
+      console.error(error);
+      throw new Error('Error while fetching staticSelections');
+    }, () => this.finishLoading());
+
   }
 
   formatDate(dateString: string): string {
@@ -171,6 +182,19 @@ export class SongViewDashboardComponent implements OnInit {
 
     // remove unwanted whitespaces
     this._lyricWithoutChords = this._lyricWithoutChords.match(/[ \S]+[\S]+[\S ]+/g).join('\n\n');
+  }
+
+  private finishLoading(): void {
+    if (this._songData.artistSurrogateKeyList.length > 0) {
+      if (this.loadingStopCounter === 1) {
+        this.loadingStatusService.stopLoading();
+        this.loadingStopCounter = 0;
+      } else {
+        this.loadingStopCounter++;
+      }
+    } else {
+      this.loadingStatusService.stopLoading();
+    }
   }
 
   get genreNameListOfTheSong(): string[] {

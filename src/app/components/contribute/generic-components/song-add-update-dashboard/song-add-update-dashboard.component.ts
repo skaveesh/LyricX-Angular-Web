@@ -82,10 +82,10 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
       guitarKeyCtrl: ['', Validators.required],
       songBeatCtrl: '',
       songKeywordsCtrl: ['', Validators.required],
-      songYouTubeLinkCtrl: ['', Validators.required],
-      songSpotifyLinkCtrl: '',
-      songDeezerLinkCtrl: '',
-      songAppleMusicLinkCtrl: '',
+      songYouTubeLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern())],
+      songSpotifyLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
+      songDeezerLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
+      songAppleMusicLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
       songExplicitCtrl: false
     });
 
@@ -166,7 +166,24 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     this.songAlbumArtUploadData.croppedImagePositions = null;
   }
 
-  public isSongFormValid(): boolean {
+  public isSongFormValid(albumCtrl: FormControl): boolean {
+
+    if (albumCtrl.value.length === 0) {
+      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+      return false;
+    }
+
+    if (!this.songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.valid) {
+      this.defaultSnackBar.openSnackBar('Provide YouTube is incorrect.', true);
+      return false;
+    }
+
+    if (!this.songAddUpdateFormGroup.controls.songSpotifyLinkCtrl.valid ||
+      !this.songAddUpdateFormGroup.controls.songDeezerLinkCtrl.valid ||
+      !this.songAddUpdateFormGroup.controls.songAppleMusicLinkCtrl.valid) {
+      this.defaultSnackBar.openSnackBar('Provide streaming services links are incorrect.', true);
+      return false;
+    }
 
     const isValid: boolean = this.songAddUpdateFormGroup.valid && this.lyricsCtrl.valid && this.languageCtrl.value.length === 1
       && this.genreCtrl.value.length > 0;
@@ -181,8 +198,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   public saveSong(albumCtrl: FormControl, artistCtrl: FormControl, callbackIfSaveComplete: any): Observable<BasicHttpResponse> {
 
-    if (!this.isSongFormValid() || albumCtrl.value.length === 0) {
-      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+    if (!this.isSongFormValid(albumCtrl)) {
       return;
     }
 
@@ -255,8 +271,10 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     this.genreCtrl.setValue(songWithAlbumAndArtist.song.genreIdList);
     songWithAlbumAndArtist.song.genreIdList.forEach(genre => this.genreController.staticSelection.push(this.genreController.getChipValueByItemCode(genre.toString())));
 
-    if (!this.isSongFormValid()) {
-      this.defaultSnackBar.openSnackBar('Provided inputs are invalid. Please check again', true);
+    const albumCtrl: FormControl = new FormControl();
+    albumCtrl.setValue(songWithAlbumAndArtist.album.surrogateKey);
+
+    if (!this.isSongFormValid(albumCtrl)) {
       return;
     }
 

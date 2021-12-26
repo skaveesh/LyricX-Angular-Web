@@ -74,18 +74,20 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
 
   delegateSaveSong(matStepper: MatStepper) {
     this.viewportScroller.scrollToPosition([0, 0]);
-    this.songAddingDashboardComponent.saveSong(this.albumAndAuthorAddingDashboardComponent.albumCtrl,
+    const songSaveObservable = this.songAddingDashboardComponent.saveSong(this.albumAndAuthorAddingDashboardComponent.albumCtrl,
       this.albumAndAuthorAddingDashboardComponent.artistCtrl, () => {
         // adding timeout to propagate the changes
         setTimeout(() => {
             matStepper.next();
             document.getElementsByTagName('mat-drawer-content')[0].scrollTo({top: 0, behavior: 'smooth'});
           }, 500);
-      }).subscribe(res => {
-      setTimeout(() => {
+      });
+
+    if (songSaveObservable) {
+      songSaveObservable.subscribe(res => {
         this.contributorUtilService.sendSongViewData(res.data);
       });
-    });
+    }
   }
 
   get hasSongAddingRequestCompleted(): boolean {

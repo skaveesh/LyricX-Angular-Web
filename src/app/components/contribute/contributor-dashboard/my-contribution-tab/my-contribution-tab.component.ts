@@ -3,13 +3,14 @@ import {ContributorAdapterService} from '../../../../services/rest/contributor-a
 import {MyContributionMetadataResponse} from '../../../../dto/contributor';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
-import {filter, first, take, tap} from 'rxjs/operators';
+import {filter, first, map, mergeMap, take, tap} from 'rxjs/operators';
 import {SongWithAlbumAndArtist} from '../../../../dto/song';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
 import {UtilService} from '../../../../services/util.service';
 import {PageEvent} from '@angular/material';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
+import {from} from 'rxjs';
 
 @Component({
   selector: 'app-my-contribution-tab',
@@ -39,42 +40,45 @@ export class MyContributionTabComponent implements AfterViewInit {
   private getMyContributions(pageNumber: number, pageSize: number) {
 
     this.contributorUtilService.getContributorTabIndex()
-      .pipe(filter(value => value === 2), first())
+      .pipe(filter(value => value === 2), first(), tap(() => this.loadingStatusService.startLoading()))
       .subscribe(() => {
 
-      this.contributorAdapterService.requestMyContributions(pageNumber, pageSize)
-      .pipe(
-        filter(res => res !== null), take(1),
-        tap(() =>  this.loadingStatusService.startLoading()))
-      .subscribe(res => {
+        this.contributorAdapterService.requestMyContributions(pageNumber, pageSize)
+          .pipe(
+            filter(res => res !== null), take(1))
+          .subscribe(res => {
 
-        this._contributionsResponse = res;
-        this.length = res.totalElements;
+            this._contributionsResponse = res;
+            this.length = res.totalElements;
 
-          this._contributionsResponse.songList.forEach(song => {
-            const songWithAlbumArtist: SongWithAlbumAndArtist = {} as SongWithAlbumAndArtist;
-            songWithAlbumArtist.song = song;
+            from(this._contributionsResponse.songList).pipe(
+              map(song => {
+                const songWithAlbumArtist: SongWithAlbumAndArtist = {} as SongWithAlbumAndArtist;
+                songWithAlbumArtist.song = song;
+                return songWithAlbumArtist;
+              }),
+              mergeMap(songWithAlbumArtistIncludedSong => this.albumAdapterService.getAlbum(songWithAlbumArtistIncludedSong.song.albumSurrogateKey, false)
+                .pipe(filter(album => album !== null), take(1),
+                  map(album => {
+                    songWithAlbumArtistIncludedSong.album = album.data;
+                    return songWithAlbumArtistIncludedSong;
+                  }),
+                  mergeMap(songWithAlbumArtistIncludedSongAndAlbum => this.artistAdapterService.getArtist(songWithAlbumArtistIncludedSongAndAlbum.album.artistSurrogateKey, false)
+                    .pipe(filter(artist => artist !== null), take(1),
+                      map(artist => {
+                        songWithAlbumArtistIncludedSongAndAlbum.artist = artist.data;
+                        return songWithAlbumArtistIncludedSongAndAlbum;
+                      }))))))
+              .subscribe(songWithAlbumArtistIncludedSongAndAlbumAndArtist => {
+                this._songWithAlbumAndArtist.push(songWithAlbumArtistIncludedSongAndAlbumAndArtist);
+              }, (error) => {
+                console.error(error);
+                this.snackBarComponent.openSnackBar('Error fetching data', true);
+              }, () => this.loadingStatusService.stopLoading());
 
-            this.albumAdapterService.getAlbum(song.albumSurrogateKey, false)
-              .pipe(filter(album => album !== null), take(1))
-              .subscribe(album => {
-                songWithAlbumArtist.album = album.data;
-
-                this.artistAdapterService.getArtist(album.data.artistSurrogateKey, false)
-                  .pipe(filter(artist => artist !== null), take(1))
-                  .subscribe(artist => {
-                    songWithAlbumArtist.artist = artist.data;
-
-                    this._songWithAlbumAndArtist.push(songWithAlbumArtist);
-                  });
-              });
+          }, () => {
+            this.snackBarComponent.openSnackBar('Error while loading contributions', true);
           });
-
-      }, error => {
-        console.error('Error while loading contributions', error);
-        this.snackBarComponent.openSnackBar('Error while loading contributions', true);
-      }, () => this.loadingStatusService.stopLoading());
-
       });
 
   }
