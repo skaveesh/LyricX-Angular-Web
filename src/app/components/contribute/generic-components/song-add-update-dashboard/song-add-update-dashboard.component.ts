@@ -214,7 +214,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
     saveSongObservable.subscribe(response => {
       this.surrogateKey = (<SongSaveUpdateRequest>response.data).surrogateKey;
-      this.defaultSnackBar.openSnackBar('Song Saving Successful', false);
+      this.defaultSnackBar.openSnackBar('Song Saving Successful');
       this.destroyAlbumImageUploadData();
       sessionStorage.removeItem(Constants.Session.SONG_LYRIC);
       this.contributeTabComponent$HasSongAddingRequestCompleted.emit(true);

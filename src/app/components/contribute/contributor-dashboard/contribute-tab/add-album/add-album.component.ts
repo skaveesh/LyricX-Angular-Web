@@ -130,7 +130,7 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
       };
 
       this.albumAdapter.createAlbum(payload, image).subscribe(response => {
-        this.defaultSnackBar.openSnackBar('Album Creation Successful', false);
+        this.defaultSnackBar.openSnackBar('Album Creation Successful');
         this.destroyInputs();
       }, error => {
         console.error(error);

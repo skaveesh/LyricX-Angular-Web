@@ -98,7 +98,7 @@ export class AddArtistComponent implements OnInit, AfterViewInit {
       };
 
       this.artistAdapter.createArtist(payload, image).subscribe(response => {
-        this.defaultSnackBar.openSnackBar('Artist Creation Successful', false);
+        this.defaultSnackBar.openSnackBar('Artist Creation Successful');
         this.destroyInputs();
       }, error => {
         console.error(error);

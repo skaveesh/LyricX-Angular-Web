@@ -258,18 +258,18 @@ export class SongViewDashboardComponent implements OnInit {
   }
 
   publishLater(): void {
-    this.snackBarComponent.openSnackBar('Saved for Publishing Later', false);
+    this.snackBarComponent.openSnackBar('Saved for Publishing Later');
     this.resetAndNavigateToContributorMainTab();
   }
 
   publishNow(): void {
-    this.snackBarComponent.openSnackBar('Publishing Now', false);
+    this.snackBarComponent.openSnackBar('Publishing Now');
     this.publishSong();
     this.resetAndNavigateToContributorMainTab();
   }
 
   submitForReview(): void {
-    this.snackBarComponent.openSnackBar('Saved for Reviewing', false);
+    this.snackBarComponent.openSnackBar('Saved for Reviewing');
     this.resetAndNavigateToContributorMainTab();
   }
 
@@ -284,7 +284,7 @@ export class SongViewDashboardComponent implements OnInit {
     };
 
     this.songAdapter.saveSong(payload).subscribe(() => {
-      this.snackBarComponent.openSnackBar('Song Publishing Successful', false);
+      this.snackBarComponent.openSnackBar('Song Publishing Successful');
     }, error => {
       console.error(error);
       this.snackBarComponent.openSnackBar('Song Publishing Failed', true);

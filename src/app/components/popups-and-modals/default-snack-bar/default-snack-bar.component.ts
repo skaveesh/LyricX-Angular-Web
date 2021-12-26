@@ -15,7 +15,7 @@ export class DefaultSnackBarComponent implements OnInit {
   ngOnInit() {
   }
 
-  public openSnackBar(message: string, isWarn: boolean) {
+  public openSnackBar(message: string, isWarn: boolean = false) {
 
     const data: SnackbarData = {
       message: message,
