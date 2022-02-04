@@ -45,9 +45,12 @@ export namespace Constants {
     TOP_LYRICS = 'toplyrics',
     ADD_ARTIST = 'contribute/add-artist',
     ADD_ALBUM = 'contribute/add-album',
-    LYRICS_VIEW = 'feedItem/:artist/:song',
+    ITEM_VIEW = ':item/:item-surrogate-key',
     ABOUT = 'about',
-    WILDCARD = '**'
+    ERROR = 'error',
+    WILDCARD = '**',
+    SONG = 'song',
+    ARTIST = 'artist'
   }
 
   export enum Session {

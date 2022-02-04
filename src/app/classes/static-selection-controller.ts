@@ -23,8 +23,7 @@ export class StaticSelectionController {
     this.staticSelectionAdapterService = staticSelectionAdapterService;
     this.staticSelectionCtrl = staticSelectionCtrl;
     this.multiChipsSupport = multiChipsSupport;
-    this.staticSelectionAdapterService.getAllSelections();
-    this.init();
+    this.staticSelectionAdapterService.getAllSelections().subscribe(() => this.init());
   }
 
   public setMatAutoComplete(matAutocomplete: MatAutocomplete) {

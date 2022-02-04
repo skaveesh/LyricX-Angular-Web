@@ -34,7 +34,7 @@ import {AppComponent} from './app.component';
 import {HomeComponent} from './components/home/home.component';
 import {TopLyricsComponent} from './components/top-lyrics/top-lyrics.component';
 import {ContributeComponent} from './components/contribute/contribute.component';
-import {LyricsviewComponent} from './components/lyricsview/lyricsview.component';
+import {ItemViewComponent} from './components/itemview/item-view.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {NotFoundComponent} from './components/not-found/not-found.component';
@@ -60,6 +60,7 @@ import {MultiDatepickerModule} from './components/popups-and-modals/multidatepic
 import {SongAddUpdateDashboardComponent} from './components/contribute/generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
 import { SongViewDashboardComponent } from './components/contribute/generic-components/song-view-dashboard/song-view-dashboard.component';
 import { MyContributionTabComponent } from './components/contribute/contributor-dashboard/my-contribution-tab/my-contribution-tab.component';
+import { ArtistViewComponent } from './components/contribute/generic-components/artist-view/artist-view.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -70,7 +71,7 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     HomeComponent,
     TopLyricsComponent,
     ContributeComponent,
-    LyricsviewComponent,
+    ItemViewComponent,
     NotFoundComponent,
     AboutComponent,
     LoginComponent,
@@ -84,7 +85,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     ImageUploadDialogComponent,
     SongAddUpdateDashboardComponent,
     SongViewDashboardComponent,
-    MyContributionTabComponent
+    MyContributionTabComponent,
+    ArtistViewComponent
   ],
   imports: [
     BrowserModule,
@@ -129,8 +131,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
         component: HomeComponent
       },
       {
-        path: Constants.Route.LYRICS_VIEW,
-        component: LyricsviewComponent
+        path: Constants.Route.ITEM_VIEW,
+        component: ItemViewComponent
       },
       {
         path: Constants.Route.TOP_LYRICS,

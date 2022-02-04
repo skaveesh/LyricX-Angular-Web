@@ -11,10 +11,10 @@
 
     <div fxFlex="65%" fxLayoutGap="0.5%">
 
-      <h1>{{songData?.name}}</h1>
+      <h1 class="set-cursor-pointer" (click)="navigateToSong({event: $event, data: songData.surrogateKey})">{{songData?.name}}</h1>
 
       <h5 class="color-dark-grey" *ngIf="album" [innerText]="album.name"></h5>
-      <h5 class="color-dark-grey" *ngIf="artist && featuringArtistList.length === 0" [innerText]="artist"></h5>
+      <h5 class="color-dark-grey set-cursor-pointer" *ngIf="artist && featuringArtistList.length === 0" (click)="navigateToArtist({event: $event, data: album.artistSurrogateKey})" [innerText]="artist"></h5>
       <h5 class="color-dark-grey" *ngIf="artist && featuringArtistList.length > 0" [innerText]="artist + ' featuring ' + featuringArtistList.toString().split(',').join(', ')"></h5>
       <h5 class="color-dark-grey" *ngIf="genreNameListOfTheSong.length > 0" [innerText]="genreNameListOfTheSong.toString().split(',').join(', ')"></h5>
       <span class="color-light-grey">Added by {{songData?.addedBy?.firstName}} {{songData?.addedBy?.lastName}}</span> <br />
@@ -136,7 +136,7 @@
     <!--vertical space between two components-->
   </div>
 
-  <div fxLayout="column" [hidden]="displayPublishComponents" #publishComponent>
+  <div fxLayout="column" *ngIf="displayPublishComponents" #publishComponent>
 
     <h6 class="color-light-grey" fxFlexAlign="start">Publish</h6>
 
@@ -180,7 +180,7 @@
 
   </div>
 
-  <div fxLayout="column" [hidden]="displayDiffComponent" #diffComponent>
+  <div fxLayout="column" *ngIf="displayDiffComponent" #diffComponent>
 
     <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
 

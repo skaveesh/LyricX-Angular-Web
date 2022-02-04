@@ -14,6 +14,8 @@ import {LoadingStatusService} from '../../../../services/loading-status.service'
 import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
 import {forkJoin, from} from 'rxjs';
+import {Constants} from '../../../../constants/constants';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-song-view-dashboard',
@@ -43,7 +45,8 @@ export class SongViewDashboardComponent implements OnInit {
   constructor(private genreAdapterService: GenreAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService, private contributorAdapterService: ContributorAdapterService,
               private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
-              private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService) {
+              private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService,
+              private router: Router) {
     // only initialize this component after save song was called in previous component
     this.contributorUtilService.getSongViewData()
       .pipe(filter(res => res !== null), tap(() => this.loadingStatusService.startLoading()))
@@ -68,38 +71,13 @@ export class SongViewDashboardComponent implements OnInit {
 
   // only initialize this component after save song was called in previous component
   afterSaveSongInit(): void {
-    this.genreAdapterService.getAllSelections();
-    this.init();
+    this.genreAdapterService.getAllSelections().subscribe(() => this.init());
   }
 
   private init(): void {
-    this.initializeGenre();
+    this.genreAdapterService.initializeGenre(this.songData.genreIdList, this._genreNameListOfTheSong);
     this.initializeAlbum();
     this.initializeLyricsView();
-  }
-
-  private initializeGenre(): void {
-    this._genreNameListOfTheSong.splice(0);
-    this.genreAdapterService.allSelections.pipe(
-      take(this.genreAdapterService.allSelections.getValue().length <= 0 ? 2 : 1)
-    ).subscribe(value => {
-
-      const genreIdList = this._songData.genreIdList.map(String);
-
-      if (value.length > 0) {
-        value.forEach(genreItem => {
-          genreIdList.forEach(genreIdItem => {
-            if (genreItem.substring(genreItem.lastIndexOf('$') + 1) === genreIdItem) {
-              this._genreNameListOfTheSong.push(genreItem.substring(0, genreItem.lastIndexOf('$')));
-              genreIdList.splice(genreIdList.indexOf(genreIdItem), 1);
-            }
-          });
-        });
-      }
-    }, error => {
-      console.error(error);
-      throw new Error('Error while fetching staticSelections');
-    });
   }
 
   private initializeAlbum(): void {
@@ -307,11 +285,21 @@ export class SongViewDashboardComponent implements OnInit {
       publishedState: true
     };
 
-    this.songAdapter.saveSong(payload).subscribe(() => {
+    this.songAdapter.saveSong(payload)
+      .pipe(tap(() => this.loadingStatusService.startLoading()))
+      .subscribe(() => {
       this.snackBarComponent.openSnackBar('Song Publishing Successful');
     }, error => {
       console.error(error);
       this.snackBarComponent.openSnackBar('Song Publishing Failed', true);
-    });
+    }, () => this.loadingStatusService.stopLoading());
+  }
+
+  public navigateToSong ($event) {
+    this.router.navigateByUrl( Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH + $event.data);
+  }
+
+  public navigateToArtist ($event) {
+    this.router.navigateByUrl( Constants.Route.ARTIST + Constants.Symbol.FORWARD_SLASH + $event.data);
   }
 }

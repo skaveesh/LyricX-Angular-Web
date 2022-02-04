@@ -3,6 +3,8 @@ import {BehaviorSubject} from 'rxjs';
 import {SongResponseData, SongWithAlbumAndArtist} from '../dto/song';
 import {SuggestedItem} from '../dto/item-suggest';
 import {Constants} from '../constants/constants';
+import {AlbumResponseData} from '../dto/album';
+import {ArtistResponseData} from '../dto/artist';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,8 @@ export class ContributorUtilService {
   private static CONTRIBUTOR_RESET_STATUS = false;
   private static CONTRIBUTOR_SONG_EDIT_DATA = null;
   private static CONTRIBUTOR_SONG_VIEW_DATA = null;
+  private static CONTRIBUTOR_ALBUM_VIEW_DATA = null;
+  private static CONTRIBUTOR_ARTIST_VIEW_DATA = null;
   private static CONTRIBUTOR_TAB_INDEX = null;
   private static CONTRIBUTOR_STEPPER = false;
 
@@ -21,6 +25,8 @@ export class ContributorUtilService {
   private _resetStatus$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(ContributorUtilService.CONTRIBUTOR_RESET_STATUS);
   private _songEditData$: BehaviorSubject<SongWithAlbumAndArtist> = new BehaviorSubject<SongWithAlbumAndArtist>(ContributorUtilService.CONTRIBUTOR_SONG_EDIT_DATA);
   private _songViewData$: BehaviorSubject<SongResponseData> = new BehaviorSubject<SongResponseData>(ContributorUtilService.CONTRIBUTOR_SONG_VIEW_DATA);
+  private _albumViewData$: BehaviorSubject<AlbumResponseData> = new BehaviorSubject<AlbumResponseData>(ContributorUtilService.CONTRIBUTOR_ALBUM_VIEW_DATA);
+  private _artistViewData$: BehaviorSubject<ArtistResponseData> = new BehaviorSubject<ArtistResponseData>(ContributorUtilService.CONTRIBUTOR_ARTIST_VIEW_DATA);
   private _contributorTabIndex$: BehaviorSubject<number> = new BehaviorSubject<number>(ContributorUtilService.CONTRIBUTOR_TAB_INDEX);
   private _contributorStepper$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(ContributorUtilService.CONTRIBUTOR_STEPPER);
 
@@ -41,6 +47,14 @@ export class ContributorUtilService {
 
   sendSongViewData(songResponseData: SongResponseData) {
     this._songViewData$.next(songResponseData);
+  }
+
+  sendAlbumViewData(albumResponseData: AlbumResponseData) {
+    this._albumViewData$.next(albumResponseData);
+  }
+
+  sendArtistViewData(artistResponseData: ArtistResponseData) {
+    this._artistViewData$.next(artistResponseData);
   }
 
   sendContributorTabIndex(contributorTabIndex: number) {
@@ -65,6 +79,14 @@ export class ContributorUtilService {
 
   getSongViewData() {
     return this._songViewData$;
+  }
+
+  getAlbumViewData$(): BehaviorSubject<AlbumResponseData> {
+    return this._albumViewData$;
+  }
+
+  getArtistViewData$(): BehaviorSubject<ArtistResponseData> {
+    return this._artistViewData$;
   }
 
   getContributorTabIndex() {

@@ -1,0 +1,56 @@
+<div fxLayout="column" *ngIf="artistData">
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around center">
+
+    <div fxFlex="25%" fxLayoutGap="0.5%">
+
+      <img *ngIf="artistData?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
+
+    </div>
+
+    <div fxFlex="65%" fxLayoutGap="0.5%">
+
+      <h1>{{artistData?.name}}</h1>
+
+      <h5 class="color-dark-grey" *ngIf="genreNameListOfTheArtist.length > 0" [innerText]="genreNameListOfTheArtist.toString().split(',').join(', ')"></h5>
+      <h5 class="color-dark-grey" *ngIf="artistData?.albumsSurrogateKeyList" [innerText]="''.concat('Artist - ').concat(artistData?.albumsSurrogateKeyList?.length?.toString()).concat(' Albums')"></h5>
+
+    </div>
+
+  </div>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around start">
+
+    <div fxFlex="25%" fxLayoutGap="0.5%">
+
+
+    </div>
+
+    <div fxFlex="65%" fxLayoutGap="0.5%">
+
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        Et inventore porro quam. Aliquam corporis debitis deleniti i
+        mpedit laudantium maxime perferendis provident reprehenderit repudiandae sequi. A
+        ut cum dolor error quidem voluptatem?</p>
+<!--      <pre *ngIf="!guitarChordToggle" [innerHTML]="lyric" class="lyric-font-style lyric-font-size"></pre>-->
+<!--      <pre *ngIf="guitarChordToggle" [innerHTML]="lyricWithoutChords" class="lyric-font-style lyric-font-size"></pre>-->
+
+    </div>
+
+  </div>
+
+  <span fxLayoutAlign="start" style="text-decoration: underline; cursor: pointer; font-size: 0.9em" class="color-light-grey">submit correction</span>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+</div>

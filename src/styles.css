@@ -174,3 +174,7 @@ mat-icon{
 .lyric-font-size {
   font-size: 1.3em;
 }
+
+.set-cursor-pointer {
+  cursor: pointer;
+}

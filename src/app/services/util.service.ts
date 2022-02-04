@@ -73,6 +73,14 @@ export class UtilService {
     return ResourceUrl.ImageResource.ALBUM_ART_BASE_URL + resourceNameWithExtension;
   }
 
+  public static constructArtistImageResourceUrl(resourceNameWithExtension: string) {
+    if (resourceNameWithExtension === null || resourceNameWithExtension.trim().length === 0) {
+      return Constants.Asset.ARTIST_IMAGE;
+    }
+
+    return ResourceUrl.ImageResource.ARTIST_IMAGE_BASE_URL + resourceNameWithExtension;
+  }
+
   /**
    * handle errors of observable
    * @param error the error

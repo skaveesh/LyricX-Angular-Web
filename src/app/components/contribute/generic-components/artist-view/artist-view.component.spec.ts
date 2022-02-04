@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LyricsviewComponent } from './lyricsview.component';
+import { ArtistViewComponent } from './artist-view.component';
 
-describe('LyricsviewComponent', () => {
-  let component: LyricsviewComponent;
-  let fixture: ComponentFixture<LyricsviewComponent>;
+describe('ArtistViewComponent', () => {
+  let component: ArtistViewComponent;
+  let fixture: ComponentFixture<ArtistViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LyricsviewComponent ]
+      declarations: [ ArtistViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LyricsviewComponent);
+    fixture = TestBed.createComponent(ArtistViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -39,10 +39,13 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
     return observable;
   }
 
-  protected createObject(url: string, payload: CreateRequest, image: Blob): Observable<CreateResponse> {
+  protected createObject(url: string, payload: CreateRequest, image: Blob = null): Observable<CreateResponse> {
     const formData: FormData = new FormData();
     formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
-    formData.append(AppConstant.IMAGE, image);
+
+    if (image) {
+      formData.append(AppConstant.IMAGE, image);
+    }
 
     return (new RestTemplateBuilder())
       .withAuthHeader()

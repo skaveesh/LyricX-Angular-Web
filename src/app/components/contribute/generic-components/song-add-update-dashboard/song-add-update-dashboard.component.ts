@@ -18,7 +18,7 @@ import {Observable} from 'rxjs';
 import {BasicHttpResponse} from '../../../../dto/base-http-response';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
-import {filter} from 'rxjs/operators';
+import {filter, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-song-add-update-dashboard',
@@ -228,7 +228,9 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
     const saveSongObservable: Observable<BasicHttpResponse> = this.songAdapter.saveSong(payload, image);
 
-    saveSongObservable.subscribe(response => {
+    saveSongObservable
+      .pipe(tap(() => this.loadingStatusService.startLoading()))
+      .subscribe(response => {
       this.surrogateKey = (<SongSaveUpdateRequest>response.data).surrogateKey;
       this.defaultSnackBar.openSnackBar('Song Saving Successful');
       this.destroyAlbumImageUploadData();
@@ -238,6 +240,8 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     }, error => {
       console.error(error);
       this.defaultSnackBar.openSnackBar('Song Saving Failed', true);
+    }, () => {
+      this.loadingStatusService.stopLoading();
     });
 
     return saveSongObservable;

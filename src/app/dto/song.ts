@@ -55,12 +55,12 @@ export interface SongResponseData {
 interface Contributor {
   firstName: string;
   lastName: string;
-  description: string;
+  description?: string;
   imgUrl: string;
-  contactLink: string;
+  contactLink?: string;
   seniorContributor: boolean;
-  addedDate: string;
-  lastModifiedDate: string;
+  addedDate?: string;
+  lastModifiedDate?: string;
 }
 
 export interface SongWithAlbumAndArtist {
@@ -69,4 +69,4 @@ export interface SongWithAlbumAndArtist {
   artist?: ArtistResponseData;
 }
 
-export type SongSaveResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;
+export type SongGetResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;
