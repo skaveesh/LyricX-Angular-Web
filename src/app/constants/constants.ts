@@ -50,7 +50,8 @@ export namespace Constants {
     ERROR = 'error',
     WILDCARD = '**',
     SONG = 'song',
-    ARTIST = 'artist'
+    ARTIST = 'artist',
+    ALBUM = 'album'
   }
 
   export enum Session {

@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
-import {filter, first, tap} from 'rxjs/operators';
+import {filter, first, mergeMap, tap, toArray} from 'rxjs/operators';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ArtistResponseData} from '../../../../dto/artist';
 import {UtilService} from '../../../../services/util.service';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
 import {Router} from '@angular/router';
+import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
+import {forkJoin, from} from 'rxjs';
+import {AlbumResponseData} from '../../../../dto/album';
+import {Constants} from '../../../../constants/constants';
 
 @Component({
   selector: 'app-artist-view',
@@ -17,9 +21,11 @@ export class ArtistViewComponent implements OnInit {
 
   private _artistResponseData: ArtistResponseData = null;
   private _genreNameListOfTheArtist: string[] = [];
+  private _albumNameListOfTheArtist: AlbumResponseData[] = [];
 
   constructor(private router: Router, private contributorUtilService: ContributorUtilService, private genreAdapterService: GenreAdapterService,
-              private loadingStatusService: LoadingStatusService, private snackBarComponent: DefaultSnackBarComponent) {
+              private albumAdapterService: AlbumAdapterService, private loadingStatusService: LoadingStatusService,
+              private snackBarComponent: DefaultSnackBarComponent) {
     this.router.routeReuseStrategy.shouldReuseRoute = function() {
       return false;
     };
@@ -31,6 +37,7 @@ export class ArtistViewComponent implements OnInit {
       .subscribe((res) => {
         this._artistResponseData = res;
         this.initGenre(res.genreIdList);
+        this.initAlbums(res.albumsSurrogateKeyList);
       }, () => {
         this.snackBarComponent.openSnackBar('Error while loading album data', true);
       }, () => this.loadingStatusService.stopLoading());
@@ -38,6 +45,23 @@ export class ArtistViewComponent implements OnInit {
 
   private initGenre(genreIdList: number[]) {
     this.genreAdapterService.initializeGenre(genreIdList, this._genreNameListOfTheArtist);
+  }
+
+  private initAlbums(albumsSurrogateKeyList: string[]) {
+
+    from(albumsSurrogateKeyList)
+      .pipe(
+        toArray(),
+        mergeMap(project => {
+          const observables = project.map(albumSurrogateKey => this.albumAdapterService.getAlbum(albumSurrogateKey, false));
+          return forkJoin(observables);
+        }),
+      ).subscribe(res => {
+
+      res.forEach(album => {
+        this._albumNameListOfTheArtist.push(album.data);
+      });
+    });
   }
 
   get artistData(): ArtistResponseData {
@@ -48,7 +72,29 @@ export class ArtistViewComponent implements OnInit {
     return this._genreNameListOfTheArtist;
   }
 
+  get albumNameListOfTheArtist(): AlbumResponseData[] {
+    return this._albumNameListOfTheArtist;
+  }
+
   constructArtistImageUrl(imgUrl: string): string {
+    console.log(imgUrl);
     return UtilService.constructArtistImageResourceUrl(imgUrl);
+  }
+
+  constructAlbumArtUrl(imgUrl: string): string {
+    return UtilService.constructAlbumArtResourceUrl(imgUrl);
+  }
+
+  public navigateToAlbum ($event) {
+    this.router.navigateByUrl( Constants.Route.ALBUM + Constants.Symbol.FORWARD_SLASH + $event.data);
+  }
+
+  public copyAlbumUrl ($event) {
+    try {
+      UtilService.copyToClipboard(location.origin + Constants.Symbol.FORWARD_SLASH + Constants.Route.ALBUM + Constants.Symbol.FORWARD_SLASH + $event.data);
+      this.snackBarComponent.openSnackBar('Item copied');
+    } catch (e) {
+      this.snackBarComponent.openSnackBar('Error coping the item', true);
+    }
   }
 }

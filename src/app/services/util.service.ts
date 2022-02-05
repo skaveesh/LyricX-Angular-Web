@@ -104,4 +104,15 @@ export class UtilService {
   public static urlRegexPattern(isEmptyValid: boolean = false): RegExp {
     return isEmptyValid ? /(^$|^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])/g : /^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/g;
   }
+
+  public static copyToClipboard(item: string, type: string = 'text/plain'): void {
+    const listener = (e: ClipboardEvent) => {
+      e.clipboardData.setData(type, (item));
+      e.preventDefault();
+    };
+
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+  }
 }

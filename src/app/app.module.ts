@@ -61,6 +61,7 @@ import {SongAddUpdateDashboardComponent} from './components/contribute/generic-c
 import { SongViewDashboardComponent } from './components/contribute/generic-components/song-view-dashboard/song-view-dashboard.component';
 import { MyContributionTabComponent } from './components/contribute/contributor-dashboard/my-contribution-tab/my-contribution-tab.component';
 import { ArtistViewComponent } from './components/contribute/generic-components/artist-view/artist-view.component';
+import { AlbumViewComponent } from './components/contribute/generic-components/album-view/album-view.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -86,7 +87,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     SongAddUpdateDashboardComponent,
     SongViewDashboardComponent,
     MyContributionTabComponent,
-    ArtistViewComponent
+    ArtistViewComponent,
+    AlbumViewComponent
   ],
   imports: [
     BrowserModule,

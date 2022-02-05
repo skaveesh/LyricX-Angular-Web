@@ -1,0 +1,15 @@
+div.item-hover:hover, div.item-hover:active {
+  background: var(--var-color-light-grey);
+}
+
+div.item-hover-dark:hover, div.item-hover-dark:active {
+  background: var(--var-color-light-grey);
+}
+
+.item-padding {
+  padding: 10px;
+}
+
+.item-corner {
+  border-radius: 10px;
+}

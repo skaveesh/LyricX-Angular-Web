@@ -2,18 +2,21 @@
 
   <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around center">
 
-    <div fxFlex="25%" fxLayoutGap="0.5%">
+    <div fxFlex="25" fxLayoutGap="0.5%">
 
-      <img *ngIf="artistData?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
+      <img style="width: 256px; height: 256px; position: relative; border-radius: 10px"
+           alt="album image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
 
     </div>
 
-    <div fxFlex="65%" fxLayoutGap="0.5%">
+    <div fxFlex="65" fxLayoutGap="0.5%">
 
       <h1>{{artistData?.name}}</h1>
 
-      <h5 class="color-dark-grey" *ngIf="genreNameListOfTheArtist.length > 0" [innerText]="genreNameListOfTheArtist.toString().split(',').join(', ')"></h5>
-      <h5 class="color-dark-grey" *ngIf="artistData?.albumsSurrogateKeyList" [innerText]="''.concat('Artist - ').concat(artistData?.albumsSurrogateKeyList?.length?.toString()).concat(' Albums')"></h5>
+      <h5 class="color-dark-grey" *ngIf="genreNameListOfTheArtist.length > 0"
+          [innerText]="genreNameListOfTheArtist.toString().split(',').join(', ')"></h5>
+      <h5 class="color-dark-grey" *ngIf="artistData?.albumsSurrogateKeyList"
+          [innerText]="''.concat('Artist - ').concat(artistData?.albumsSurrogateKeyList?.length?.toString()).concat(' Albums')"></h5>
 
     </div>
 
@@ -29,28 +32,55 @@
     <!--vertical space between two components-->
   </div>
 
-  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around start">
+  <mat-list>
+    <h3 class="item-padding" style="color: var(--var-color-dark-grey)">Albums</h3>
 
-    <div fxFlex="25%" fxLayoutGap="0.5%">
+    <div style="height: 50px">
+      <!--vertical space between two components-->
+    </div>
 
+    <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="7%">
+
+      <mat-list-item *ngFor="let album of albumNameListOfTheArtist" class="set-cursor-pointer">
+        <div  fxFlex="100" class="item-hover item-padding item-corner">
+
+          <div fxFlex="98" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})">
+            <div fxFlex="30" fxLayoutAlign=" center">
+              <img *ngIf="artistData?.imgUrl"
+                   style="width: 128px; height: 128px; position: relative; border-radius: 10px"
+                   alt="album image" [src]="constructAlbumArtUrl(album?.imgUrl)"/>
+            </div>
+
+            <div fxFlex="60" fxLayoutAlign=" center">
+              <h4 mat-line>{{album.name}}</h4>
+            </div>
+
+            <div fxFlex="8" fxLayoutAlign=" center">
+              <h4 mat-line>{{album.year}}</h4>
+            </div>
+          </div>
+
+          <div fxFlex="2" fxLayoutAlign=" center" style="z-index: 1000" class="set-cursor-pointer"
+               matTooltip="Copy the link to the Clipboard"
+               (click)="copyAlbumUrl({event: $event, data: album.surrogateKey})">
+            <span class="material-icons">link</span>
+          </div>
+
+        </div>
+      </mat-list-item>
 
     </div>
 
-    <div fxFlex="65%" fxLayoutGap="0.5%">
+  </mat-list>
 
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-        Et inventore porro quam. Aliquam corporis debitis deleniti i
-        mpedit laudantium maxime perferendis provident reprehenderit repudiandae sequi. A
-        ut cum dolor error quidem voluptatem?</p>
-<!--      <pre *ngIf="!guitarChordToggle" [innerHTML]="lyric" class="lyric-font-style lyric-font-size"></pre>-->
-<!--      <pre *ngIf="guitarChordToggle" [innerHTML]="lyricWithoutChords" class="lyric-font-style lyric-font-size"></pre>-->
-
-    </div>
-
+  <div style="height: 50px">
+    <!--vertical space between two components-->
   </div>
 
-  <span fxLayoutAlign="start" style="text-decoration: underline; cursor: pointer; font-size: 0.9em" class="color-light-grey">submit correction</span>
-
   <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
 
 </div>
