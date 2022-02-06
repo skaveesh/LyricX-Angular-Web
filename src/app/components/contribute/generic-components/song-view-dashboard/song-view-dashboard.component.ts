@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {SongSaveUpdateRequest, SongResponseData} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
-import {filter, first, mergeMap, take, tap, toArray} from 'rxjs/operators';
+import {filter, first, mergeMap, tap, toArray} from 'rxjs/operators';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
 import {AlbumResponseData} from '../../../../dto/album';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
@@ -22,7 +22,7 @@ import {Router} from '@angular/router';
   templateUrl: './song-view-dashboard.component.html',
   styleUrls: ['./song-view-dashboard.component.css']
 })
-export class SongViewDashboardComponent implements OnInit {
+export class SongViewDashboardComponent {
 
   private _genreNameListOfTheSong: string[] = [];
   private _album: AlbumResponseData = null;
@@ -47,6 +47,7 @@ export class SongViewDashboardComponent implements OnInit {
               private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
               private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService,
               private router: Router) {
+
     // only initialize this component after save song was called in previous component
     this.contributorUtilService.getSongViewData()
       .pipe(filter(res => res !== null), tap(() => this.loadingStatusService.startLoading()))
@@ -64,9 +65,6 @@ export class SongViewDashboardComponent implements OnInit {
     }, () => {
       console.error('Error occurred while fetching contributor details.');
     });
-  }
-
-  ngOnInit() {
   }
 
   // only initialize this component after save song was called in previous component
@@ -295,11 +293,11 @@ export class SongViewDashboardComponent implements OnInit {
     }, () => this.loadingStatusService.stopLoading());
   }
 
-  public navigateToSong ($event) {
-    this.router.navigateByUrl( Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH + $event.data);
-  }
-
   public navigateToArtist ($event) {
     this.router.navigateByUrl( Constants.Route.ARTIST + Constants.Symbol.FORWARD_SLASH + $event.data);
+  }
+
+  public navigateToAlbum ($event) {
+    this.router.navigateByUrl( Constants.Route.ALBUM + Constants.Symbol.FORWARD_SLASH + $event.data);
   }
 }

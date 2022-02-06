@@ -69,4 +69,9 @@ export interface SongWithAlbumAndArtist {
   artist?: ArtistResponseData;
 }
 
+export interface SongWithArtistList {
+  song: SongResponseData;
+  artistList?: ArtistResponseData[];
+}
+
 export type SongGetResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;

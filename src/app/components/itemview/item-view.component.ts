@@ -19,6 +19,9 @@ export class ItemViewComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private contributorUtilService: ContributorUtilService,
               private songAdapterService: SongAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService) {
+    this.router.routeReuseStrategy.shouldReuseRoute = function() {
+      return false;
+    };
     this.route.params.subscribe(params => {
       this._item = params['item'];
       this._itemSurrogateKey = params['item-surrogate-key'];
@@ -34,7 +37,7 @@ export class ItemViewComponent implements OnInit {
       });
     } else if (this._item === 'album') {
       this.albumAdapterService.getAlbum(this._itemSurrogateKey, true).subscribe(res => {
-        this.contributorUtilService.sendAlbumViewData(res.data); // todo need to implement album and artist view
+        this.contributorUtilService.sendAlbumViewData(res.data);
       }, error => {
         this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ERROR);
       });
@@ -51,9 +54,5 @@ export class ItemViewComponent implements OnInit {
 
   get item(): string {
     return this._item;
-  }
-
-  get itemSurrogateKey(): string {
-    return this._itemSurrogateKey;
   }
 }

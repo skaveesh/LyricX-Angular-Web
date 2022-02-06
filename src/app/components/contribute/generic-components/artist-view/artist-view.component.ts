@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
-import {filter, first, mergeMap, tap, toArray} from 'rxjs/operators';
+import {filter, mergeMap, toArray} from 'rxjs/operators';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {ArtistResponseData} from '../../../../dto/artist';
@@ -17,7 +17,7 @@ import {Constants} from '../../../../constants/constants';
   templateUrl: './artist-view.component.html',
   styleUrls: ['./artist-view.component.css']
 })
-export class ArtistViewComponent implements OnInit {
+export class ArtistViewComponent {
 
   private _artistResponseData: ArtistResponseData = null;
   private _genreNameListOfTheArtist: string[] = [];
@@ -26,21 +26,16 @@ export class ArtistViewComponent implements OnInit {
   constructor(private router: Router, private contributorUtilService: ContributorUtilService, private genreAdapterService: GenreAdapterService,
               private albumAdapterService: AlbumAdapterService, private loadingStatusService: LoadingStatusService,
               private snackBarComponent: DefaultSnackBarComponent) {
-    this.router.routeReuseStrategy.shouldReuseRoute = function() {
-      return false;
-    };
-  }
 
-  ngOnInit() {
     this.contributorUtilService.getArtistViewData$()
-      .pipe(filter(res => res !== null), first(), tap(() => this.loadingStatusService.startLoading()))
+      .pipe(filter(res => res !== null))
       .subscribe((res) => {
         this._artistResponseData = res;
         this.initGenre(res.genreIdList);
         this.initAlbums(res.albumsSurrogateKeyList);
       }, () => {
         this.snackBarComponent.openSnackBar('Error while loading album data', true);
-      }, () => this.loadingStatusService.stopLoading());
+      });
   }
 
   private initGenre(genreIdList: number[]) {
@@ -48,6 +43,8 @@ export class ArtistViewComponent implements OnInit {
   }
 
   private initAlbums(albumsSurrogateKeyList: string[]) {
+
+    this._albumNameListOfTheArtist.splice(0);
 
     from(albumsSurrogateKeyList)
       .pipe(
@@ -77,7 +74,6 @@ export class ArtistViewComponent implements OnInit {
   }
 
   constructArtistImageUrl(imgUrl: string): string {
-    console.log(imgUrl);
     return UtilService.constructArtistImageResourceUrl(imgUrl);
   }
 
@@ -97,4 +93,5 @@ export class ArtistViewComponent implements OnInit {
       this.snackBarComponent.openSnackBar('Error coping the item', true);
     }
   }
+
 }

@@ -46,9 +46,12 @@
 
           <div fxFlex="98" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})">
             <div fxFlex="30" fxLayoutAlign=" center">
-              <img *ngIf="artistData?.imgUrl"
+              <img *ngIf="album?.imgUrl"
                    style="width: 128px; height: 128px; position: relative; border-radius: 10px"
                    alt="album image" [src]="constructAlbumArtUrl(album?.imgUrl)"/>
+              <img *ngIf="!album?.imgUrl"
+                   style="width: 128px; height: 128px; position: relative; border-radius: 10px"
+                   alt="artist image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
             </div>
 
             <div fxFlex="60" fxLayoutAlign=" center">
