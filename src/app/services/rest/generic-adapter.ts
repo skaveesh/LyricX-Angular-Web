@@ -6,7 +6,7 @@ import {Constants} from '../../constants/constants';
 import {UtilService} from '../util.service';
 import AppConstant = Constants.AppConstant;
 
-export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse> extends HttpRoot {
+export abstract class GenericAdapter<GetResponse, SaveRequest, SaveResponse> extends HttpRoot {
 
   private objectMap: Map<string, GetResponse> = new Map();
 
@@ -39,7 +39,7 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
     return observable;
   }
 
-  protected createObject(url: string, payload: CreateRequest, image: Blob = null): Observable<CreateResponse> {
+  protected saveObject(url: string, payload: SaveRequest, image: Blob = null): Observable<SaveResponse> {
     const formData: FormData = new FormData();
     formData.append(AppConstant.PAYLOAD, UtilService.dataToBlob(payload));
 
@@ -49,7 +49,7 @@ export abstract class GenericAdapter<GetResponse, CreateRequest, CreateResponse>
 
     return (new RestTemplateBuilder())
       .withAuthHeader()
-      .put<FormData, CreateResponse>(url, formData)
+      .post<FormData, SaveResponse>(url, formData)
       .pipe(
         map(response => response.body),
         first(),

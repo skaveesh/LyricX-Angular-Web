@@ -15,7 +15,7 @@
 
     <div fxLayout="column" fxLayoutAlign="center center">
 
-      <img alt="artist image" [src]="getArtistImage()" class="artist-image"/>
+      <img alt="artist image" [src]="getArtistImage()" class="artist-image" #artistImage/>
 
       <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openArtistImageUploadDialog()">
         Upload Artist Image

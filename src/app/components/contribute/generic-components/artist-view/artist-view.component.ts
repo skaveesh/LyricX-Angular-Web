@@ -94,4 +94,9 @@ export class ArtistViewComponent {
     }
   }
 
+  private editArtist($event) {
+    this.contributorUtilService.sendArtistEditData($event.data);
+    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
+  }
+
 }

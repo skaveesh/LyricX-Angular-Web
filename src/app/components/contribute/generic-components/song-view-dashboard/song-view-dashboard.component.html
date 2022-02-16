@@ -11,11 +11,34 @@
 
     <div fxFlex="65%" fxLayoutGap="0.5%">
 
-      <h1>{{songData?.name}}</h1>
+      <table>
+        <tr>
+          <td><h1>{{songData?.name}}</h1></td>
+          <td *ngIf="isCurrentRouteSong() && songData">
+            <div (click)="editSong({event: $event, data: songData})" class="set-cursor-pointer" style="background-color: var(--var-color-warn); height:0;width:100%;padding-bottom:100%; border-radius:50px">
+              <mat-icon style="margin:3px" aria-hidden="false" aria-label="Edit song">edit</mat-icon>
+            </div>
+          </td>
+        </tr>
+      </table>
 
       <h5 class="color-dark-grey set-cursor-pointer" *ngIf="album" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})" [innerText]="album.name"></h5>
-      <h5 class="color-dark-grey set-cursor-pointer" *ngIf="artist && featuringArtistList.length === 0" (click)="navigateToArtist({event: $event, data: album.artistSurrogateKey})" [innerText]="artist"></h5>
-      <h5 class="color-dark-grey" *ngIf="artist && featuringArtistList.length > 0" [innerText]="artist + ' featuring ' + featuringArtistList.toString().split(',').join(', ')"></h5>
+      <h5 class="color-dark-grey set-cursor-pointer" *ngIf="artist && featuringArtistList.length === 0" (click)="navigateToArtist({event: $event, data: artist.surrogateKey})" [innerText]="artist.artistName"></h5>
+
+      <div *ngIf="artist && featuringArtistList.length > 0">
+
+        <h5 class="color-dark-grey set-cursor-pointer" style="display: inline"
+            (click)="navigateToArtist({event: $event, data: artist.surrogateKey})" [innerText]="artist.artistName"></h5>
+
+        <h5 class="color-dark-grey" style="display: inline"> featuring </h5>
+
+        <div *ngFor="let a of featuringArtistList; last as isLast" style="display: inline">
+          <h5 class="color-dark-grey set-cursor-pointer" style="display: inline" (click)="navigateToArtist({event: $event, data: a.surrogateKey})" [innerText]="a.artistName"></h5>
+          <h5 *ngIf="!isLast" class="color-dark-grey set-cursor-pointer" style="display: inline">, </h5>
+        </div>
+
+      </div>
+
       <h5 class="color-dark-grey" *ngIf="genreNameListOfTheSong.length > 0" [innerText]="genreNameListOfTheSong.toString().split(',').join(', ')"></h5>
       <span class="color-light-grey">Added by {{songData?.addedBy?.firstName}} {{songData?.addedBy?.lastName}}</span> <br />
       <span class="color-light-grey">Last modified by {{songData?.lastModifiedBy?.firstName}} {{songData?.lastModifiedBy?.lastName}}</span> <br />

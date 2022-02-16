@@ -3,14 +3,14 @@ import {ContributorAdapterService} from '../../../../services/rest/contributor-a
 import {MyContributionMetadataResponse} from '../../../../dto/contributor';
 import {DefaultSnackBarComponent} from '../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {LoadingStatusService} from '../../../../services/loading-status.service';
-import {filter, first, map, mergeMap, take, tap} from 'rxjs/operators';
+import {filter, first, take, tap} from 'rxjs/operators';
 import {SongWithAlbumAndArtist} from '../../../../dto/song';
 import {AlbumAdapterService} from '../../../../services/rest/album-adapter.service';
 import {ArtistAdapterService} from '../../../../services/rest/artist-adapter.service';
 import {UtilService} from '../../../../services/util.service';
 import {PageEvent} from '@angular/material';
 import {ContributorUtilService} from '../../../../services/contributor-util.service';
-import {from} from 'rxjs';
+import {SongAdapterService} from '../../../../services/rest/song-adapter.service';
 
 @Component({
   selector: 'app-my-contribution-tab',
@@ -28,7 +28,7 @@ export class MyContributionTabComponent implements AfterViewInit {
   pageSize = 0;
   pageSizeOptions: number[] = [5, 10, 25];
 
-  constructor(private contributorAdapterService: ContributorAdapterService, private albumAdapterService: AlbumAdapterService,
+  constructor(private contributorAdapterService: ContributorAdapterService, private songAdapterService: SongAdapterService, private albumAdapterService: AlbumAdapterService,
               private artistAdapterService: ArtistAdapterService, private snackBarComponent: DefaultSnackBarComponent,
               private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService) {
   }
@@ -40,7 +40,7 @@ export class MyContributionTabComponent implements AfterViewInit {
   private getMyContributions(pageNumber: number, pageSize: number) {
 
     this.contributorUtilService.getContributorTabIndex()
-      .pipe(filter(value => value === 2), first(), tap(() => this.loadingStatusService.startLoading()))
+      .pipe(filter(res => res !== null), filter(value => value.contributorTabIndex === 2), first(), tap(() => this.loadingStatusService.startLoading()))
       .subscribe(() => {
 
         this.contributorAdapterService.requestMyContributions(pageNumber, pageSize)
@@ -51,30 +51,13 @@ export class MyContributionTabComponent implements AfterViewInit {
             this._contributionsResponse = res;
             this.length = res.totalElements;
 
-            from(this._contributionsResponse.songList).pipe(
-              map(song => {
-                const songWithAlbumArtist: SongWithAlbumAndArtist = {} as SongWithAlbumAndArtist;
-                songWithAlbumArtist.song = song;
-                return songWithAlbumArtist;
-              }),
-              mergeMap(songWithAlbumArtistIncludedSong => this.albumAdapterService.getAlbum(songWithAlbumArtistIncludedSong.song.albumSurrogateKey, false)
-                .pipe(filter(album => album !== null), take(1),
-                  map(album => {
-                    songWithAlbumArtistIncludedSong.album = album.data;
-                    return songWithAlbumArtistIncludedSong;
-                  }),
-                  mergeMap(songWithAlbumArtistIncludedSongAndAlbum => this.artistAdapterService.getArtist(songWithAlbumArtistIncludedSongAndAlbum.album.artistSurrogateKey, false)
-                    .pipe(filter(artist => artist !== null), take(1),
-                      map(artist => {
-                        songWithAlbumArtistIncludedSongAndAlbum.artist = artist.data;
-                        return songWithAlbumArtistIncludedSongAndAlbum;
-                      }))))))
-              .subscribe(songWithAlbumArtistIncludedSongAndAlbumAndArtist => {
-                this._songWithAlbumAndArtist.push(songWithAlbumArtistIncludedSongAndAlbumAndArtist);
-              }, (error) => {
-                console.error(error);
-                this.snackBarComponent.openSnackBar('Error fetching data', true);
-              }, () => this.loadingStatusService.stopLoading());
+            this.songAdapterService.songListToSongWithAlbumAndArtist(this._contributionsResponse.songList)
+            .subscribe(songWithAlbumArtistIncludedSongAndAlbumAndArtist => {
+              this._songWithAlbumAndArtist.push(...songWithAlbumArtistIncludedSongAndAlbumAndArtist);
+            }, (error) => {
+              console.error(error);
+              this.snackBarComponent.openSnackBar('Error fetching data', true);
+            }, () => this.loadingStatusService.stopLoading());
 
           }, () => {
             this.snackBarComponent.openSnackBar('Error while loading contributions', true);
@@ -101,7 +84,7 @@ export class MyContributionTabComponent implements AfterViewInit {
   }
 
   private editSong(songSurrogateKey: string): void {
-    this.contributorUtilService.resetContributorFields();
+    this.contributorUtilService.resetContributorFields(true);
     const songWithAlbumAndArtist: SongWithAlbumAndArtist = this._songWithAlbumAndArtist.find(song => song.song.surrogateKey === songSurrogateKey);
     setTimeout(() => this.contributorUtilService.sendSongEditData(songWithAlbumAndArtist), 500);
   }

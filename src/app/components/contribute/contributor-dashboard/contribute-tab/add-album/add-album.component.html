@@ -15,7 +15,7 @@
 
     <div fxLayout="column" fxLayoutAlign="center center">
 
-      <img alt="album image" [src]="getAlbumImage()" class="album-image"/>
+      <img alt="album image" [src]="getAlbumImage()" class="album-image" #albumImage/>
 
       <button mat-button mat-raised-button color="warn" class="button-default button-album-image" (click)="openAlbumImageUploadDialog()">
         Upload Album Image
@@ -45,6 +45,7 @@
           </mat-chip>
 
           <input #artistInput matInput
+                 name="Artist name"
                  placeholder="Search an Artist"
                  formControlName="artistCtrl"
                  [matAutocomplete]="autoCompleteArtist"

@@ -11,13 +11,17 @@ import {isNotNullOrUndefined} from 'codelyzer/util/isNotNullOrUndefined';
 import {ArtistSuggest} from '../../../../../dto/artist';
 import moment from 'moment';
 import {UtilService} from '../../../../../services/util.service';
-import {AlbumCreateRequest} from '../../../../../dto/album';
+import {AlbumSaveRequest, AlbumResponseData} from '../../../../../dto/album';
 import {AlbumAdapterService} from '../../../../../services/rest/album-adapter.service';
 import {DefaultSnackBarComponent} from '../../../../popups-and-modals/default-snack-bar/default-snack-bar.component';
 import {YearPickerComponent} from '../../../../popups-and-modals/multidatepicker/year-picker-component/year-picker.component';
 import {ImageUploadData} from '../../../../../dto/image-upload-data';
 import {ImageUploadDialogFacade} from '../../../../../classes/image-upload-dialog-facade';
 import AppConstant = Constants.AppConstant;
+import {ContributorUtilService} from '../../../../../services/contributor-util.service';
+import {filter} from 'rxjs/operators';
+import {ArtistAdapterService} from '../../../../../services/rest/artist-adapter.service';
+import {ResourceUrl} from '../../../../../constants/resource-url';
 
 @Component({
   selector: 'app-add-album',
@@ -55,8 +59,13 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
 
   @ViewChild('autoCompleteArtist', {static: false}) matAutocompleteArtist: MatAutocomplete;
 
-  constructor(private router: Router, private _formBuilder: FormBuilder, private albumAdapter: AlbumAdapterService,
-              private suggestionService: SuggestionService, public dialog: MatDialog, private defaultSnackBar: DefaultSnackBarComponent) {
+  @ViewChild('albumImage', {static: false}) albumImage: ElementRef<HTMLInputElement>;
+
+  private surrogateKey: string = null;
+
+  constructor(private router: Router, private _formBuilder: FormBuilder, private albumAdapter: AlbumAdapterService, private artistAdapterService: ArtistAdapterService,
+              private contributorUtilService: ContributorUtilService, private suggestionService: SuggestionService,
+              public dialog: MatDialog, private defaultSnackBar: DefaultSnackBarComponent) {
 
     this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
 
@@ -67,15 +76,11 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     this.currentYear = moment().year() + 1;
   }
 
-  ngAfterViewInit() {
-    this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocompleteArtist);
-    this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
-  }
-
   ngOnInit(): void {
     this.albumAddingFormGroup = this._formBuilder.group({
       albumNameCtrl: ['', Validators.required],
-      albumYearCtrl: ''
+      albumYearCtrl: '',
+      artistCtrl: ''
     });
 
     this.suggestionService.getArtistSuggestions().subscribe((artistSuggestArray: ArtistSuggest[]) => {
@@ -92,6 +97,15 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
         this.suggestionUserInterfaceArtist.pushDataToAllItems(itemSuggestArray);
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocompleteArtist);
+    this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
+
+    setTimeout(() => this.contributorUtilService.getAlbumEditData$()
+      .pipe(filter(res => res !== null))
+      .subscribe(res => this.autoFillAlbumEditFields(res)), 500);
   }
 
   backToContributor() {
@@ -118,34 +132,39 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     const artistName = this.artistCtrl;
     const year = this.albumAddingFormGroup.get('albumYearCtrl');
 
-    if (this.albumAddingFormGroup.valid && isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64) &&
-      this.albumImageUploadData.croppedImageBase64.toString().length > 0) {
+    if (this.albumAddingFormGroup.valid && artistName.value.length > 0) {
 
-      const image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
-
-      const payload: AlbumCreateRequest = {
+      const payload: AlbumSaveRequest = {
+        surrogateKey: this.surrogateKey,
         name: albumName.value,
         artistSurrogateKey: artistName.value[0],
         year: new Date(year.value).getFullYear()
       };
 
-      this.albumAdapter.createAlbum(payload, image).subscribe(response => {
-        this.defaultSnackBar.openSnackBar('Album Creation Successful');
+      let image = null;
+
+      if (this.albumImageUploadData.croppedImageBase64 !== null) {
+        image = UtilService.base64URItoBlob(this.albumImageUploadData.croppedImageBase64.toString());
+      }
+
+      if (this.surrogateKey === null && this.albumImageUploadData.croppedImageBase64 === null) {
+        this.defaultSnackBar.openSnackBar('Please upload a Album image', true);
+      }
+
+      this.albumAdapter.saveAlbum(payload, image).subscribe(response => {
+        this.defaultSnackBar.openSnackBar('Album saving successful');
         this.destroyInputs();
       }, error => {
-        console.error(error);
-        this.defaultSnackBar.openSnackBar('Album Creation Failed', true);
+        this.defaultSnackBar.openSnackBar('Album saving failed', true);
       });
 
     } else {
       if (!albumName.valid) {
         this.defaultSnackBar.openSnackBar('Album name is invalid', true);
-      } else if (artistName.value.length !== 0) {
+      } else if (artistName.value.length === 0) {
         this.defaultSnackBar.openSnackBar('Artist name is invalid', true);
       } else if (!year.valid) {
         this.defaultSnackBar.openSnackBar('Year is invalid', true);
-      } else if (!isNotNullOrUndefined(this.albumImageUploadData.croppedImageBase64)) {
-        this.defaultSnackBar.openSnackBar('Please upload a Album image', true);
       }
     }
   }
@@ -157,5 +176,28 @@ export class AddAlbumComponent implements OnInit, AfterViewInit {
     this.albumImageUploadData.croppedImageBase64 = null;
     this.albumImageUploadData.originalImageBase64 = null;
     this.albumImageUploadData.croppedImagePositions = null;
+    this.albumImage.nativeElement.src = Constants.Asset.ALBUM_IMAGE;
+  }
+
+  private autoFillAlbumEditFields(albumResponseData: AlbumResponseData) {
+    this.surrogateKey = albumResponseData.surrogateKey;
+    this.albumAddingFormGroup.controls.albumNameCtrl.setValue(albumResponseData.name);
+    this.albumAddingFormGroup.controls.albumYearCtrl.setValue(albumResponseData.year);
+    const year = new Date();
+    year.setFullYear(+albumResponseData.year);
+    this.yearPickerComponent.writeValue(year);
+    UtilService.getBase64FromUrl(ResourceUrl.ImageResource.ALBUM_ART_BASE_URL + albumResponseData.imgUrl).then(res => this.albumImage.nativeElement.src = res.toString());
+
+    this.artistAdapterService.getArtist(albumResponseData.artistSurrogateKey, false)
+      .subscribe(artist => {
+        const artistChipSelectedItems: any[] = [];
+        const item = ContributorUtilService.defaultSurrogateKeyNameSuggestedItem(artist.data.surrogateKey, artist.data.name);
+
+        artistChipSelectedItems.push(item);
+        this.suggestionUserInterfaceArtist.chipSelectedItems.push(item);
+        const arrayOfChipSelectedItems = artistChipSelectedItems.map(chipItem => chipItem.surrogateKey);
+        this.artistCtrl.setValue(arrayOfChipSelectedItems);
+      });
+
   }
 }

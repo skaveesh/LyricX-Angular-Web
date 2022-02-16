@@ -101,8 +101,8 @@ export class UtilService {
     return Promise.reject(error.message || error);
   }
 
-  public static urlRegexPattern(isEmptyValid: boolean = false): RegExp {
-    return isEmptyValid ? /(^$|^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])/g : /^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/g;
+  public static urlRegexPattern(): string {
+    return '^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]';
   }
 
   public static copyToClipboard(item: string, type: string = 'text/plain'): void {
@@ -115,4 +115,18 @@ export class UtilService {
     document.execCommand('copy');
     document.removeEventListener('copy', listener);
   }
+
+  public static async getBase64FromUrl(url: string): Promise<string | ArrayBuffer> {
+      const data = await fetch(url);
+      const blob = await data.blob();
+      return await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const base64data = reader.result;
+          resolve(base64data);
+        };
+      });
+  }
+
 }

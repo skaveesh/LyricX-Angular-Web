@@ -11,7 +11,16 @@
 
     <div fxFlex="65" fxLayoutGap="0.5%">
 
-      <h1>{{albumData?.name}}</h1>
+      <table>
+        <tr>
+          <td><h1>{{albumData?.name}}</h1></td>
+          <td *ngIf="albumData">
+            <div (click)="editAlbum({event: $event, data: albumData})" class="set-cursor-pointer" style="background-color: var(--var-color-warn); height:0;width:100%;padding-bottom:100%; border-radius:50px">
+              <mat-icon style="margin:3px" aria-hidden="false" aria-label="Edit album">edit</mat-icon>
+            </div>
+          </td>
+        </tr>
+      </table>
 
       <h5 class="color-dark-grey set-cursor-pointer" *ngIf="artistResponseData?.name" [innerText]="artistResponseData?.name" (click)="navigateToArtist({event: $event, data: artistResponseData.surrogateKey})"></h5>
       <h5 class="color-dark-grey" *ngIf="albumData?.songsSurrogateKeys"

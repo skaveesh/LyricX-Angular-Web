@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {AfterContentInit, Component} from '@angular/core';
 import {SongSaveUpdateRequest, SongResponseData} from '../../../../dto/song';
 import moment from 'moment';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
@@ -16,19 +16,20 @@ import {ContributorUtilService} from '../../../../services/contributor-util.serv
 import {forkJoin, from} from 'rxjs';
 import {Constants} from '../../../../constants/constants';
 import {Router} from '@angular/router';
+import {ArtistSuggest} from '../../../../dto/artist';
 
 @Component({
   selector: 'app-song-view-dashboard',
   templateUrl: './song-view-dashboard.component.html',
   styleUrls: ['./song-view-dashboard.component.css']
 })
-export class SongViewDashboardComponent {
+export class SongViewDashboardComponent implements AfterContentInit {
 
   private _genreNameListOfTheSong: string[] = [];
   private _album: AlbumResponseData = null;
   private _contributor: ContributorResponseData = null;
-  private _artist: string;
-  private _featuringArtistList: string[] = [];
+  private _artist: ArtistSuggest;
+  private _featuringArtistList: ArtistSuggest[] = [];
   private _lyric: string;
   private _lyricWithoutChords: string;
 
@@ -47,24 +48,27 @@ export class SongViewDashboardComponent {
               private songAdapter: SongAdapterService, private snackBarComponent: DefaultSnackBarComponent,
               private loadingStatusService: LoadingStatusService, private contributorUtilService: ContributorUtilService,
               private router: Router) {
+  }
+
+  ngAfterContentInit(): void {
 
     // only initialize this component after save song was called in previous component
     this.contributorUtilService.getSongViewData()
       .pipe(filter(res => res !== null), tap(() => this.loadingStatusService.startLoading()))
       .subscribe((res) => {
-      this._songData = res;
-      this.afterSaveSongInit();
-    }, () => {
-      this.snackBarComponent.openSnackBar('Error while loading song data', true);
-    });
+        this._songData = res;
+        this.afterSaveSongInit();
+      }, () => {
+        this.snackBarComponent.openSnackBar('Error while loading song data', true);
+      });
 
     // get contributor
     this.contributorAdapterService.requestContributorDetails()
       .subscribe((res) => {
-      this._contributor = res;
-    }, () => {
-      console.error('Error occurred while fetching contributor details.');
-    });
+        this._contributor = res;
+      }, () => {
+        console.error('Error occurred while fetching contributor details.');
+      });
   }
 
   // only initialize this component after save song was called in previous component
@@ -94,8 +98,11 @@ export class SongViewDashboardComponent {
   private initializeArtist(): void {
     this.artistAdapterService.getArtist(this._album.artistSurrogateKey, false)
       .pipe(first())
-      .subscribe(value => {
-      this._artist = value.data.name;
+      .subscribe(artist => {
+      this._artist = {
+        surrogateKey: artist.data.surrogateKey,
+        artistName: artist.data.name
+      };
     }, error => {
       console.error(error);
       throw new Error('Error while fetching staticSelections');
@@ -110,13 +117,15 @@ export class SongViewDashboardComponent {
         toArray(),
         mergeMap(project => {
           const observables = project.map(artistSurrogateKey => this.artistAdapterService.getArtist(artistSurrogateKey, false)
-            .pipe(tap(() => console.log('start fetch artist list')), first()));
-
+            .pipe(first()));
           return forkJoin(observables);
         }),
       ).subscribe(res => {
       res.forEach(artist => {
-        this._featuringArtistList.push(artist.data.name);
+        this._featuringArtistList.push({
+          surrogateKey: artist.data.surrogateKey,
+          artistName: artist.data.name
+        });
       });
     }, error => {
       console.error(error);
@@ -185,11 +194,11 @@ export class SongViewDashboardComponent {
     return this._contributor;
   }
 
-  get artist(): string {
+  get artist(): ArtistSuggest {
     return this._artist;
   }
 
-  get featuringArtistList(): string[] {
+  get featuringArtistList(): ArtistSuggest[] {
     return this._featuringArtistList;
   }
 
@@ -274,7 +283,8 @@ export class SongViewDashboardComponent {
   }
 
   private resetAndNavigateToContributorMainTab(): void {
-    this.contributorUtilService.resetContributorFields();
+    this.contributorUtilService.resetContributorFields(true);
+    setTimeout(() => this.contributorUtilService.resetContributorFields(false), 500);
   }
 
   private publishSong() {
@@ -291,6 +301,20 @@ export class SongViewDashboardComponent {
       console.error(error);
       this.snackBarComponent.openSnackBar('Song Publishing Failed', true);
     }, () => this.loadingStatusService.stopLoading());
+  }
+
+  private editSong($event): void {
+    this.songAdapter.songListToSongWithAlbumAndArtist([$event.data]).pipe(first())
+      .subscribe(songWithAlbumArtistIncludedSongAndAlbumAndArtist => {
+      this.contributorUtilService.sendContributorTabIndex(1, true);
+      this.contributorUtilService.sendSongEditData(songWithAlbumArtistIncludedSongAndAlbumAndArtist[0]);
+    },
+      () => {},
+      () => this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.CONTRIBUTE));
+  }
+
+  private isCurrentRouteSong(): boolean {
+    return this.router.url.startsWith(Constants.Symbol.FORWARD_SLASH + Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH);
   }
 
   public navigateToArtist ($event) {

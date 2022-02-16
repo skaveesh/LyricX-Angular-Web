@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {BasicHttpResponse} from '../../dto/base-http-response';
-import {AlbumCreateRequest, AlbumGetResponse} from '../../dto/album';
+import {AlbumSaveRequest, AlbumGetResponse} from '../../dto/album';
 import {Observable} from 'rxjs';
 import {GenericAdapter} from './generic-adapter';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AlbumAdapterService extends GenericAdapter<AlbumGetResponse, AlbumCreateRequest, BasicHttpResponse> {
+export class AlbumAdapterService extends GenericAdapter<AlbumGetResponse, AlbumSaveRequest, BasicHttpResponse> {
 
   constructor() {
     super();
@@ -17,7 +17,7 @@ export class AlbumAdapterService extends GenericAdapter<AlbumGetResponse, AlbumC
     return super.getObjectBySurrogateKey(this.GET_ALBUM_URL, surrogateKey, doRefresh);
   }
 
-  public createAlbum(payload: AlbumCreateRequest, image: Blob): Observable<BasicHttpResponse> {
-    return super.createObject(this.CREATE_ALBUM_URL, payload, image);
+  public saveAlbum(payload: AlbumSaveRequest, image: Blob): Observable<BasicHttpResponse> {
+    return super.saveObject(this.SAVE_ALBUM_URL, payload, image);
   }
 }

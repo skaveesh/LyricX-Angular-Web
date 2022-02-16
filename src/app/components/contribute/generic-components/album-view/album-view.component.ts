@@ -136,4 +136,9 @@ export class AlbumViewComponent {
     return artistString;
   }
 
+  editAlbum($event) {
+    this.contributorUtilService.sendAlbumEditData($event.data);
+    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ALBUM);
+  }
+
 }

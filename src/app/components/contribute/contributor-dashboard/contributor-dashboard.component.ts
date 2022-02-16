@@ -2,7 +2,6 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ContributorUtilService} from '../../../services/contributor-util.service';
 import {filter} from 'rxjs/operators';
 import {MatTabChangeEvent, MatTabGroup} from '@angular/material';
-import {LoadingStatusService} from '../../../services/loading-status.service';
 
 @Component({
   selector: 'app-contributor-dashboard',
@@ -15,7 +14,7 @@ export class ContributorDashboardComponent implements OnInit, AfterViewInit {
 
   @ViewChild('mainContributorTabGroup', {static: false}) tabGroup: MatTabGroup;
 
-  constructor(private contributorUtilService: ContributorUtilService, private loadingStatusService: LoadingStatusService) {
+  constructor(private contributorUtilService: ContributorUtilService) {
     this.tab = 0;
   }
 
@@ -23,13 +22,15 @@ export class ContributorDashboardComponent implements OnInit, AfterViewInit {
   }
 
   onTabChanged(matTabChangeEvent: MatTabChangeEvent) {
-    this.contributorUtilService.sendContributorTabIndex(matTabChangeEvent.index);
+    this.contributorUtilService.sendContributorTabIndex(matTabChangeEvent.index, false);
   }
 
   ngAfterViewInit(): void {
-    this.contributorUtilService.getResetStatus().pipe(filter((res: boolean) => res === true)).subscribe(() => {
-      this.tabGroup.selectedIndex = 1;
-    });
+    this.contributorUtilService.getContributorEditorFieldsResetStatus().pipe(filter((res: boolean) => res === true))
+      .subscribe(() => this.tabGroup.selectedIndex = 1);
+
+    this.contributorUtilService.getContributorTabIndex().pipe(filter(res => res !== null), filter(res => res.navigate === true))
+      .subscribe( res => this.tabGroup.selectedIndex = res.contributorTabIndex);
   }
 
 }

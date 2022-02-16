@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {FormBuilder} from '@angular/forms';
 import {AlbumAndAuthorAddingDashboardComponent} from './album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
 import {Router} from '@angular/router';
@@ -15,7 +15,7 @@ import {filter} from 'rxjs/operators';
   templateUrl: './contribute-tab.component.html',
   styleUrls: ['./contribute-tab.component.css']
 })
-export class ContributeTabComponent implements OnInit, AfterViewInit {
+export class ContributeTabComponent implements AfterViewInit, AfterContentInit {
 
   @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
   @ViewChild(SongAddUpdateDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddUpdateDashboardComponent;
@@ -27,23 +27,25 @@ export class ContributeTabComponent implements OnInit, AfterViewInit {
               private viewportScroller: ViewportScroller, private contributorUtilService: ContributorUtilService) {
   }
 
-  ngOnInit(): void {
-  }
-
   ngAfterViewInit(): void {
-    this.cdr.detectChanges();
-
-    this.contributorUtilService.getResetStatus().pipe(filter((res: boolean) => res === true)).subscribe(() => {
-      this.contributorStepper.reset();
+    this.contributorUtilService.getContributorEditorFieldsResetStatus().pipe(filter((res: boolean) => res === true)).subscribe(() => {
+      this.contributorUtilService.sendContributorStepper('reset');
       this.resetEveryFieldOnContributorTabAndStepper();
     });
+  }
+
+  ngAfterContentInit(): void {
+    this.cdr.detectChanges();
 
     this.contributorUtilService.getContributorStepper().subscribe(res => {
       setTimeout(() => {
-        if (res) {
+        if (res === 'next') {
           this.contributorStepper.next();
-        } else {
+        } else if (res === 'previous') {
           this.contributorStepper.previous();
+        } else if (res === 'reset') {
+          this.contributorStepper.reset();
+          this.resetEveryFieldOnContributorTabAndStepper();
         }
       }, 500);
     });

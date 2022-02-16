@@ -5,7 +5,8 @@ export interface AlbumSuggest {
   albumName: string;
 }
 
-export interface AlbumCreateRequest {
+export interface AlbumSaveRequest {
+  surrogateKey?: string;
   name: string;
   artistSurrogateKey: string;
   year: number;

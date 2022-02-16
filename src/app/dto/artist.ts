@@ -5,7 +5,8 @@ export interface ArtistSuggest {
   artistName: string;
 }
 
-export interface ArtistCreateRequest {
+export interface ArtistSaveRequest {
+  surrogateKey?: string;
   name: string;
   genreIdList: number[];
 }

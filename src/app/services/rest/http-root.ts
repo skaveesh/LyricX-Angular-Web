@@ -7,9 +7,11 @@ export class HttpRoot {
 
   readonly GET_ARTIST_URL = this.ROOT_URL + 'artist/get';
   readonly CREATE_ARTIST_URL = this.ROOT_URL + 'artist/create';
+  readonly SAVE_ARTIST_URL = this.ROOT_URL + 'artist/save';
 
   readonly GET_ALBUM_URL = this.ROOT_URL + 'album/get';
   readonly CREATE_ALBUM_URL = this.ROOT_URL + 'album/create';
+  readonly SAVE_ALBUM_URL = this.ROOT_URL + 'album/save';
 
   readonly GET_SONG_URL = this.ROOT_URL + 'song/get';
   readonly SAVE_SONG_DETAILS_URL = this.ROOT_URL + 'song/save/details';

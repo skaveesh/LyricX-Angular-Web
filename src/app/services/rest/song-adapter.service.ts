@@ -1,15 +1,18 @@
 import {Injectable} from '@angular/core';
-import {SongGetResponse, SongSaveUpdateRequest} from '../../dto/song';
+import {SongGetResponse, SongResponseData, SongSaveUpdateRequest, SongWithAlbumAndArtist} from '../../dto/song';
 import {BasicHttpResponse} from '../../dto/base-http-response';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {GenericAdapter} from './generic-adapter';
+import {filter, map, mergeMap, take, toArray} from 'rxjs/operators';
+import {AlbumAdapterService} from './album-adapter.service';
+import {ArtistAdapterService} from './artist-adapter.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSaveUpdateRequest, BasicHttpResponse> {
 
-  constructor() {
+  constructor(private albumAdapterService: AlbumAdapterService, private artistAdapterService: ArtistAdapterService) {
     super();
   }
 
@@ -19,6 +22,27 @@ export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSave
 
   public saveSong(payload: SongSaveUpdateRequest, image: Blob = null): Observable<BasicHttpResponse> {
     const url = image ? this.SAVE_SONG_ALBUMART_URL : this.SAVE_SONG_DETAILS_URL;
-    return super.createObject(url, payload, image);
+    return super.saveObject(url, payload, image);
+  }
+
+  public songListToSongWithAlbumAndArtist(songList: SongResponseData[]): Observable<SongWithAlbumAndArtist[]> {
+    return from(songList).pipe(
+      map(song => {
+        const songWithAlbumArtist: SongWithAlbumAndArtist = {} as SongWithAlbumAndArtist;
+        songWithAlbumArtist.song = song;
+        return songWithAlbumArtist;
+      }),
+      mergeMap(songWithAlbumArtistIncludedSong => this.albumAdapterService.getAlbum(songWithAlbumArtistIncludedSong.song.albumSurrogateKey, false)
+        .pipe(filter(album => album !== null), take(1),
+          map(album => {
+            songWithAlbumArtistIncludedSong.album = album.data;
+            return songWithAlbumArtistIncludedSong;
+          }),
+          mergeMap(songWithAlbumArtistIncludedSongAndAlbum => this.artistAdapterService.getArtist(songWithAlbumArtistIncludedSongAndAlbum.album.artistSurrogateKey, false)
+            .pipe(filter(artist => artist !== null), take(1),
+              map(artist => {
+                songWithAlbumArtistIncludedSongAndAlbum.artist = artist.data;
+                return songWithAlbumArtistIncludedSongAndAlbum;
+              }))))), toArray());
   }
 }

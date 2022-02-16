@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {MatAutocomplete, MatDialog} from '@angular/material';
 import {GenreAdapterService} from '../../../../services/rest/genre-adapter.service';
@@ -25,7 +35,7 @@ import {filter, tap} from 'rxjs/operators';
   templateUrl: './song-add-update-dashboard.component.html',
   styleUrls: ['./song-add-update-dashboard.component.css']
 })
-export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
+export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit, AfterContentInit {
 
   public songAlbumArtUploadData: ImageUploadData = {
     croppedImageBase64: null,
@@ -71,7 +81,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(private _formBuilder: FormBuilder, private genreAdapter: GenreAdapterService, private languageAdapter: LanguageAdapterService,
               private songAdapter: SongAdapterService, private defaultSnackBar: DefaultSnackBarComponent, public dialog: MatDialog,
-              private contributorUtilService: ContributorUtilService, private loadingStatusService: LoadingStatusService) {
+              private contributorUtilService: ContributorUtilService, private loadingStatusService: LoadingStatusService, private cdr: ChangeDetectorRef) {
 
     this.albumImageUploadDialogFacade = new ImageUploadDialogFacade(this.dialog);
   }
@@ -82,10 +92,10 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
       guitarKeyCtrl: ['', Validators.required],
       songBeatCtrl: '',
       songKeywordsCtrl: ['', Validators.required],
-      songYouTubeLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern())],
-      songSpotifyLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
-      songDeezerLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
-      songAppleMusicLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern(true))],
+      songYouTubeLinkCtrl: ['',  [Validators.required, Validators.pattern(UtilService.urlRegexPattern())]],
+      songSpotifyLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern())],
+      songDeezerLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern())],
+      songAppleMusicLinkCtrl: ['', Validators.pattern(UtilService.urlRegexPattern())],
       songExplicitCtrl: false
     });
 
@@ -99,10 +109,16 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     this.languageController.setMatAutoComplete(this.matAutocompleteLanguage);
     this.languageController.setStaticSelectionInput(this.languageInput);
     this.initializeLyricsTextArea();
+  }
 
+  ngAfterContentInit(): void {
+  setTimeout(() => {
     this.contributorUtilService.getSongEditData()
       .pipe(filter(res => res !== null))
-      .subscribe(res => this.autoFillContributorEditFields(res));
+      .subscribe(res => {
+        this.autoFillContributorEditFields(res);
+      });
+  }, 500);
   }
 
   private initializeLyricsTextArea(): void {
@@ -174,7 +190,7 @@ export class SongAddUpdateDashboardComponent implements OnInit, AfterViewInit {
     }
 
     if (!this.songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.valid) {
-      this.defaultSnackBar.openSnackBar('Provide YouTube is incorrect.', true);
+      this.defaultSnackBar.openSnackBar('Provided YouTube URL is incorrect.', true);
       return false;
     }
 

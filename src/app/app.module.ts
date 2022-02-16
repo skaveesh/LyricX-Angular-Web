@@ -133,10 +133,6 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
         component: HomeComponent
       },
       {
-        path: Constants.Route.ITEM_VIEW,
-        component: ItemViewComponent
-      },
-      {
         path: Constants.Route.TOP_LYRICS,
         component: TopLyricsComponent
       },
@@ -163,6 +159,10 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
         component: AddAlbumComponent,
         canActivate: [AngularFireAuthGuard],
         data: {authGuardPipe: redirectUnauthorizedToLogin}
+      },
+      {
+        path: Constants.Route.ITEM_VIEW,
+        component: ItemViewComponent
       },
       {
         path: Constants.Route.ABOUT,

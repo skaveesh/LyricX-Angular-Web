@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import {SuggestionUserInterface} from '../../../../../classes/suggestion-user-interface';
@@ -21,7 +21,7 @@ import {ArtistAdapterService} from '../../../../../services/rest/artist-adapter.
   templateUrl: './album-and-author-adding-dashboard.component.html',
   styleUrls: ['./album-and-author-adding-dashboard.component.css']
 })
-export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterViewInit {
+export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterViewInit, AfterContentInit {
 
   public albumCtrl = new FormControl();
   public artistCtrl = new FormControl();
@@ -57,10 +57,12 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
 
     this.suggestionUserInterfaceArtist.setMatAutoComplete(this.matAutocompleteArtist);
     this.suggestionUserInterfaceArtist.setItemInput(this.artistInput);
+  }
 
-    this.contributorUtilService.getSongEditData()
+  ngAfterContentInit(): void {
+    setTimeout(() => this.contributorUtilService.getSongEditData()
       .pipe(filter(res => res !== null))
-      .subscribe(res => this.autoFillContributorEditFields(res));
+      .subscribe(res => this.autoFillContributorEditFields(res)), 500);
   }
 
   ngOnInit(): void {
@@ -113,8 +115,8 @@ export class AlbumAndAuthorAddingDashboardComponent implements OnInit, AfterView
       () => {
         this.loadingStatusService.stopLoading();
         // sending two events
-        this.contributorUtilService.sendContributorStepper(true);
-        this.contributorUtilService.sendContributorStepper(true);
+        this.contributorUtilService.sendContributorStepper('next');
+        this.contributorUtilService.sendContributorStepper('next');
       });
 
     const artistChipSelectedItems: any[] = [];
