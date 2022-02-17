@@ -13,7 +13,7 @@
 
       <table>
         <tr>
-          <td><h1>{{songData?.name}}</h1></td>
+          <td><h1 class="set-cursor-pointer" (click)="navigateToSong({event: $event, data: songData.surrogateKey})">{{songData?.name}}</h1></td>
           <td *ngIf="isCurrentRouteSong() && songData">
             <div (click)="editSong({event: $event, data: songData})" class="set-cursor-pointer" style="background-color: var(--var-color-warn); height:0;width:100%;padding-bottom:100%; border-radius:50px">
               <mat-icon style="margin:3px" aria-hidden="false" aria-label="Edit song">edit</mat-icon>

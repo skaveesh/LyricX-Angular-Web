@@ -21,8 +21,7 @@ export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSave
   }
 
   public saveSong(payload: SongSaveUpdateRequest, image: Blob = null): Observable<BasicHttpResponse> {
-    const url = image ? this.SAVE_SONG_ALBUMART_URL : this.SAVE_SONG_DETAILS_URL;
-    return super.saveObject(url, payload, image);
+    return super.saveObject(this.SAVE_SONG_URL, payload, image);
   }
 
   public songListToSongWithAlbumAndArtist(songList: SongResponseData[]): Observable<SongWithAlbumAndArtist[]> {

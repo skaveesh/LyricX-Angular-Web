@@ -26,7 +26,6 @@ export abstract class GenericAdapter<GetResponse, SaveRequest, SaveResponse> ext
       observable = of<GetResponse>(this.objectMap.get(surrogateKey)).pipe(share());
     } else {
       observable = (new RestTemplateBuilder())
-        .withAuthHeader()
         .withParam(Constants.Param.SURROGATE_KEY, surrogateKey)
         .get<GetResponse>(url)
         .pipe(

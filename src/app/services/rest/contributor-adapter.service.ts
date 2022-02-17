@@ -29,7 +29,6 @@ export class ContributorAdapterService extends HttpRoot {
       observable = of<ContributorResponseData>(<ContributorResponseData>JSON.parse(contributorDetails)).pipe(first(), share());
     } else {
       observable = (new RestTemplateBuilder())
-        .withAuthHeader()
         .get<BasicHttpResponse>(this.GET_CONTRIBUTOR_URL)
         .pipe(first(), share(), map(response => response.body.data));
 

@@ -34,7 +34,7 @@ export class RestTemplateBuilder {
 
     if (!isNotNullOrUndefined(userToken)) {
       console.error(Constants.Error.USER_TOKEN_NOT_FOUNT);
-      userAuthorizationService.logout();
+      userAuthorizationService.logout(true);
       throw new UserTokenError('User logged-out. Pending request cancelled');
     }
 

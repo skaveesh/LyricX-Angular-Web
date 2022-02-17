@@ -60,9 +60,6 @@ export class LoginComponent implements OnInit {
 
     this.userAuth.signInWithEmailAndPassword(this.loginForm.controls.email.value, this.loginForm.controls.password.value)
       .then((res) => {
-        console.log(res.additionalUserInfo);
-        console.log(res.credential);
-        console.log(res.operationType);
         this.token = res.user.refreshToken;
 
         this.userAuth.getRefreshToken(true).then(() => {

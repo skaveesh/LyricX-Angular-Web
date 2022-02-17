@@ -28,6 +28,6 @@ export class ContributeComponent implements AfterViewInit {
   }
 
   logout() {
-    this.userAuth.logout();
+    this.userAuth.logout(true);
   }
 }

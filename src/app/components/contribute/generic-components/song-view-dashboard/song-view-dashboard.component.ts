@@ -316,11 +316,15 @@ export class SongViewDashboardComponent implements AfterContentInit {
     return this.router.url.startsWith(Constants.Symbol.FORWARD_SLASH + Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH);
   }
 
-  public navigateToArtist ($event) {
+  public navigateToSong($event) {
+    this.router.navigateByUrl( Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH + $event.data);
+  }
+
+  public navigateToArtist($event) {
     this.router.navigateByUrl( Constants.Route.ARTIST + Constants.Symbol.FORWARD_SLASH + $event.data);
   }
 
-  public navigateToAlbum ($event) {
+  public navigateToAlbum($event) {
     this.router.navigateByUrl( Constants.Route.ALBUM + Constants.Symbol.FORWARD_SLASH + $event.data);
   }
 }

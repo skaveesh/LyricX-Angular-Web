@@ -20,11 +20,11 @@ export class UserAuthorizationService {
       if (res !== null) {
         this.getRefreshToken(true);
       } else {
-        this.logout();
+        this.logout(false);
       }
     }).catch(error => {
       console.error('Error fetching the user.');
-      this.logout();
+      this.logout(true);
     });
   }
 
@@ -61,10 +61,14 @@ export class UserAuthorizationService {
     return userCredential;
   }
 
-  logout() {
+  logout(navigateToLogin: boolean) {
     this.afAuth.auth.signOut().then((res) => {
       this.isLoggedOut.next(true);
-      this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
+
+      if (navigateToLogin) {
+        this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.LOGIN );
+      }
+
       sessionStorage.clear();
     }).catch((err) => {
       this.isLoggedOut.next(true);
