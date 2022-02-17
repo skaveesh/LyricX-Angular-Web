@@ -41,8 +41,8 @@ export class ContributorUtilService {
     };
   }
 
-  resetContributorFields(value: boolean) {
-    this._resetStatus$.next(value);
+  resetContributorFields() {
+    this._resetStatus$.next(true);
     setTimeout(() => this._resetStatus$.next(false), 500);
   }
 

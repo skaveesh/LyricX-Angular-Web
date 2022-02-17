@@ -84,7 +84,7 @@ export class MyContributionTabComponent implements AfterViewInit {
   }
 
   private editSong(songSurrogateKey: string): void {
-    this.contributorUtilService.resetContributorFields(true);
+    this.contributorUtilService.resetContributorFields();
     const songWithAlbumAndArtist: SongWithAlbumAndArtist = this._songWithAlbumAndArtist.find(song => song.song.surrogateKey === songSurrogateKey);
     setTimeout(() => this.contributorUtilService.sendSongEditData(songWithAlbumAndArtist), 500);
   }

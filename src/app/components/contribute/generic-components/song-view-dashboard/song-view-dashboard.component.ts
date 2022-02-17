@@ -283,8 +283,7 @@ export class SongViewDashboardComponent implements AfterContentInit {
   }
 
   private resetAndNavigateToContributorMainTab(): void {
-    this.contributorUtilService.resetContributorFields(true);
-    setTimeout(() => this.contributorUtilService.resetContributorFields(false), 500);
+    this.contributorUtilService.resetContributorFields();
   }
 
   private publishSong() {
