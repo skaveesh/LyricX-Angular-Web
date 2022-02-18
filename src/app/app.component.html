@@ -41,8 +41,8 @@
         <mat-toolbar-row>
           <form class="search-form">
             <mat-form-field class="search-full-width">
-              <input matInput placeholder="Search Songs, Artists, Albums" style="width: 400px;">
-              <mat-icon class="mat-icon-white" matSuffix>search</mat-icon>
+              <input matInput placeholder="Search Songs, Artists, Albums" style="width: 400px;" [formControl]="searchQuery" (keyup.enter)="onSearchQuery($event)">
+              <mat-icon [ngClass]="searchIconColorChange ? 'color-warn' : 'mat-icon-white'" class="set-cursor-pointer" (click)="onSearchQuery($event)" matSuffix>search</mat-icon>
             </mat-form-field>
           </form>
         </mat-toolbar-row>

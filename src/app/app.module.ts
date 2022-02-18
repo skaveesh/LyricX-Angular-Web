@@ -62,6 +62,7 @@ import { SongViewDashboardComponent } from './components/contribute/generic-comp
 import { MyContributionTabComponent } from './components/contribute/contributor-dashboard/my-contribution-tab/my-contribution-tab.component';
 import { ArtistViewComponent } from './components/contribute/generic-components/artist-view/artist-view.component';
 import { AlbumViewComponent } from './components/contribute/generic-components/album-view/album-view.component';
+import { SearchComponent } from './components/search/search.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo([Constants.Route.LOGIN]);
 const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.CONTRIBUTE]);
@@ -88,7 +89,8 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
     SongViewDashboardComponent,
     MyContributionTabComponent,
     ArtistViewComponent,
-    AlbumViewComponent
+    AlbumViewComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,
@@ -163,6 +165,10 @@ const redirectLoggedInToContribute = () => redirectLoggedInTo([Constants.Route.C
       {
         path: Constants.Route.ITEM_VIEW,
         component: ItemViewComponent
+      },
+      {
+        path: Constants.Route.SEARCH,
+        component: SearchComponent
       },
       {
         path: Constants.Route.ABOUT,

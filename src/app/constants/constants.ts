@@ -30,6 +30,8 @@ export namespace Constants {
   }
 
   export enum Symbol {
+    EQUAL = '=',
+    QUESTION_MARK = '?',
     DOLLAR_SIGN = '$',
     FORWARD_SLASH = '/',
     WHITESPACE = ' ',
@@ -46,6 +48,7 @@ export namespace Constants {
     ADD_ARTIST = 'contribute/add-artist',
     ADD_ALBUM = 'contribute/add-album',
     ITEM_VIEW = ':item/:item-surrogate-key',
+    SEARCH = 'search',
     ABOUT = 'about',
     ERROR = 'error',
     WILDCARD = '**',

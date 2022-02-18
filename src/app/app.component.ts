@@ -6,6 +6,10 @@ import {LoginAccessoryService} from './services/auth/login-accessory.service';
 import {RestTemplate} from './services/rest/rest-template-builder';
 import {MetadataService} from './services/rest/metadata.service';
 import {ContributorAdapterService} from './services/rest/contributor-adapter.service';
+import {FormControl} from '@angular/forms';
+import {distinctUntilChanged, filter, tap} from 'rxjs/operators';
+import {Constants} from './constants/constants';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -34,6 +38,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   public collapse = 'closed';
   public innerWidth: any;
   progressBarViewStatus = false;
+  searchQuery = new FormControl('');
+  searchIconColorChange = false;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -41,12 +47,19 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
 // Even if these parameters not used in this AppComponent, they work on their own. Needed to initiated this way to bind with the application
-  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef,
+  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef, private router: Router,
               private loginAccessory: LoginAccessoryService, private restTemplate: RestTemplate, private metadata: MetadataService, private cdr: ChangeDetectorRef, private contributorAdapterService: ContributorAdapterService) {
   }
 
   ngOnInit() {
     this.innerWidth = window.innerWidth;
+    this.searchQuery.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        tap((value) => {
+          this.searchIconColorChange = value.length > 2;
+        }))
+      .subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -63,6 +76,10 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   toggleCollapse() {
     this.collapse = this.collapse === 'open' ? 'closed' : 'open';
+  }
+
+  onSearchQuery($event) {
+    this.router.navigateByUrl(Constants.Route.SEARCH + Constants.Symbol.QUESTION_MARK + 'query' + Constants.Symbol.EQUAL + this.searchQuery.value);
   }
 
 }
