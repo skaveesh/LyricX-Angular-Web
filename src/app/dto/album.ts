@@ -1,4 +1,5 @@
 import {BaseHttpResponse} from './base-http-response';
+import {BasePageableResponse} from './base-pageable-response';
 
 export interface AlbumSuggest {
   surrogateKey: string;
@@ -16,6 +17,10 @@ interface BaseHttpResponseWithAlbumResponseData {
   'data': AlbumResponseData;
 }
 
+interface BaseHttpResponseWithSearchAlbumResponseData {
+  'data': SearchAlbumResponseData;
+}
+
 export interface AlbumResponseData {
   surrogateKey: string;
   artistSurrogateKey: string;
@@ -29,5 +34,13 @@ export interface AlbumResponseData {
   approvedStatus: boolean;
   songsSurrogateKeys: string[];
 }
+
+export interface AlbumResponseDataList {
+  albumList: AlbumResponseData[];
+}
+
+type SearchAlbumResponseData = BasePageableResponse & AlbumResponseDataList;
+
+export type SearchAlbumResponse = BaseHttpResponse & BaseHttpResponseWithSearchAlbumResponseData;
 
 export type AlbumGetResponse = BaseHttpResponse & BaseHttpResponseWithAlbumResponseData;

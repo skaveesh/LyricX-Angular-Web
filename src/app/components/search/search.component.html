@@ -1,3 +1,83 @@
-<p>search works!</p>
+<p>Search results for {{query}}</p>
 
-<p>{{query}}</p>
+<div *ngIf="songList && songList.length > 0">
+  <table class="item-selection-table">
+    <tr>
+      <th>Songs</th>
+    </tr>
+    <tr class="item-selection" *ngFor="let song of songList" (click)="navigateToSong({event: $event, data: song.surrogateKey})">
+      <td>
+        <img style="width: 50px; height: 50px; border-radius: 50px"
+             src="{{constructSongAlbumArtUrl(song?.imgUrl)}}"
+             alt="contribution image for {{song?.name}}"/>
+      </td>
+      <td>
+        <span mat-line>{{song?.name}}</span>
+      </td>
+      <td>
+        <!--      <span mat-line>{{getAlbumName(song?.albumSurrogateKey)}}</span>-->
+        <br />
+        <!--      <span mat-line>{{getArtistName(song?.albumSurrogateKey)}}</span>-->
+      </td>
+    </tr>
+  </table>
+
+  <mat-paginator [length]="totalSongElements"
+                 [pageSize]="songPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoSongPage($event)">
+  </mat-paginator>
+</div>
+
+<div *ngIf="albumList && albumList.length > 0">
+  <table class="item-selection-table">
+    <tr>
+      <th>Albums</th>
+    </tr>
+    <tr class="item-selection" *ngFor="let album of albumList" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})">
+      <td>
+        <img style="width: 50px; height: 50px; border-radius: 50px"
+             src="{{constructAlbumArtImageUrl(album?.imgUrl)}}"
+             alt="contribution image for {{album?.name}}"/>
+      </td>
+      <td>
+        <span mat-line>{{album?.name}}</span>
+      </td>
+      <td>
+        <!--      <span mat-line>{{getArtistName(album?.artistSurrogateKey)}}</span>-->
+      </td>
+  </table>
+
+  <mat-paginator [length]="totalAlbumElements"
+                 [pageSize]="albumPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoAlbumPage($event)">
+  </mat-paginator>
+</div>
+
+<div *ngIf="artistList && artistList.length > 0">
+  <table class="item-selection-table">
+    <tr>
+      <th>Artist</th>
+    </tr>
+    <tr class="item-selection" *ngFor="let artist of artistList" (click)="navigateToArtist({event: $event, data: artist.surrogateKey})">
+      <td>
+        <img style="width: 50px; height: 50px; border-radius: 50px"
+             src="{{constructArtistImageUrl(artist?.imgUrl)}}"
+             alt="contribution image for {{artist?.name}}"/>
+      </td>
+      <td>
+        <span mat-line>{{artist?.name}}</span>
+      </td>
+      <td>
+        <!--      <span mat-line>{{getGenreNameList(artist?.genreIdList)}}</span>-->
+      </td>
+  </table>
+
+  <mat-paginator [length]="totalArtistElements"
+                 [pageSize]="artistPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoArtistPage($event)">
+  </mat-paginator>
+</div>
+

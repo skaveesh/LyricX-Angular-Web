@@ -1,4 +1,5 @@
 import {BaseHttpResponse} from './base-http-response';
+import {BasePageableResponse} from './base-pageable-response';
 
 export interface ArtistSuggest {
   surrogateKey: string;
@@ -15,6 +16,10 @@ interface BaseHttpResponseWithArtistResponseData {
   'data': ArtistResponseData;
 }
 
+interface BaseHttpResponseWithSearchArtistResponseData {
+  'data': SearchArtistResponseData;
+}
+
 export interface ArtistResponseData {
   surrogateKey: string;
   name: string;
@@ -28,5 +33,13 @@ export interface ArtistResponseData {
   albumsSurrogateKeyList: string[];
   artistSongsSurrogateKeyList: string[];
 }
+
+export interface ArtistResponseDataList {
+  artistList: ArtistResponseData[];
+}
+
+type SearchArtistResponseData = BasePageableResponse & ArtistResponseDataList;
+
+export type SearchArtistResponse = BaseHttpResponse & BaseHttpResponseWithSearchArtistResponseData;
 
 export type ArtistGetResponse = BaseHttpResponse & BaseHttpResponseWithArtistResponseData;

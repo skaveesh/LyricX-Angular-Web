@@ -1,6 +1,8 @@
 import {BaseHttpResponse} from './base-http-response';
 import {ArtistResponseData} from './artist';
 import {AlbumResponseData} from './album';
+import {ContributorResponseData} from './contributor';
+import {BasePageableResponse} from './base-pageable-response';
 
 export interface SongSaveUpdateRequest {
   surrogateKey: string;
@@ -25,6 +27,10 @@ interface BaseHttpResponseWithSongResponseData {
   'data': SongResponseData;
 }
 
+interface BaseHttpResponseWithSearchSongResponseData {
+  'data': SearchSongResponseData;
+}
+
 export interface SongResponseData {
   surrogateKey: string;
   name: string;
@@ -40,9 +46,9 @@ export interface SongResponseData {
   appleMusicLink: string;
   imgUrl: string;
   isExplicit: boolean;
-  addedBy: Contributor;
-  lastModifiedBy: Contributor;
-  publishedBy: Contributor;
+  addedBy: ContributorResponseData;
+  lastModifiedBy: ContributorResponseData;
+  publishedBy: ContributorResponseData;
   addedDate: string;
   lastModifiedDate: string;
   publishedDate: string;
@@ -52,15 +58,8 @@ export interface SongResponseData {
   genreIdList: number[];
 }
 
-interface Contributor {
-  firstName: string;
-  lastName: string;
-  description?: string;
-  imgUrl: string;
-  contactLink?: string;
-  seniorContributor: boolean;
-  addedDate?: string;
-  lastModifiedDate?: string;
+export interface SongResponseDataList {
+  songList: SongResponseData[];
 }
 
 export interface SongWithAlbumAndArtist {
@@ -73,5 +72,9 @@ export interface SongWithArtistList {
   song: SongResponseData;
   artistList?: ArtistResponseData[];
 }
+
+type SearchSongResponseData = BasePageableResponse & SongResponseDataList;
+
+export type SearchSongResponse = BaseHttpResponse & BaseHttpResponseWithSearchSongResponseData;
 
 export type SongGetResponse = BaseHttpResponse & BaseHttpResponseWithSongResponseData;

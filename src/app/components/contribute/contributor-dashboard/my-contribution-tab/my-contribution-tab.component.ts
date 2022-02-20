@@ -24,7 +24,7 @@ export class MyContributionTabComponent implements AfterViewInit {
   private _songWithAlbumAndArtist: SongWithAlbumAndArtist[] = [];
 
   // MatPaginator Inputs
-  length = 0;
+  totalElements = 0;
   pageSize = 0;
   pageSizeOptions: number[] = [5, 10, 25];
 
@@ -49,11 +49,16 @@ export class MyContributionTabComponent implements AfterViewInit {
           .subscribe(res => {
 
             this._contributionsResponse = res;
-            this.length = res.totalElements;
+            this.totalElements = res.totalElements;
 
             this.songAdapterService.songListToSongWithAlbumAndArtist(this._contributionsResponse.songList)
             .subscribe(songWithAlbumArtistIncludedSongAndAlbumAndArtist => {
-              this._songWithAlbumAndArtist.push(...songWithAlbumArtistIncludedSongAndAlbumAndArtist);
+
+              if (this._songWithAlbumAndArtist !== null) {
+                this._songWithAlbumAndArtist.splice(0);
+              }
+
+              this._songWithAlbumAndArtist = songWithAlbumArtistIncludedSongAndAlbumAndArtist;
             }, (error) => {
               console.error(error);
               this.snackBarComponent.openSnackBar('Error fetching data', true);
@@ -79,7 +84,6 @@ export class MyContributionTabComponent implements AfterViewInit {
   }
 
   gotoPage(pageEvent: PageEvent) {
-    this._songWithAlbumAndArtist.splice(0);
     this.getMyContributions(pageEvent.pageIndex, pageEvent.pageSize);
   }
 

@@ -16,6 +16,7 @@ export namespace Constants {
 
   export enum Param {
     SURROGATE_KEY = 'surrogateKey',
+    QUERY = 'query',
     PAGE_NUMBER = 'pageNumber',
     PAGE_SIZE = 'pageSize'
   }

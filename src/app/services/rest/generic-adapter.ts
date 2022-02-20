@@ -6,7 +6,7 @@ import {Constants} from '../../constants/constants';
 import {UtilService} from '../util.service';
 import AppConstant = Constants.AppConstant;
 
-export abstract class GenericAdapter<GetResponse, SaveRequest, SaveResponse> extends HttpRoot {
+export abstract class GenericAdapter<GetResponse, SaveRequest, SaveResponse, SearchResponse> extends HttpRoot {
 
   private objectMap: Map<string, GetResponse> = new Map();
 
@@ -49,6 +49,18 @@ export abstract class GenericAdapter<GetResponse, SaveRequest, SaveResponse> ext
     return (new RestTemplateBuilder())
       .withAuthHeader()
       .post<FormData, SaveResponse>(url, formData)
+      .pipe(
+        map(response => response.body),
+        first(),
+        share());
+  }
+
+  public searchPageable(url: string, query: string, pageNumber: number, pageSize: number): Observable<SearchResponse> {
+    return (new RestTemplateBuilder())
+      .withParam(Constants.Param.QUERY, query)
+      .withParam(Constants.Param.PAGE_NUMBER, pageNumber.toString())
+      .withParam(Constants.Param.PAGE_SIZE, pageSize.toString())
+      .get<SearchResponse>(url)
       .pipe(
         map(response => response.body),
         first(),

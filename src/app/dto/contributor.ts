@@ -1,5 +1,6 @@
 import {BaseHttpResponse} from './base-http-response';
-import {SongResponseData} from './song';
+import {SongResponseDataList} from './song';
+import {BasePageableResponse} from './base-pageable-response';
 
 interface BaseHttpResponseWithContributorResponseData {
   'data': ContributorResponseData;
@@ -8,25 +9,19 @@ interface BaseHttpResponseWithContributorResponseData {
 export interface ContributorResponseData {
   firstName: string;
   lastName: string;
-  description: string;
+  description?: string;
   imgUrl: string;
-  contactLink: string;
+  contactLink?: string;
   seniorContributor: boolean;
-  addedDate: string;
-  lastModifiedDate: string;
-}
-
-export interface MyContributionMetadataResponse {
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
-  totalElements: number;
-  songList: SongResponseData[];
+  addedDate?: string;
+  lastModifiedDate?: string;
 }
 
 interface BaseHttpResponseWithSongListResponseData {
   'data': MyContributionMetadataResponse;
 }
+
+export type MyContributionMetadataResponse = BasePageableResponse & SongResponseDataList;
 
 export type ContributorGetResponse = BaseHttpResponse & BaseHttpResponseWithContributorResponseData;
 

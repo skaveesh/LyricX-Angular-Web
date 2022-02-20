@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {SongGetResponse, SongResponseData, SongSaveUpdateRequest, SongWithAlbumAndArtist} from '../../dto/song';
+import {SearchSongResponse, SongGetResponse, SongResponseData, SongSaveUpdateRequest, SongWithAlbumAndArtist} from '../../dto/song';
 import {BasicHttpResponse} from '../../dto/base-http-response';
 import {from, Observable} from 'rxjs';
 import {GenericAdapter} from './generic-adapter';
@@ -10,7 +10,7 @@ import {ArtistAdapterService} from './artist-adapter.service';
 @Injectable({
   providedIn: 'root'
 })
-export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSaveUpdateRequest, BasicHttpResponse> {
+export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSaveUpdateRequest, BasicHttpResponse, SearchSongResponse> {
 
   constructor(private albumAdapterService: AlbumAdapterService, private artistAdapterService: ArtistAdapterService) {
     super();
@@ -18,6 +18,10 @@ export class SongAdapterService extends GenericAdapter<SongGetResponse, SongSave
 
   public getSong(surrogateKey: string, doRefresh: boolean): Observable<SongGetResponse> {
     return super.getObjectBySurrogateKey(this.GET_SONG_URL, surrogateKey, doRefresh);
+  }
+
+  public searchSong(query: string, pageNumber: number, pageSize: number): Observable<SearchSongResponse> {
+    return super.searchPageable(this.SEARCH_SONG_URL, query, pageNumber, pageSize);
   }
 
   public saveSong(payload: SongSaveUpdateRequest, image: Blob = null): Observable<BasicHttpResponse> {
