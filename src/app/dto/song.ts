@@ -35,6 +35,9 @@ export interface SongResponseData {
   surrogateKey: string;
   name: string;
   albumSurrogateKey: string;
+  albumName: string;
+  artistSurrogateKeyOfTheAlbum: string;
+  artistNameOfTheAlbum: string;
   guitarKey: string;
   beat: string;
   languageCode: string;
@@ -55,6 +58,7 @@ export interface SongResponseData {
   publishedState: boolean;
   songModifiesRequestsAvailable: boolean;
   artistSurrogateKeyList: string[];
+  artistNameList: string[];
   genreIdList: number[];
 }
 
@@ -63,7 +67,7 @@ export interface SongResponseDataList {
 }
 
 export interface SongWithAlbumAndArtist {
-  song: SongResponseData;
+  song?: SongResponseData;
   album?: AlbumResponseData;
   artist?: ArtistResponseData;
 }

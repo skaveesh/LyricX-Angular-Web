@@ -24,6 +24,7 @@ interface BaseHttpResponseWithSearchAlbumResponseData {
 export interface AlbumResponseData {
   surrogateKey: string;
   artistSurrogateKey: string;
+  artistName: string;
   year: string;
   name: string;
   imgUrl: string;

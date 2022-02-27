@@ -31,7 +31,9 @@ export interface ArtistResponseData {
   lastModifiedDate: string;
   genreIdList: number[];
   albumsSurrogateKeyList: string[];
+  albumsNameList: string[];
   artistSongsSurrogateKeyList: string[];
+  artistSongsNameList: string[];
 }
 
 export interface ArtistResponseDataList {

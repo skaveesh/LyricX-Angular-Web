@@ -178,3 +178,28 @@ mat-icon{
 .set-cursor-pointer {
   cursor: pointer;
 }
+
+.item-selection > td {
+   padding: 5px;
+ }
+
+.item-selection:hover {
+  background-color: var(--var-color-light-grey);
+}
+
+.item-selection-dark {
+  padding: 2px;
+}
+
+.item-selection-dark:hover {
+  color: var(--var-color-light-grey);
+  background-color: var(--var-color-warn);
+  padding: 2px;
+  border-radius: 50px;
+}
+
+.item-selection-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}

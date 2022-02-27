@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {filter, take} from 'rxjs/operators';
 import {SongAdapterService} from '../../services/rest/song-adapter.service';
@@ -11,11 +11,13 @@ import {DefaultSnackBarComponent} from '../popups-and-modals/default-snack-bar/d
 import {Constants} from '../../constants/constants';
 import {UtilService} from '../../services/util.service';
 import {PageEvent} from '@angular/material';
+import {GenreAdapterService} from '../../services/rest/genre-adapter.service';
 
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
-  styleUrls: ['./search.component.css']
+  styleUrls: ['./search.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class SearchComponent implements OnInit, AfterViewInit {
 
@@ -33,7 +35,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
   private _artistResponseData: ArtistResponseData[] = null;
 
   constructor(private activatedRoute: ActivatedRoute, private router: Router, private songAdapterService: SongAdapterService, private albumAdapterService: AlbumAdapterService,
-              private artistAdapterService: ArtistAdapterService, private snackBarComponent: DefaultSnackBarComponent) {
+              private artistAdapterService: ArtistAdapterService, private genreAdapterService: GenreAdapterService, private snackBarComponent: DefaultSnackBarComponent) {
   }
 
   private _query = null;
@@ -152,5 +154,23 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   get artistList(): ArtistResponseData[] {
     return this._artistResponseData;
+  }
+
+  getSongUrl(surrogateKey: string): string {
+    return location.origin + Constants.Symbol.FORWARD_SLASH + Constants.Route.SONG + Constants.Symbol.FORWARD_SLASH + surrogateKey;
+  }
+
+  getAlbumUrl(surrogateKey: string): string {
+    return location.origin + Constants.Symbol.FORWARD_SLASH + Constants.Route.ARTIST + Constants.Symbol.FORWARD_SLASH + surrogateKey;
+  }
+
+  getArtistUrl(surrogateKey: string): string {
+    return location.origin + Constants.Symbol.FORWARD_SLASH + Constants.Route.ALBUM + Constants.Symbol.FORWARD_SLASH + surrogateKey;
+  }
+
+  getGenreNamesByIDs(genreIdList: number[]): string[] {
+    const genreNameList: string[] = [];
+    this.genreAdapterService.initializeGenre(genreIdList, genreNameList);
+    return genreNameList;
   }
 }
