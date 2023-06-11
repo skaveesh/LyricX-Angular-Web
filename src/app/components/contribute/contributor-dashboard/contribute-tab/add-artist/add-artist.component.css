@@ -1,0 +1,23 @@
+.artist-form {
+  width: 100%;
+}
+
+.artist-form-full-width {
+  width: var(--var-album-artist-form-width);
+}
+
+.button-artist-image {
+  width: var(--var-album-artist-button-width);
+}
+
+.artist-add-chip-list {
+  width: var(--var-album-artist-form-width);
+}
+
+.artist-image {
+  width: 146px;
+  height: 146px;
+  border-radius: 73px;
+  border: 8px solid;
+  border-color: var(--var-color-warn);
+}

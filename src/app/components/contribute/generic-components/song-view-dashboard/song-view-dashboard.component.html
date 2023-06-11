@@ -1,0 +1,217 @@
+<div fxLayout="column" *ngIf="songData && album && artist">
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around center">
+
+    <div fxFlex="25%" fxLayoutGap="0.5%">
+
+      <img *ngIf="songData?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructSongAlbumArtUrl(songData?.imgUrl)"/>
+      <img *ngIf="!songData?.imgUrl" style="width: 256px; height: 256px; position: relative; border-radius: 10px" alt="album image" [src]="constructAlbumArtUrl(album?.imgUrl)"/>
+
+    </div>
+
+    <div fxFlex="65%" fxLayoutGap="0.5%">
+
+      <table>
+        <tr>
+          <td><h1 class="set-cursor-pointer" (click)="navigateToSong({event: $event, data: songData.surrogateKey})">{{songData?.name}}</h1></td>
+          <td *ngIf="isCurrentRouteSong() && songData">
+            <div (click)="editSong({event: $event, data: songData})" class="set-cursor-pointer" style="background-color: var(--var-color-warn); height:0;width:100%;padding-bottom:100%; border-radius:50px">
+              <mat-icon style="margin:3px" aria-hidden="false" aria-label="Edit song">edit</mat-icon>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <h5 class="color-dark-grey set-cursor-pointer" *ngIf="album" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})" [innerText]="album.name"></h5>
+      <h5 class="color-dark-grey set-cursor-pointer" *ngIf="artist && featuringArtistList.length === 0" (click)="navigateToArtist({event: $event, data: artist.surrogateKey})" [innerText]="artist.artistName"></h5>
+
+      <div *ngIf="artist && featuringArtistList.length > 0">
+
+        <h5 class="color-dark-grey set-cursor-pointer" style="display: inline"
+            (click)="navigateToArtist({event: $event, data: artist.surrogateKey})" [innerText]="artist.artistName"></h5>
+
+        <h5 class="color-dark-grey" style="display: inline"> featuring </h5>
+
+        <div *ngFor="let a of featuringArtistList; last as isLast" style="display: inline">
+          <h5 class="color-dark-grey set-cursor-pointer" style="display: inline" (click)="navigateToArtist({event: $event, data: a.surrogateKey})" [innerText]="a.artistName"></h5>
+          <h5 *ngIf="!isLast" class="color-dark-grey set-cursor-pointer" style="display: inline">, </h5>
+        </div>
+
+      </div>
+
+      <h5 class="color-dark-grey" *ngIf="genreNameListOfTheSong.length > 0" [innerText]="genreNameListOfTheSong.toString().split(',').join(', ')"></h5>
+      <span class="color-light-grey">Added by {{songData?.addedBy?.firstName}} {{songData?.addedBy?.lastName}}</span> <br />
+      <span class="color-light-grey">Last modified by {{songData?.lastModifiedBy?.firstName}} {{songData?.lastModifiedBy?.lastName}}</span> <br />
+      <span class="color-light-grey">Added on {{formatDate(songData?.addedDate)}}, Last modified on {{formatDate(songData?.lastModifiedDate)}}</span> <br />
+
+    </div>
+
+  </div>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around start">
+
+    <div fxFlex="25%" fxLayoutGap="0.5%">
+
+      <table>
+        <tr>
+          <td>
+            <mat-slide-toggle
+              class="example-margin"
+              color="warn"
+              [(ngModel)]="guitarChordToggle">
+            </mat-slide-toggle>
+          </td>
+          <td colspan="2">
+            Hide Guitar Chords
+          </td>
+        </tr>
+        <tr *ngIf="songData?.guitarKey">
+          <td>Key</td>
+          <td>:</td>
+          <td [innerText]="songData?.guitarKey"></td>
+        </tr>
+        <tr *ngIf="songData?.beat">
+          <td>Beat</td>
+          <td>:</td>
+          <td [innerText]="songData?.beat"></td>
+        </tr>
+      </table>
+
+    </div>
+
+    <div fxFlex="65%" fxLayoutGap="0.5%">
+
+      <pre *ngIf="!guitarChordToggle" [innerHTML]="lyric" class="lyric-font-style lyric-font-size"></pre>
+      <pre *ngIf="guitarChordToggle" [innerHTML]="lyricWithoutChords" class="lyric-font-style lyric-font-size"></pre>
+
+    </div>
+
+  </div>
+
+  <span fxLayoutAlign="start" style="text-decoration: underline; cursor: pointer; font-size: 0.9em" class="color-light-grey">submit correction</span>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-between center" fxLayoutAlign.lt-sm="start">
+
+    <div>
+
+      <table class="small-icon-size-with-light-grey space-around-cells">
+        <tr>
+          <td>
+            <span class="color-dark-grey">Listen on</span>
+          </td>
+          <td>
+            <img src="/assets/icons/youtube.svg" alt="youtube icon" *ngIf="this.songData?.youTubeLink" (click)="openInNewTab(this.songData?.youTubeLink)">
+          </td>
+          <td>
+            <img src="/assets/icons/spotify.svg" alt="spotify icon" *ngIf="this.songData?.spotifyLink" (click)="openInNewTab(this.songData?.spotifyLink)">
+          </td>
+          <td>
+            <img src="/assets/icons/deezer.svg" alt="deezer icon" *ngIf="this.songData?.deezerLink" (click)="openInNewTab(this.songData?.deezerLink)">
+          </td>
+          <td>
+            <img src="/assets/icons/applemusic.svg" alt="apple music icon" *ngIf="this.songData?.appleMusicLink" (click)="openInNewTab(this.songData?.appleMusicLink)">
+          </td>
+        </tr>
+      </table>
+
+    </div>
+
+    <div>
+
+      <table class="small-icon-size-with-light-grey space-around-cells">
+        <tr>
+          <td>
+            <span class="color-dark-grey">Share on</span>
+          </td>
+          <td>
+            <img src="/assets/icons/facebook.svg" alt="facebook icon" (click)="facebookLink">
+          </td>
+          <td>
+            <img src="/assets/icons/twitter.svg" alt="twitter icon" (click)="twitterLink">
+          </td>
+          <td>
+            <img src="/assets/icons/instagram.svg" alt="instagram icon" (click)="instagramLink">
+          </td>
+        </tr>
+      </table>
+
+    </div>
+
+  </div>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <div fxLayout="column" *ngIf="displayPublishComponents" #publishComponent>
+
+    <h6 class="color-light-grey" fxFlexAlign="start">Publish</h6>
+
+    <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+    <div *ngIf="contributor && contributor.seniorContributor" fxLayout="column" #seniorContributorPublishComponent>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="publishLater()">
+          Publish Later
+        </button>
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="publishNow()">
+          Publish Now
+        </button>
+
+      </div>
+
+    </div>
+
+    <div *ngIf="contributor && !contributor.seniorContributor" fxLayout="column" #juniorContributorPublishComponent>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" (click)="submitForReview()">
+          Submit for Review
+        </button>
+
+      </div>
+
+      <div fxLayout="row" fxFlexAlign="end">
+
+        <span class="color-warn" style="font-size: 0.7em; float: top; margin: 10px">
+        * Only senior members can publish a song. You can submit the song to be reviewed by a senior member.
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div fxLayout="column" *ngIf="displayDiffComponent" #diffComponent>
+
+    <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+<!--    TODO implement diff component here-->
+
+  </div>
+
+</div>
+
+
+

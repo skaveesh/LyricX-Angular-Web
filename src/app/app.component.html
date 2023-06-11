@@ -1,57 +1,60 @@
 <mat-progress-bar [hidden]="!progressBarViewStatus" mode="indeterminate" color="warn"
                   class="loading-progress-bar-position"></mat-progress-bar>
 
-<mat-drawer-container [hasBackdrop]="true" style="height: 100vh"
-                      [ngClass]="progressBarViewStatus ? 'filter-elements-grayscale' : 'filter-elements-none'">
-  <mat-drawer #drawer mode="over" style="padding-left: 30px; padding-top:30px; padding-right: 100px;">
-    <ul class="nav navbar-nav">
-      <li class="nav-item"><a class="nav-link" routerLink="/" (click)="drawer.toggle()">Home</a></li>
-      <li class="nav-item"><a class="nav-link" routerLink="toplyrics" (click)="drawer.toggle()">Top Lyrics</a></li>
-      <li class="nav-item"><a class="nav-link" routerLink="contribute" (click)="drawer.toggle()">Contribute</a></li>
-      <li class="nav-item"><a class="nav-link" routerLink="about" (click)="drawer.toggle()">About</a></li>
-    </ul>
-  </mat-drawer>
-  <mat-drawer-content>
+<div [ngClass]="{'prevent-click-through': progressBarViewStatus}">
 
-    <mat-toolbar style="left:0; right:0">
-      <mat-toolbar-row>
+  <mat-drawer-container [hasBackdrop]="true" style="height: 100vh"
+                        [ngClass]="progressBarViewStatus ? 'filter-elements-grayscale' : 'filter-elements-none'">
+    <mat-drawer #drawer mode="over" style="padding-left: 30px; padding-top:30px; padding-right: 100px;">
+      <ul class="nav navbar-nav">
+        <li class="nav-item"><a class="nav-link" routerLink="/" (click)="drawer.toggle()">Home</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="toplyrics" (click)="drawer.toggle()">Top Lyrics</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="contribute" (click)="drawer.toggle()">Contribute</a></li>
+        <li class="nav-item"><a class="nav-link" routerLink="about" (click)="drawer.toggle()">About</a></li>
+      </ul>
+    </mat-drawer>
+    <mat-drawer-content>
 
-        <span style="font-size: 24px;">{{ title }}</span>
+      <mat-toolbar style="left:0; right:0">
+        <mat-toolbar-row>
 
-        <span class="fill-remaining-space"></span>
+          <span style="font-size: 24px;">{{ title }}</span>
 
-        <button mat-button routerLink="/" *ngIf="innerWidth>576">Home</button>
-        <button mat-button routerLink="/toplyrics" *ngIf="innerWidth>576">Top Lyrics</button>
-        <button mat-button routerLink="/contribute" *ngIf="innerWidth>576">Contribute</button>
-        <button mat-button routerLink="/about" *ngIf="innerWidth>576">About</button>
-        <button mat-button (click)="drawer.toggle()" *ngIf="innerWidth<=576">
-          <mat-icon>menu</mat-icon>
-        </button>
+          <span class="fill-remaining-space"></span>
 
-      </mat-toolbar-row>
+          <button mat-button routerLink="/" *ngIf="innerWidth>576">Home</button>
+          <button mat-button routerLink="/toplyrics" *ngIf="innerWidth>576">Top Lyrics</button>
+          <button mat-button routerLink="/contribute" *ngIf="innerWidth>576">Contribute</button>
+          <button mat-button routerLink="/about" *ngIf="innerWidth>576">About</button>
+          <button mat-button (click)="drawer.toggle()" *ngIf="innerWidth<=576">
+            <mat-icon>menu</mat-icon>
+          </button>
 
-      <mat-toolbar-row>
-        <h1 style="padding-bottom: 20px" class="mat-display-1 cursive-font color-warn"
-            [ngStyle]="{'font-size': innerWidth<700 ? '1.5rem':'2rem'}">Explore the world's largest catalog of song
-          lyrics</h1>
-      </mat-toolbar-row>
+        </mat-toolbar-row>
 
-      <mat-toolbar-row>
-        <form class="search-form">
-          <mat-form-field class="search-full-width">
-            <input matInput placeholder="Search Songs, Artists, Albums" style="width: 400px;">
-            <mat-icon class="mat-icon-white" matSuffix>search</mat-icon>
-          </mat-form-field>
-        </form>
-      </mat-toolbar-row>
+        <mat-toolbar-row>
+          <h1 style="padding-bottom: 20px" class="mat-display-1 cursive-font color-warn"
+              [ngStyle]="{'font-size': innerWidth<700 ? '1.5rem':'2rem'}">Explore the world's largest catalog of song
+            lyrics</h1>
+        </mat-toolbar-row>
 
-    </mat-toolbar>
+        <mat-toolbar-row>
+          <form class="search-form">
+            <mat-form-field class="search-full-width">
+              <input matInput placeholder="Search Songs, Artists, Albums" style="width: 400px;" [formControl]="searchQuery" (keyup.enter)="onSearchQuery($event)">
+              <mat-icon [ngClass]="searchIconColorChange ? 'color-warn' : 'mat-icon-white'" class="set-cursor-pointer" (click)="onSearchQuery($event)" matSuffix>search</mat-icon>
+            </mat-form-field>
+          </form>
+        </mat-toolbar-row>
 
-    <div style="height: 50px"></div>
+      </mat-toolbar>
 
-    <div class="container">
-      <router-outlet></router-outlet>
-    </div>
-  </mat-drawer-content>
-</mat-drawer-container>
+      <div style="height: 50px"></div>
 
+      <div class="container">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-drawer-content>
+  </mat-drawer-container>
+
+</div>

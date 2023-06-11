@@ -1,0 +1,160 @@
+<p>Search results for {{query}}</p>
+
+<mat-selection-list *ngIf="songList && songList.length > 0">
+
+  <p class="color-dark-grey">Songs</p>
+
+  <mat-list-option *ngFor="let song of songList" style="height: 100%"
+                   (click)="navigateToSong({event: $event, data: song.surrogateKey})">
+
+    <img mat-list-icon style="width: 50px; height: 50px; border-radius: 50px"
+         src="{{constructSongAlbumArtUrl(song?.imgUrl)}}"
+         alt="contribution image for {{song?.name}}"/>
+
+    <div>
+      <table style="width: 100%;">
+        <tr>
+          <td>
+            <span>{{song?.name}}</span>
+          </td>
+          <td rowspan="3" style="width: 1%;">
+            <a [attr.href]="getSongUrl(song?.surrogateKey)" style="float: right" mat-icon-button>
+              <span class="material-icons item-selection-dark">link</span>
+            </a>
+        </tr>
+        <tr>
+          <td>
+            <span class="color-dark-grey" style="font-size: small">{{song?.albumName}}</span>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="color-dark-grey" style="font-size: small">{{song?.artistNameOfTheAlbum}}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-list-option>
+
+  <mat-paginator [length]="totalSongElements"
+                 [pageSize]="songPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoSongPage($event)"
+                 style="background-color: transparent;">
+  </mat-paginator>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+</mat-selection-list>
+
+<mat-selection-list *ngIf="albumList && albumList.length > 0">
+
+  <p class="color-dark-grey">Albums</p>
+
+  <mat-list-option *ngFor="let album of albumList" style="height: 100%"
+                   (click)="navigateToAlbum({event: $event, data: album.surrogateKey})">
+
+    <img mat-list-icon style="width: 50px; height: 50px; border-radius: 50px"
+         src="{{constructAlbumArtImageUrl(album?.imgUrl)}}"
+         alt="contribution image for {{album?.name}}"/>
+
+    <div mat-line>
+      <table style="width: 100%;">
+        <tr>
+          <td>
+            <span>{{album?.name}}</span>
+          </td>
+          <td rowspan="2" style="width: 1%;">
+            <a [attr.href]="getAlbumUrl(album?.surrogateKey)" style="float: right" mat-icon-button>
+              <span class="material-icons item-selection-dark">link</span>
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="color-dark-grey" style="font-size: small">{{album?.artistName}}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-list-option>
+
+
+  <mat-paginator [length]="totalAlbumElements"
+                 [pageSize]="albumPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoAlbumPage($event)"
+                 style="background-color: transparent;">
+  </mat-paginator>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+</mat-selection-list>
+
+<mat-selection-list *ngIf="artistList && artistList.length > 0">
+
+  <p class="color-dark-grey">Artist</p>
+
+  <mat-list-option *ngFor="let artist of artistList" style="height: 100%"
+                   (click)="navigateToArtist({event: $event, data: artist.surrogateKey})">
+
+    <img mat-list-icon style="width: 50px; height: 50px; border-radius: 50px"
+         src="{{constructArtistImageUrl(artist?.imgUrl)}}"
+         alt="contribution image for {{artist?.name}}"/>
+
+    <div mat-line>
+      <table style="width: 100%;">
+        <tr>
+          <td>
+            <span>{{artist?.name}}</span>
+          </td>
+          <td rowspan="2" style="width: 1%;">
+            <a [attr.href]="getArtistUrl(artist?.surrogateKey)" style="float: right" mat-icon-button>
+              <span class="material-icons item-selection-dark">link</span>
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <span class="color-dark-grey" style="font-size: small">{{getGenreNamesByIDs(artist?.genreIdList).toString().split(',').join(', ')}}</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </mat-list-option>
+
+  <mat-paginator [length]="totalArtistElements"
+                 [pageSize]="artistPageSize"
+                 [pageSizeOptions]="pageSizeOptions"
+                 (page)="gotoArtistPage($event)"
+                 style="background-color: transparent;">
+  </mat-paginator>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+</mat-selection-list>
+

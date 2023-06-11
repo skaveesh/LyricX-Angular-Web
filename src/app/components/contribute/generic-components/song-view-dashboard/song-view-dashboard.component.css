@@ -1,0 +1,34 @@
+.upload-custom-album-art-button-default{
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.song-add-chip-list {
+  width: var(--var-song-form-width);
+}
+
+.album-image {
+  width: 146px;
+  height: 146px;
+  border: 8px solid;
+  border-color: var(--var-color-warn);
+  horiz-align: center;
+}
+
+.song-album-art-pane-width {
+  width: 25vw !important;
+}
+
+.song-view-pane-width {
+  width: 75vw !important;
+}
+
+table.small-icon-size-with-light-grey img {
+  height: 40px !important;
+  width: 40px !important;
+  cursor: pointer;
+}
+
+table.space-around-cells td {
+  padding: 5px;
+}

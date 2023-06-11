@@ -1,77 +1,138 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {MatAutocomplete} from '@angular/material/autocomplete';
-import {Observable} from 'rxjs';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
-import {map, startWith} from 'rxjs/operators';
-import {SuggestionService} from '../../../../services/suggestion.service';
+import {AfterContentInit, AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {FormBuilder} from '@angular/forms';
+import {AlbumAndAuthorAddingDashboardComponent} from './album-and-author-adding-dashboard/album-and-author-adding-dashboard.component';
+import {Router} from '@angular/router';
 import {Constants} from '../../../../constants/constants';
-import AlbumSuggestType = Constants.AlbumSuggestedItem;
-import {SuggestionUserInterface} from '../../../../classes/suggestion-user-interface';
+import {SongAddUpdateDashboardComponent} from '../../generic-components/song-add-update-dashboard/song-add-update-dashboard.component';
+import {MatHorizontalStepper, MatStepper} from '@angular/material';
+import {ViewportScroller} from '@angular/common';
+import {SongViewDashboardComponent} from '../../generic-components/song-view-dashboard/song-view-dashboard.component';
+import {ContributorUtilService} from '../../../../services/contributor-util.service';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-contribute-tab',
   templateUrl: './contribute-tab.component.html',
   styleUrls: ['./contribute-tab.component.css']
 })
-export class ContributeTabComponent implements OnInit {
+export class ContributeTabComponent implements AfterViewInit, AfterContentInit {
 
+  @ViewChild(AlbumAndAuthorAddingDashboardComponent, {static: false}) albumAndAuthorAddingDashboardComponent: AlbumAndAuthorAddingDashboardComponent;
+  @ViewChild(SongAddUpdateDashboardComponent, {static: false}) songAddingDashboardComponent: SongAddUpdateDashboardComponent;
+  @ViewChild(SongViewDashboardComponent, {static: false}) songViewDashboardComponent: SongViewDashboardComponent;
+  @ViewChild('contributorStepper', {static: false}) contributorStepper: MatHorizontalStepper;
 
-  firstFormGroup: FormGroup;
-  secondFormGroup: FormGroup;
-  visible = true;
-  selectable = true;
-  removable = true;
-  addOnBlur = true;
-  separatorKeysCodes: number[] = [ENTER, COMMA];
-
-  filteredFruits: Observable<String[]>;
-
- private suggestionUserInterfaceAlbum : SuggestionUserInterface;
-
-  @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
-  @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
-
-  constructor(private _formBuilder: FormBuilder, private suggestionService: SuggestionService) {
-    this.suggestionUserInterfaceAlbum = new SuggestionUserInterface(this.suggestionService);
+  private _hasSongAddingRequestCompleted = false;
+  constructor(private _formBuilder: FormBuilder, private cdr: ChangeDetectorRef, private router: Router,
+              private viewportScroller: ViewportScroller, private contributorUtilService: ContributorUtilService) {
   }
 
-  ngAfterViewInit() {
-      this.suggestionUserInterfaceAlbum.setMatAutoComplete(this.matAutocomplete);
-      this.suggestionUserInterfaceAlbum.setFruitInput(this.fruitInput);
+  ngAfterViewInit(): void {
+    this.contributorUtilService.getContributorEditorFieldsResetStatus().pipe(filter((res: boolean) => res === true)).subscribe(() => {
+      this.contributorUtilService.sendContributorStepper('reset');
+      this.resetEveryFieldOnContributorTabAndStepper();
+    });
   }
 
-  ngOnInit(): void {
-    this.firstFormGroup = this._formBuilder.group({
-      firstCtrl: ['', Validators.required]
+  ngAfterContentInit(): void {
+    this.cdr.detectChanges();
+
+    this.contributorUtilService.getContributorStepper().subscribe(res => {
+      setTimeout(() => {
+        if (res === 'next') {
+          this.contributorStepper.next();
+        } else if (res === 'previous') {
+          this.contributorStepper.previous();
+        } else if (res === 'reset') {
+          this.contributorStepper.reset();
+          this.resetEveryFieldOnContributorTabAndStepper();
+        }
+      }, 500);
     });
-    this.secondFormGroup = this._formBuilder.group({
-      secondCtrl: ['', Validators.required]
-    });
+  }
 
-    this.filteredFruits = this.suggestionUserInterfaceAlbum.fruitCtrl.valueChanges.pipe(
-      startWith(<string>null),
-      map(fruitName => this.suggestionUserInterfaceAlbum.filterOnValueChange(fruitName))
-    );
+  isAlbumArtistInputsInvalid(): boolean {
+    return this.albumAndAuthorAddingDashboardComponent === undefined ||
+      this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum === undefined ||
+      this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum.chipSelectedItems.length !== 1;
+  }
 
-    this.suggestionService.getAlbumSuggestions().subscribe((x: AlbumSuggestType[]) => {
+  getMandatoryInputNames(): string {
+    if (this.albumAndAuthorAddingDashboardComponent === undefined ||
+      this.albumAndAuthorAddingDashboardComponent.albumInput === undefined) {
+      return null;
+    } else {
+      return this.albumAndAuthorAddingDashboardComponent.albumInput.nativeElement.name;
+    }
+  }
 
-      this.suggestionUserInterfaceAlbum.allFruits = [];
+  navigateToAlbumCreation() {
+    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ALBUM);
+  }
 
-      if (x !== null) {
-        x.forEach(y => {
-          let a = <AlbumSuggestType>{
-            surrogateKey: y.surrogateKey,
-            albumName: y.albumName + '$' + y.surrogateKey
-          };
+  navigateToArtistCreation() {
+    this.router.navigateByUrl(Constants.Symbol.FORWARD_SLASH + Constants.Route.ADD_ARTIST);
+  }
 
-          this.suggestionUserInterfaceAlbum.allFruits.push(a);
-        });
+  delegateSaveSong(matStepper: MatStepper) {
+    this.viewportScroller.scrollToPosition([0, 0]);
+    const songSaveObservable = this.songAddingDashboardComponent.saveSong(this.albumAndAuthorAddingDashboardComponent.albumCtrl,
+      this.albumAndAuthorAddingDashboardComponent.artistCtrl, () => {
+        // adding timeout to propagate the changes
+        setTimeout(() => {
+            matStepper.next();
+            document.getElementsByTagName('mat-drawer-content')[0].scrollTo({top: 0, behavior: 'smooth'});
+          }, 500);
+      });
+
+    if (songSaveObservable) {
+      songSaveObservable.subscribe(res => {
+        this.contributorUtilService.sendSongViewData(res.data);
+      });
+    }
+  }
+
+  get hasSongAddingRequestCompleted(): boolean {
+    return this._hasSongAddingRequestCompleted;
+  }
+
+  set hasSongAddingRequestCompleted(value: boolean) {
+    this._hasSongAddingRequestCompleted = value;
+  }
+
+  private resetEveryFieldOnContributorTabAndStepper(): void {
+
+    try {
+      this.hasSongAddingRequestCompleted = false;
+
+      this.albumAndAuthorAddingDashboardComponent.artistCtrl.reset();
+      this.albumAndAuthorAddingDashboardComponent.albumCtrl.reset();
+      this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceAlbum.chipSelectedItems.splice(0);
+      this.albumAndAuthorAddingDashboardComponent.suggestionUserInterfaceArtist.chipSelectedItems.splice(0);
+
+      if (this.songAddingDashboardComponent) {
+        this.songAddingDashboardComponent.genreCtrl.reset();
+        this.songAddingDashboardComponent.languageCtrl.reset();
+        this.songAddingDashboardComponent.lyricsCtrl.reset();
+        this.songAddingDashboardComponent.songAddUpdateFormGroup.reset();
+        this.songAddingDashboardComponent.genreController.staticSelection.splice(0);
+        this.songAddingDashboardComponent.languageController.staticSelection.splice(0);
+        this.songAddingDashboardComponent.songAlbumArtUploadData.originalImageBase64 = null;
+        this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImageBase64 = null;
+        this.songAddingDashboardComponent.songAlbumArtUploadData.croppedImagePositions = null;
+        this.songAddingDashboardComponent.resetLyricsFieldHeight();
       }
-    });
+
+      if (this.songViewDashboardComponent) {
+        this.songViewDashboardComponent.guitarChordToggle = false;
+        this.songViewDashboardComponent.displayPublishComponents = false;
+        this.songViewDashboardComponent.displayDiffComponent = false;
+        this.songViewDashboardComponent.songData = null;
+      }
+    } catch (e) {
+      console.error('Error clearing fields.');
+    }
 
   }
 
 }
-
-

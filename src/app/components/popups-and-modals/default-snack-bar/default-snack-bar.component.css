@@ -1,5 +1,7 @@
-.snack-bar-data-style {
+.snack-bar-data-style-white {
   color: var(--var-color-warn);
 }
 
-
+.snack-bar-data-style-warn {
+  color: var(--var-color-white);
+}

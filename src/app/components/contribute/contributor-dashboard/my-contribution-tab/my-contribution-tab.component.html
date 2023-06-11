@@ -1,0 +1,33 @@
+<table class="item-selection-table" *ngIf="songWithAlbumAndArtist && songWithAlbumAndArtist.length > 0">
+  <tr class="item-selection" *ngFor="let contribution of songWithAlbumAndArtist">
+    <td>
+      <img style="width: 50px; height: 50px; border-radius: 50px"
+           src="{{constructSongAlbumArtUrl(contribution.song?.imgUrl)}}"
+           alt="contribution image for {{contribution.song?.name}}"/>
+    </td>
+    <td>
+      <span mat-line>{{contribution.song?.name}}</span>
+    </td>
+    <td>
+      <span mat-line>{{contribution.album?.name}}</span>
+    </td>
+    <td>
+      <span mat-line>{{contribution.artist?.name}}</span>
+    </td>
+    <td>
+      <button (click)="editSong(contribution.song.surrogateKey)" mat-button mat-raised-button color="accent" class="mat-button-sea">
+        View
+      </button>
+    </td>
+    <td>
+      <mat-icon  *ngIf="contribution.song?.publishedState === true" style="color: limegreen" aria-hidden="false" aria-label="Published song" matTooltip="Public">verified</mat-icon>
+      <mat-icon *ngIf="contribution.song?.publishedState === false" style="color: rgba(202,0,26,0.79)" aria-hidden="false" aria-label="Non-Published song" matTooltip="This song has not been published yet">public_off</mat-icon>
+    </td>
+  </tr>
+</table>
+
+<mat-paginator [length]="totalElements"
+               [pageSize]="pageSize"
+               [pageSizeOptions]="pageSizeOptions"
+               (page)="gotoPage($event)">
+</mat-paginator>

@@ -1,91 +1,93 @@
-<mat-horizontal-stepper [linear]="true">
+<mat-horizontal-stepper linear #contributorStepper>
 
-  <mat-step [stepControl]="firstFormGroup">
+  <mat-step [completed]="!isAlbumArtistInputsInvalid()">
 
-    <form [formGroup]="firstFormGroup">
+    <ng-template matStepLabel>Album</ng-template>
 
-      <ng-template matStepLabel>Album</ng-template>
+    <div fxLayout="row">
 
-      <div fxLayout="row">
+      <div fxLayout="column" fxFlex="100%">
 
-        <div fxLayout="column">
+        <app-album-and-author-adding-dashboard></app-album-and-author-adding-dashboard>
 
-          <h6 class="color-light-grey" fxFlexAlign="start">Main Album Associated with this Song</h6>
+        <div fxLayout="row" fxFlex fxLayoutAlign="start" style="margin-top: 2em">
+          <span class="color-warn album-form-inner-component-width" style="font-size: 0.7em; float: top;"
+                [hidden]="!isAlbumArtistInputsInvalid() && getMandatoryInputNames() != null">
+            *{{getMandatoryInputNames()}} field is mandatory.
+          </span>
+        </div>
 
-          <mat-divider fxFlexAlign="center" class="album-form-inner-component-width"></mat-divider>
+        <div fxLayout="row">
 
-          <mat-form-field class="example-chip-list">
+          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
 
-            <mat-chip-list #chipList aria-label="Fruit selection">
+            <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToAlbumCreation()">
+              Create a New Album
+            </button>
 
-              <mat-chip
-                *ngFor="let fruit of suggestionUserInterfaceAlbum.chipSelectedFruits"
-                [selectable]="selectable"
-                [removable]="removable"
-                (removed)="suggestionUserInterfaceAlbum.remove(fruit)">
-                {{fruit.albumName.substring(0, fruit.albumName.lastIndexOf("$"))}}
-                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-              </mat-chip>
+            <button mat-button mat-raised-button color="warn" class="button-default" [disabled]="!isAlbumArtistInputsInvalid()" (click)="navigateToArtistCreation()">
+              Create a New Artist
+            </button>
 
-              <input
-                placeholder="New fruit..."
-                #fruitInput
-                [formControl]="suggestionUserInterfaceAlbum.fruitCtrl"
-                [matAutocomplete]="auto"
-                [matChipInputFor]="chipList"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                [matChipInputAddOnBlur]="addOnBlur"
-                [multiple]="false"
-                (matChipInputTokenEnd)="suggestionUserInterfaceAlbum.addFruit($event)"
-                (keyup)="suggestionUserInterfaceAlbum.onKey($event)">
+            <button matStepperNext mat-button mat-raised-button color="warn" class="button-default" [disabled]="isAlbumArtistInputsInvalid()">
+              Next
+            </button>
 
-            </mat-chip-list>
-
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="suggestionUserInterfaceAlbum.fruitSelected($event)">
-
-              <mat-option *ngFor="let fruit of filteredFruits | async" [value]="fruit">
-                {{fruit.substring(0, fruit.lastIndexOf("$"))}}
-              </mat-option>
-
-            </mat-autocomplete>
-
-          </mat-form-field>
+          </div>
 
         </div>
 
       </div>
 
-      <mat-form-field>
-        <input matInput placeholder="Last name, First name" formControlName="firstCtrl" required>
-      </mat-form-field>
-
-      <button (click)="suggestionUserInterfaceAlbum.getSelectedValue()">ShowMe SUrrogate key</button>
-
-      <div>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-
-    </form>
-
-  </mat-step>
-
-  <mat-step [stepControl]="secondFormGroup">
-    <form [formGroup]="secondFormGroup">
-      <ng-template matStepLabel>Lyrics</ng-template>
-      <mat-form-field>
-        <input matInput placeholder="Address" formControlName="secondCtrl" required>
-      </mat-form-field>
-      <div>
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button matStepperNext>Next</button>
-      </div>
-    </form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Publish</ng-template>
-    You are now done.
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
     </div>
+
+  </mat-step>
+
+  <mat-step [completed]="hasSongAddingRequestCompleted">
+
+    <ng-template matStepLabel>Lyrics</ng-template>
+
+    <div fxLayout="row">
+
+      <div fxLayout="column" fxFlex="100%">
+
+        <app-song-add-update-dashboard (contributeTabComponent$HasSongAddingRequestCompleted)="hasSongAddingRequestCompleted=$event"></app-song-add-update-dashboard>
+
+        <div fxLayout="row">
+
+          <div fxFlex fxLayoutAlign="end start" style="margin-top: 2em">
+
+            <button mat-button mat-raised-button color="warn" class="button-default" (click)="delegateSaveSong(contributorStepper)">Save</button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </mat-step>
+
+  <mat-step>
+
+    <ng-template matStepLabel>Publish</ng-template>
+
+    <div fxLayout="row">
+
+      <div fxLayout="column" fxFlex="100%" *ngIf="hasSongAddingRequestCompleted">
+
+        <app-song-view-dashboard></app-song-view-dashboard>
+
+      </div>
+
+      <div fxLayout="column" fxFlex="100%" *ngIf="!hasSongAddingRequestCompleted">
+
+        <h3>Uh.oh.. you're not suppose to see this page.</h3>
+
+      </div>
+
+    </div>
+
   </mat-step>
 </mat-horizontal-stepper>

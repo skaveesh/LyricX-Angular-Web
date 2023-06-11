@@ -11,12 +11,30 @@
   --var-color-text-default: #323232;
   --var-color-button-text-default: #fff;
   --var-color-white: #fff;
+  --var-color-sea: #36F4CD;
+  --var-album-artist-form-width: 340px;
+  --var-album-artist-button-width: 240px;
+  --var-song-form-width: 340px;
+  --var-song-button-width: 240px;
 }
+
+
+html { height: 100%; overflow:auto; }
+body { height: 100%; }
 
 * {
   font-family: 'Fredoka One', cursive;
   color: var(--var-color-text-default);
 }
+
+/**:not(.mat-autocomplete-panel) {*/
+/*  -ms-overflow-style: none;  !* IE and Edge - hide the scrollbar *!*/
+/*  scrollbar-width: none;  !* Firefox - hide the scrollbar *!*/
+/*}*/
+
+/**:not(.mat-autocomplete-panel)::-webkit-scrollbar {*/
+/*  display: none; !* Chrome, Safari and Opera - hide the scrollbar *!*/
+/*}*/
 
 ul:focus {
   outline: none !important;
@@ -104,7 +122,84 @@ mat-icon{
   text-align: center;
 }
 
-.white-color-background-with-text-color-warn{
-  color: var(--var-color-warn);
-  background: var(--var-color-white);
+.white-snackbar {
+  background: var(--var-color-white) !important;
+}
+
+.red-snackbar {
+  background: var(--var-color-warn) !important;
+}
+
+.back-button-with-ripple {
+  cursor: pointer;
+
+  width: 100%;
+  height: 100%;
+  line-height: 100%;
+  margin: 20px;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  -webkit-user-drag: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.near-max-width-element {
+  width: 80vw;
+}
+
+
+.lyric-guitar-table-font-style {
+  font-family: monospace !important;
+  font-weight: 900;
+  color: var(--var-color-warn) !important;
+}
+
+.lyric-guitar-table-font-size {
+  font-size: 0.9em !important;
+}
+
+.lyric-guitar-chord-font-style {
+  color: var(--var-color-warn) !important;
+}
+
+.lyric-font-style {
+  font-family: 'Fredoka One', cursive;
+  color: black;
+}
+
+.lyric-font-size {
+  font-size: 1.3em;
+}
+
+.set-cursor-pointer {
+  cursor: pointer;
+}
+
+.item-selection > td {
+   padding: 5px;
+ }
+
+.item-selection:hover {
+  background-color: var(--var-color-light-grey);
+}
+
+.item-selection-dark {
+  padding: 2px;
+}
+
+.item-selection-dark:hover {
+  color: var(--var-color-light-grey);
+  background-color: var(--var-color-warn);
+  padding: 2px;
+  border-radius: 50px;
+}
+
+.item-selection-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px;
 }

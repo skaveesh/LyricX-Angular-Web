@@ -1,42 +1,33 @@
-import {Component, OnInit} from '@angular/core';
-import {AngularFireAuth} from '@angular/fire/auth';
+import {AfterViewInit, Component} from '@angular/core';
 import {LoadingStatusService} from '../../services/loading-status.service';
+import {UserAuthorizationService} from '../../services/auth/user-authorization.service';
 
 @Component({
   selector: 'app-contribute',
   templateUrl: './contribute.component.html',
   styleUrls: ['./contribute.component.css']
 })
-export class ContributeComponent implements OnInit {
+export class ContributeComponent implements AfterViewInit {
 
-  constructor(public afAuth: AngularFireAuth, private loadingStatus: LoadingStatusService) {
+  constructor(public userAuth: UserAuthorizationService, private loadingStatus: LoadingStatusService) {
+    loadingStatus.startLoading();
   }
 
-  token: string;
-  forceToken: string;
-  emailVerifyText = 'Verify your email';
-
-  ngOnInit() {
+  ngAfterViewInit() {
+    this.userAuth.getUser().subscribe(() => {
+      this.loadingStatus.stopLoading();
+    });
   }
 
   refreshToken(forceRefresh: boolean) {
-    this.afAuth.auth.currentUser.getIdToken(forceRefresh).then((res) => {
-      this.forceToken = res;
-    }).catch((error) => {
-      console.log(error);
-    });
+    this.userAuth.getRefreshToken(forceRefresh);
   }
 
   sendEmailConfirmation() {
-    this.afAuth.auth.currentUser.sendEmailVerification().then((res) => {
-      this.emailVerifyText = 'Verification E-Mail sent to your inbox.';
-    }).catch((error) => {
-      console.log(error);
-      this.emailVerifyText = 'Verify your email';
-    });
+    this.userAuth.sendEmailConfirmation();
   }
 
   logout() {
-    this.afAuth.auth.signOut();
+    this.userAuth.logout(true);
   }
 }

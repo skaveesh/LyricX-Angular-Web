@@ -1,13 +1,15 @@
-import {Component, ElementRef, HostListener, OnInit, Renderer2} from '@angular/core';
-import {
-  trigger,
-  state,
-  style,
-  animate,
-  transition
-} from '@angular/animations';
+import {AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, Renderer2} from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import 'rxjs/operators';
 import {LoadingStatusService} from './services/loading-status.service';
+import {LoginAccessoryService} from './services/auth/login-accessory.service';
+import {RestTemplate} from './services/rest/rest-template-builder';
+import {MetadataService} from './services/rest/metadata.service';
+import {ContributorAdapterService} from './services/rest/contributor-adapter.service';
+import {FormControl} from '@angular/forms';
+import {distinctUntilChanged, filter, tap} from 'rxjs/operators';
+import {Constants} from './constants/constants';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -30,47 +32,54 @@ import {LoadingStatusService} from './services/loading-status.service';
     ])
   ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
+
   title = 'LyricX';
   public collapse = 'closed';
   public innerWidth: any;
-  public progressBarViewStatus: boolean = false;
+  progressBarViewStatus = false;
+  searchQuery = new FormControl('');
+  searchIconColorChange = false;
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.innerWidth = window.innerWidth;
   }
 
-  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef) {
+// Even if these parameters not used in this AppComponent, they work on their own. Needed to initiated this way to bind with the application
+  constructor(private loadingStatus: LoadingStatusService, private renderer: Renderer2, private element: ElementRef, private router: Router,
+              private loginAccessory: LoginAccessoryService, private restTemplate: RestTemplate, private metadata: MetadataService, private cdr: ChangeDetectorRef, private contributorAdapterService: ContributorAdapterService) {
+  }
 
+  ngOnInit() {
+    this.innerWidth = window.innerWidth;
+    this.searchQuery.valueChanges
+      .pipe(
+        distinctUntilChanged(),
+        tap((value) => {
+          this.searchIconColorChange = value.length > 2;
+        }))
+      .subscribe();
+  }
+
+  ngAfterViewInit(): void {
     this.loadingStatus.getLoading().subscribe(
       (status) => {
-        this.progressBarViewStatus = status;
 
-        let allInputElements = this.element.nativeElement.querySelectorAll('button, input, textarea');
-
-        if (status) {
-          allInputElements.forEach((element) => {
-            element.disabled = true;
-          });
-        } else {
-          allInputElements.forEach((element) => {
-            element.disabled = false;
-          });
+        if (status !== this.progressBarViewStatus) {
+          this.progressBarViewStatus = status;
         }
       }
     );
 
   }
 
-  ngOnInit() {
-    this.innerWidth = window.innerWidth;
-  }
-
-
   toggleCollapse() {
     this.collapse = this.collapse === 'open' ? 'closed' : 'open';
   }
 
+  onSearchQuery($event) {
+    this.router.navigateByUrl(Constants.Route.SEARCH + Constants.Symbol.QUESTION_MARK + 'query' + Constants.Symbol.EQUAL + this.searchQuery.value);
+  }
 
 }

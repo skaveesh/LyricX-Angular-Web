@@ -1,0 +1,83 @@
+<div fxLayout="row" fxLayoutAlign="start center" fxFlexFill>
+  <div fxLayout="column">
+    <div class="back-button-with-ripple" matRipple [matRippleUnbounded]="true" [matRippleRadius]="1500" (click)="backToContributor()">
+      <mat-icon class="mat-icon-white">arrow_back</mat-icon>
+    </div>
+  </div>
+  <div fxLayout="column">
+    <span style="font-size: 25px;">Add an Artist</span>
+  </div>
+</div>
+
+<form [formGroup]="artistAddingFormGroup" fxLayoutAlign="center center" class="artist-form" fxLayout>
+
+  <div fxLayout="row">
+
+    <div fxLayout="column" fxLayoutAlign="center center">
+
+      <img alt="artist image" [src]="getArtistImage()" class="artist-image" #artistImage/>
+
+      <button mat-button mat-raised-button color="warn" class="button-default button-artist-image" (click)="openArtistImageUploadDialog()">
+        Upload Artist Image
+      </button>
+
+      <mat-form-field class="artist-form-full-width">
+
+        <input matInput name="ArtistName"
+               placeholder="Enter Artist Name"
+               formControlName="artistNameCtrl">
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field class="artist-add-chip-list">
+
+        <mat-chip-list #chipGenreList aria-label="Genre selection">
+
+          <mat-chip
+            *ngFor="let singleGenre of genreController.staticSelection"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="genreController.remove(singleGenre)">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+          <input #genreInput matInput
+                 name="Genre"
+                 placeholder="Search an Genre"
+                 formControlName="genreCtrl"
+                 [matAutocomplete]="autoCompleteGenre"
+                 [matChipInputFor]="chipGenreList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="true"
+                 (matChipInputTokenEnd)="genreController.add($event)"
+                 (keyup)="genreController.onKey($event)">
+
+          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+        </mat-chip-list>
+
+        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="genreController.selected($event)">
+
+          <mat-option *ngFor="let singleGenre of genreController.filteredStaticSelection | async" [value]="singleGenre">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+          </mat-option>
+
+        </mat-autocomplete>
+
+      </mat-form-field>
+
+      <div style="margin-top: 3vh; margin-bottom: 3vh"></div>
+
+      <button mat-mini-fab color="warn" aria-label="Submit Artist" (click)="submitArtist()">
+        <mat-icon>add_task</mat-icon>
+      </button>
+
+    </div>
+
+  </div>
+
+</form>

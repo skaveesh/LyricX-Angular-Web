@@ -1,0 +1,98 @@
+<div fxLayout="column" *ngIf="artistData">
+
+  <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutAlign="space-around center">
+
+    <div fxFlex="25" fxLayoutGap="0.5%">
+
+      <img style="width: 256px; height: 256px; position: relative; border-radius: 10px"
+           alt="album image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
+
+    </div>
+
+    <div fxFlex="65" fxLayoutGap="0.5%">
+
+      <table>
+        <tr>
+          <td><h1>{{artistData?.name}}</h1></td>
+          <td *ngIf="artistData">
+            <div (click)="editArtist({event: $event, data: artistData})" class="set-cursor-pointer" style="background-color: var(--var-color-warn); height:0;width:100%;padding-bottom:100%; border-radius:50px">
+              <mat-icon style="margin:3px" aria-hidden="false" aria-label="Edit artist">edit</mat-icon>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <h5 class="color-dark-grey" *ngIf="genreNameListOfTheArtist.length > 0"
+          [innerText]="genreNameListOfTheArtist.toString().split(',').join(', ')"></h5>
+      <h5 class="color-dark-grey" *ngIf="artistData?.albumsSurrogateKeyList"
+          [innerText]="''.concat('Artist - ').concat(artistData?.albumsSurrogateKeyList?.length?.toString()).concat(' Albums')"></h5>
+
+    </div>
+
+  </div>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-list>
+    <h3 class="item-padding" style="color: var(--var-color-dark-grey)">Albums</h3>
+
+    <div style="height: 50px">
+      <!--vertical space between two components-->
+    </div>
+
+    <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="7%">
+
+      <mat-list-item *ngFor="let album of albumNameListOfTheArtist" class="set-cursor-pointer">
+        <div  fxFlex="100" class="item-hover item-padding item-corner">
+
+          <div fxFlex="98" (click)="navigateToAlbum({event: $event, data: album.surrogateKey})">
+            <div fxFlex="30" fxLayoutAlign=" center">
+              <img *ngIf="album?.imgUrl"
+                   style="width: 128px; height: 128px; position: relative; border-radius: 10px"
+                   alt="album image" [src]="constructAlbumArtUrl(album?.imgUrl)"/>
+              <img *ngIf="!album?.imgUrl"
+                   style="width: 128px; height: 128px; position: relative; border-radius: 10px"
+                   alt="artist image" [src]="constructArtistImageUrl(artistData?.imgUrl)"/>
+            </div>
+
+            <div fxFlex="60" fxLayoutAlign=" center">
+              <h4 mat-line>{{album.name}}</h4>
+            </div>
+
+            <div fxFlex="8" fxLayoutAlign=" center">
+              <h4 mat-line>{{album.year}}</h4>
+            </div>
+          </div>
+
+          <div fxFlex="2" fxLayoutAlign=" center" style="z-index: 1000" class="set-cursor-pointer"
+               matTooltip="Copy the link to the Clipboard"
+               (click)="copyAlbumUrl({event: $event, data: album.surrogateKey})">
+            <span class="material-icons">link</span>
+          </div>
+
+        </div>
+      </mat-list-item>
+
+    </div>
+
+  </mat-list>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+  <mat-divider fxFlexAlign="center" class="near-max-width-element"></mat-divider>
+
+  <div style="height: 50px">
+    <!--vertical space between two components-->
+  </div>
+
+</div>

@@ -1,0 +1,337 @@
+<div [formGroup]="songAddUpdateFormGroup">
+
+  <div fxLayout="row">
+
+    <div fxLayout="column" class="song-adding-form-inner-component-generic-width">
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Name</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field>
+
+        <input matInput name="SongName" placeholder="Enter Song Name" formControlName="songNameCtrl" autocomplete="off">
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.songNameCtrl && songAddUpdateFormGroup.controls.songNameCtrl.touched && songAddUpdateFormGroup.controls.songNameCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <div style="height: 50px" *ngIf="songAlbumArtUploadData.croppedImageBase64">
+        <!--vertical space between two components-->
+      </div>
+
+      <div fxLayout="row" fxLayoutAlign="space-around center" style="align-content: center" *ngIf="songAlbumArtUploadData.croppedImageBase64">
+
+        <div  style="width: 146px; height: 146px; position: relative;">
+
+          <div style="position: absolute; top: 0; right: 0">
+            <img alt="album image" [src]="getAlbumImage()" class="album-image"/>
+          </div>
+
+          <div style="position: absolute; top: -10px; right: -10px;">
+            <button color="warn" mat-mini-fab aria-label="Remove" (click)="destroyAlbumImageUploadData()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <button mat-button mat-raised-button color="warn" class="upload-custom-album-art-button-default button-default" (click)="openAlbumImageUploadDialog()">
+        Upload Custom Album Art for this Song
+      </button>
+
+      <span class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Optional
+        <br/>
+        * Or otherwise it'll display the Album's Album Art Image.
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Genre</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field class="song-add-chip-list">
+
+        <mat-chip-list #chipGenreList aria-label="Genre selection">
+
+          <mat-chip
+            *ngFor="let singleGenre of genreController.staticSelection"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="genreController.remove(singleGenre)">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+          <input #genreInput matInput
+                 name="Genre"
+                 placeholder="Search an Genre"
+                 [formControl]="genreCtrl"
+                 [matAutocomplete]="autoCompleteGenre"
+                 [matChipInputFor]="chipGenreList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="true"
+                 (matChipInputTokenEnd)="genreController.add($event)"
+                 (keyup)="genreController.onKey($event)">
+
+          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+        </mat-chip-list>
+
+        <mat-autocomplete #autoCompleteGenre="matAutocomplete" (optionSelected)="genreController.selected($event)">
+
+          <mat-option *ngFor="let singleGenre of genreController.filteredStaticSelection | async" [value]="singleGenre">
+            {{singleGenre.substring(0, singleGenre.lastIndexOf("$"))}}
+          </mat-option>
+
+        </mat-autocomplete>
+
+      </mat-form-field>
+
+      <span *ngIf="genreCtrl && genreCtrl.touched && genreCtrl.value.length !== 1" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Language</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field class="song-add-chip-list">
+
+        <mat-chip-list #chipLanguageList aria-label="Language selection">
+
+          <mat-chip
+            *ngFor="let singleLanguage of languageController.staticSelection"
+            [selectable]="selectable"
+            [removable]="removable"
+            (removed)="languageController.remove(singleLanguage)">
+            {{singleLanguage.substring(0, singleLanguage.lastIndexOf("$"))}}
+            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+          </mat-chip>
+
+          <input #languageInput matInput
+                 name="Language"
+                 placeholder="Search an Language"
+                 [formControl]="languageCtrl"
+                 [matAutocomplete]="autoCompleteLanguage"
+                 [matChipInputFor]="chipLanguageList"
+                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                 [matChipInputAddOnBlur]="addOnBlur"
+                 [multiple]="false"
+                 (matChipInputTokenEnd)="languageController.add($event)"
+                 (keyup)="languageController.onKey($event)">
+
+          <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+        </mat-chip-list>
+
+        <mat-autocomplete #autoCompleteLanguage="matAutocomplete"
+                          (optionSelected)="languageController.selected($event)">
+
+          <mat-option *ngFor="let singleLanguage of languageController.filteredStaticSelection | async" [value]="singleLanguage">
+            {{singleLanguage.substring(0, singleLanguage.lastIndexOf("$"))}}
+          </mat-option>
+
+        </mat-autocomplete>
+
+      </mat-form-field>
+
+      <span *ngIf="languageCtrl && languageCtrl.touched && languageCtrl.value.length !== 1" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Guitar Chords</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field>
+
+        <mat-label>Guitar Key</mat-label>
+
+        <mat-select formControlName="guitarKeyCtrl" required>
+          <mat-option>--</mat-option>
+          <mat-option *ngFor="let key of guitarKeys" [value]="key">
+            {{key}}
+          </mat-option>
+        </mat-select>
+
+        <mat-error *ngIf="guitarKeyAbstractCtrl.hasError('required')">Please choose a key</mat-error>
+
+      </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.guitarKeyCtrl && songAddUpdateFormGroup.controls.guitarKeyCtrl.touched && songAddUpdateFormGroup.controls.guitarKeyCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <mat-form-field>
+
+        <input matInput name="SongBeat"
+               placeholder="Beat (4/4, 3/4, 6/8 etc.)"
+               formControlName="songBeatCtrl">
+
+        <mat-icon class="mat-icon-white" matSuffix>edit</mat-icon>
+
+      </mat-form-field>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Lyrics</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field class="near-max-width-element">
+
+        <textarea #lyricsTextArea matInput placeholder="Enter Lyrics Here" [formControl]="lyricsCtrl"
+                  (keyup)="autoGeneratePreview($event)" class="near-max-width-element"></textarea>
+
+      </mat-form-field>
+
+      <span *ngIf="lyricsCtrl && lyricsCtrl.touched && lyricsCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field. Lyric should have at least 50 characters.
+      </span>
+
+      <span class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Preserve spacing.
+        <br />
+        * Cover each and every chord with '`'.
+        <br />
+        * Cover whole guitar chart with '$' if any.
+        <br />
+        * Separate Intro, Verse, Chorus, etc. with '-----' without adding [Intro], [Verse], [Chorus], etc.
+        <br />
+        * click here to fill the text area with an example.
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Preview Lyrics</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-accordion class="near-max-width-element">
+
+        <mat-expansion-panel>
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Preview
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <pre [innerHTML]="lyric" class="lyric-font-style"></pre>
+
+        </mat-expansion-panel>
+
+      </mat-accordion>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Keywords</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field class="near-max-width-element">
+
+        <textarea matInput name="SongKeywords" formControlName="songKeywordsCtrl" placeholder="Enter Keywords"
+                  class="near-max-width-element" rows="8"></textarea>
+
+      </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.songKeywordsCtrl && songAddUpdateFormGroup.controls.songKeywordsCtrl.touched && songAddUpdateFormGroup.controls.songKeywordsCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <span class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Enter keywords related to the song which users will more likely search.
+        <br/>
+        * click here to fill the text area with an example.
+      </span>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <h6 class="color-light-grey" fxFlexAlign="start">Links</h6>
+
+      <mat-divider fxFlexAlign="left" class="near-max-width-element"></mat-divider>
+
+      <mat-form-field>
+
+        <input matInput name="YouTubeLink" placeholder="YouTube Link" formControlName="songYouTubeLinkCtrl"
+               autocomplete="off">
+
+        <mat-icon class="mat-icon-white" matSuffix>link</mat-icon>
+
+      </mat-form-field>
+
+      <span *ngIf="songAddUpdateFormGroup.controls.songYouTubeLinkCtrl && songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.touched && songAddUpdateFormGroup.controls.songYouTubeLinkCtrl.errors" class="color-warn near-max-width-element" style="font-size: 0.7em; float: top">
+        * Required field
+      </span>
+
+      <mat-form-field>
+
+        <input matInput name="SpotifyLink" placeholder="Spotify Link" formControlName="songSpotifyLinkCtrl"
+               autocomplete="off">
+
+        <mat-icon class="mat-icon-white" matSuffix>link</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field>
+
+        <input matInput name="DeezerLink" placeholder="Deezer Link" formControlName="songDeezerLinkCtrl"
+               autocomplete="off">
+
+        <mat-icon class="mat-icon-white" matSuffix>link</mat-icon>
+
+      </mat-form-field>
+
+      <mat-form-field>
+
+        <input matInput name="AppleMusicLink" placeholder="Apple Music Link" formControlName="songAppleMusicLinkCtrl"
+               autocomplete="off">
+
+        <mat-icon class="mat-icon-white" matSuffix>link</mat-icon>
+
+      </mat-form-field>
+
+      <div style="height: 50px">
+        <!--vertical space between two components-->
+      </div>
+
+      <mat-checkbox formControlName="songExplicitCtrl" color="warn">This song contains explicit content</mat-checkbox>
+
+    </div>
+
+  </div>
+
+</div>

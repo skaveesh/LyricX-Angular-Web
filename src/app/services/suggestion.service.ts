@@ -1,59 +1,100 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {SocketRootService} from './socket-root.service';
-
-import {Constants} from '../constants/constants';
 import {Stomp} from 'stompjs/lib/stomp.js';
-import AlbumSuggestion = Constants.AlbumSuggest;
 import {BehaviorSubject} from 'rxjs';
+import {ItemSuggest} from '../dto/item-suggest';
+import {AlbumSuggest} from '../dto/album';
+import {ArtistSuggest} from '../dto/artist';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SuggestionService extends SocketRootService {
-  private socket = new WebSocket(this.ROOT_URL);
-  private stompClient = Stomp.over(this.socket);
-
-  private albumSuggestionsBehaviorSubject = new BehaviorSubject(null);
-
-  getAlbumSuggestions(): BehaviorSubject<any> {
-    return this.albumSuggestionsBehaviorSubject;
-  }
 
   constructor() {
     super();
     this.connect();
   }
 
+  private albumSocket = new WebSocket(this.ROOT_URL);
+  private artistSocket = new WebSocket(this.ROOT_URL);
+
+  private albumStompClient = Stomp.over(this.albumSocket);
+  private artistStompClient = Stomp.over(this.artistSocket);
+
+  private albumSuggestionsBehaviorSubject = new BehaviorSubject(null);
+  private artistSuggestionsBehaviorSubject = new BehaviorSubject(null);
+
+  private static onMessageReceived(message: any, behaviourSubject: any) {
+    behaviourSubject.next(
+      (JSON.parse(message.body))
+    );
+  }
+
+  public getAlbumSuggestions(): BehaviorSubject<any> {
+    return this.albumSuggestionsBehaviorSubject;
+  }
+
+  public getArtistSuggestions(): BehaviorSubject<any> {
+    return this.artistSuggestionsBehaviorSubject;
+  }
+
   private connect(): void {
     const _this = this;
 
-    this.stompClient.connect({}, function (frame) {
+    this.albumStompClient.connect({}, function (frame) {
 
-      console.log('Connected: ' + frame);
+      _this.albumStompClient.subscribe('/user/suggested/album', function (message) {
+        _this.onAlbumReceived(message);
 
-      _this.stompClient.subscribe('/user/suggested/album', function (greeting) {
-        _this.onMessageReceived(greeting);
+      }, _this.errorCallBack);
+    });
+
+    this.artistStompClient.connect({}, function (frame) {
+
+      _this.artistStompClient.subscribe('/user/suggested/artist', function (message) {
+        _this.onArtistReceived(message);
 
       }, _this.errorCallBack);
     });
   }
 
-  public getAlbumSuggestion(albumSuggestion: AlbumSuggestion): void {
-    this.stompClient.send("/app/suggest/album", {}, JSON.stringify(albumSuggestion));
+  public getAlbumSuggestion(itemSuggestion: ItemSuggest): void {
+    const albumSuggestion: AlbumSuggest = {
+      surrogateKey: null,
+      albumName: itemSuggestion.name
+    };
+
+    if (albumSuggestion.albumName != null && albumSuggestion.albumName.length >= 1) {
+      this.albumStompClient.send('/app/suggest/album', {}, JSON.stringify(albumSuggestion));
+    }
   }
 
-  //TODO on error, schedule a reconnection attempt, should connect to sockjs as fallback
+  public getArtistSuggestion(itemSuggestion: ItemSuggest): void {
+    const artistSuggestion: ArtistSuggest = {
+      surrogateKey: null,
+      artistName: itemSuggestion.name
+    };
+
+    if (artistSuggestion.artistName != null && artistSuggestion.artistName.length >= 1) {
+      this.artistStompClient.send('/app/suggest/artist', {}, JSON.stringify(artistSuggestion));
+    }
+  }
+
+  // TODO on error, schedule a reconnection attempt, should connect to sockjs as fallback
   private errorCallBack(error) {
-    console.log("errorCallBack -> " + error);
+    console.log('errorCallBack -> ' + error);
     setTimeout(() => {
       this.connect();
     }, 5000);
   }
 
-  private onMessageReceived(message){
-   this.albumSuggestionsBehaviorSubject.next(
-     (JSON.parse(message.body))
-   );
+  private onAlbumReceived(message) {
+    SuggestionService.onMessageReceived(message, this.albumSuggestionsBehaviorSubject);
+  }
+
+  private onArtistReceived(message) {
+    SuggestionService.onMessageReceived(message, this.artistSuggestionsBehaviorSubject);
   }
 }
 
